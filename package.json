@@ -1,7 +1,7 @@
 {
   "name": "react-agendfy",
   "private": false,
-  "version": "0.0.16-beta-22",
+  "version": "1.0.1-beta.1",
   "type": "module",
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
@@ -19,6 +19,10 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zebedeu/react-agendfy.git"
+  },
   "keywords": [
     "react",
     "calendar",
