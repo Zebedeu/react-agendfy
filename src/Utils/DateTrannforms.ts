@@ -1,128 +1,83 @@
 import { TZDate } from "@date-fns/tz";
-import { addMinutes, parseISO } from "date-fns";
+import { addDays, differenceInDays, parseISO } from "date-fns";
 import { RRule } from "rrule";
-import { EventProps } from "../types";
 
+// Função para expandir eventos recorrentes
+export const expandRecurringEvents = (events, startDate, endDate, timezone) => {
+  // Converte startDate e endDate para objetos Date se necessário
+  const start = typeof startDate === "string" ? new TZDate(parseISO(startDate), timezone) : new TZDate(startDate, timezone);
+  const end = typeof endDate === "string" ? new TZDate(parseISO(endDate), timezone) : new TZDate(endDate, timezone);
 
-/**
- * Expands recurring events within a given date range based on their recurrence rules.
- *
- * @param {EventProps[]} events - An array of event objects, some of which may have recurrence rules.
- * @param {string | Date} startDate - The start date of the range to expand events within (ISO string or Date object).
- * @param {string | Date} endDate - The end date of the range to expand events within (ISO string or Date object).
- * @param {string} timezone - The timezone to use for date calculations.
- * @returns {EventProps[]} - An array of expanded event objects, including instances of recurring events within the given range.
- */
-export const expandRecurringEvents = (
-  events: EventProps[],
-  startDate: string | Date,
-  endDate: string | Date,
-  timezone: string
-) => {
-  // Converte startDate e endDate para TZDate para consistência de fuso horário
-  const start = new TZDate(startDate, timezone);
-  const end = new TZDate(endDate, timezone);
+  let expandedEvents = [];
 
-  let expandedEvents: EventProps[] = [];
-
-  for (const event of events) {
-    // Se o evento não tem regra de recorrência, adiciona-o diretamente
+  events.forEach((event) => {
+    // Se o evento não possui recorrência, adiciona diretamente
     if (!event.recurrence) {
       expandedEvents.push(event);
-      continue;
+      return;
     }
 
     try {
       // Parse da string rrule
       const rule = RRule.fromString(event.recurrence);
 
-      // Obtém as ocorrências dentro do intervalo (inclusivo)
+      // Obtém as datas de ocorrência dentro do intervalo (inclusivo)
       const occurrences = rule.between(start, end, true);
 
-      if (occurrences.length === 0) continue; // Se não há ocorrências, pula para o próximo evento
+      if (occurrences.length === 0) return;
 
-      const originalStart = parseISO(event.start as string);
-      const originalEnd = parseISO(event.end as string);
-      const durationInMinutes = (originalEnd.getTime() - originalStart.getTime()) / 60000;
+      // Para cada ocorrência, cria um novo evento
+      occurrences.forEach((date) => {
+        const eventStart = parseISO(event.start);
+        const eventEnd = parseISO(event.end);
+        const duration = differenceInDays(eventEnd, eventStart);
 
-      for (const date of occurrences) {
-        // Cria uma nova data de início para a ocorrência, preservando o horário original
-
-        // Primeiro, cria um TZDate a partir da data da ocorrência
-        const newStart = new TZDate(date, timezone);
-        // Converte para Date nativo para usar setUTCHours
-        const nativeNewStart = new Date(newStart.getTime());
-        nativeNewStart.setUTCHours(
-          originalStart.getUTCHours(),
-          originalStart.getUTCMinutes(),
-          originalStart.getUTCSeconds(),
-          originalStart.getUTCMilliseconds()
+        // Cria uma nova data de início mantendo a hora original
+        const newStart = new Date(date);
+        newStart.setHours(
+          eventStart.getHours(),
+          eventStart.getMinutes(),
+          eventStart.getSeconds()
         );
-        const finalNewStart = new TZDate(nativeNewStart, timezone);
 
-        // Calcula o novo horário de término adicionando a duração em minutos
-        const newEnd = addMinutes(finalNewStart, durationInMinutes);
-        // Ajusta o horário de término para que coincida com o original em UTC
-        const nativeNewEnd = new Date(newEnd.getTime());
-        nativeNewEnd.setUTCHours(
-          originalEnd.getUTCHours(),
-          originalEnd.getUTCMinutes(),
-          originalEnd.getUTCSeconds(),
-          originalEnd.getUTCMilliseconds()
+        // Calcula a nova data de término
+        const newEnd = addDays(newStart, duration);
+        newEnd.setHours(
+          eventEnd.getHours(),
+          eventEnd.getMinutes(),
+          eventEnd.getSeconds()
         );
-        const finalNewEnd = new TZDate(nativeNewEnd, timezone);
 
         expandedEvents.push({
           ...event,
-          id: `${event.id}-${date.toISOString()}`, // Gera um ID único para cada instância
-          start: finalNewStart.toISOString(),
-          end: finalNewEnd.toISOString(),
-          isRecurrenceInstance: true, // Marca como instância recorrente
-          originalEventId: event.id, // Guarda o ID original para referência
+          id: `${event.id}-${date.toISOString()}`, // ID único para cada ocorrência
+          start: newStart.toISOString(),
+          end: newEnd.toISOString(),
+          isRecurrenceInstance: true,
+          originalEventId: event.id,
         });
-      }
+      });
     } catch (error) {
-      console.error("Error expanding recurring event:", error, event);
-      expandedEvents.push(event);
+      console.error("Eerror when expanding recurring event:", error);
+      expandedEvents.push(event); // Em caso de erro, adiciona o evento original
     }
-  }
+  });
 
   return expandedEvents;
 };
 
-/**
- * Ensures that the provided date string or Date object is converted to a valid TZDate object.
- * It attempts to parse various date string formats, including ISO strings and strings with spaces.
- *
- * @param {string | Date} dateStr - The date string or Date object to ensure validity of.
- * @param {string} timezone - The timezone to use for the TZDate object.
- * @returns {TZDate} - A valid TZDate object. If parsing fails, returns the current date as TZDate as a fallback.
- */
-export const ensureDate = (dateStr: string | Date, timezone: string): TZDate => {
-  if (dateStr instanceof Date) {
-    return new TZDate(dateStr, timezone);
-  }
+// Função auxiliar para garantir que uma string de data seja um objeto Date válido
+export const ensureDate = (dateStr, timezone) => {
+  if (dateStr instanceof Date) return new TZDate(dateStr, timezone);
 
   try {
-    if (typeof dateStr === "string") {
-      if (dateStr.includes("T") || dateStr.endsWith("Z")) {
-        // Caso já contenha "T" ou termine com "Z", assumimos que já tem fuso horário definido.
-        return new TZDate(parseISO(dateStr), timezone);
-      } else if (dateStr.includes(" ")) {
-        // Adiciona "Z" após substituir o espaço por "T"
-        return new TZDate(parseISO(dateStr.replace(" ", "T") + "Z"), timezone);
-      } else {
-        console.warn("Date string format is ambiguous, assuming YYYY-MM-DD format:", dateStr);
-        // Assumindo que a string está no formato YYYY-MM-DD e queremos a meia-noite em UTC.
-        return new TZDate(parseISO(dateStr + "T00:00:00Z"), timezone);
-      }
+    if (dateStr.includes("T") || dateStr.includes("Z")) {
+      return new TZDate(parseISO(dateStr), timezone);
     } else {
-      console.warn("ensureDate received non-string and non-Date input:", dateStr);
-      return new TZDate(new Date(), timezone);
+      return new Date(dateStr.replace(" ", "T"));
     }
   } catch (e) {
-    console.error("Error converting date string:", dateStr, e);
-    return new TZDate(new Date(), timezone);
+    console.error("Error converting date:", dateStr, e);
+    return new Date(); // Fallback para data atual
   }
 };
-

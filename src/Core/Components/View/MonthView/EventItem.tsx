@@ -26,7 +26,7 @@ export const EventItem = ({ isStart, isEnd, event, isPreview = false, onEventCli
     : {};
 
   const [dimensions, setDimensions] = useState({
-    width: event.width || (event.isMultiDay ? "100%" : 200),
+    width: event.width || (event.isMultiDay ? "100%" : "100%"),
     height: event.height || 40,
   });
 

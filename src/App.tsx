@@ -136,6 +136,22 @@ const initialEvents = [
   "color": "#f44336",
   "isAllDay": true,
   "isMultiDay": false,
+},
+{
+  "id": "1741282097867",
+  "title": "Fomulario",
+  "start": "2025-03-06T16:00:00.000Z",
+  "end": "2025-03-06T17:00:00.000Z",
+  "color": "#cb34a3",
+  "isAllDay": false,
+  "isMultiDay": false,
+  "resources": [
+      {
+          "id": "r3",
+          "name": "Projector",
+          "type": "equipment"
+      }
+  ]
 }
 ];
 function App() {
@@ -178,7 +194,7 @@ function App() {
 
 
   const handleEventUpdate = useCallback((updatedEvent) => {
-    console.log("Updated event:", updatedEvent.title);
+    console.log("Updated event:", updatedEvent);
     // Assuming onEventUpdate in Calendar component expects the updated event to replace the old one
     // You might need to adjust this logic based on how your Calendar component handles updates
     const updatedEventsList = events.map(event =>
