@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+/* src/App.css */
+.App {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .SortableItem {
+    padding: 10px;
+    margin: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: grab;
+  }
+  
+  .SortableItem:active {
+    cursor: grabbing;
+  }
