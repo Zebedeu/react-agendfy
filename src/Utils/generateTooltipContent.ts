@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 function generateTooltipContent(event, isMultiDay, isStart, isEnd) {
   const eventStart = new Date(event.start);
   const eventEnd = new Date(event.end);
+  
 
   // Exibição do tempo
   const timeDisplay = isMultiDay

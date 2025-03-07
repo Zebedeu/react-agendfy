@@ -78,7 +78,7 @@ const BaseEvent = ({
   };
 
   const displayTitle = event.title + "\b";
-  const tooltipContent = generateTooltipContent(event, isMultiDay, isStart, isEnd);
+  const tooltipContent = generateTooltipContent(event, isMultiDay, isStart, isEnd, config?.timeZone);
 
   return (
 

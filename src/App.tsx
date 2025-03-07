@@ -152,6 +152,19 @@ const initialEvents = [
           "type": "equipment"
       }
   ]
+},
+{
+  "id": "1741289417992",
+  "title": "Alerta",
+  "start": "2025-03-06T20:30:00.000Z",
+  "end": "2025-03-06T21:00:00.000Z",
+  "color": "#81909c",
+  "isAllDay": false,
+  "isMultiDay": false,
+  "alertBefore": 18,
+  "resources": [
+      "r1"
+  ]
 }
 ];
 function App() {
@@ -168,24 +181,31 @@ function App() {
     defaultView: "week",
     slotDuration: 15,
     slotLabelFormat: "HH:mm",
-    slotMin: "00:00",
+    slotMin: "06:00",
     slotMax: "23:59",
-    lang: 'pt',
+    lang: 'en',
     today: 'Today',
     monthView: 'Month',
     weekView: 'Week',
     dayView: 'Day',
     listView: 'List',
     all_day: 'All Day',
-    clier_filter: 'Clear Filters',
-    filter_resources: 'Filtrar',
+    clear_filter: 'Clear Filters',
+    filter_resources: 'Filter Resources',
+    businessHours: {
+      enabled: true,
+      intervals: [
+        { daysOfWeek: [1, 2, 3, 4, 5], startTime: "09:00", endTime: "17:00" }
+      ]
+    },
     
+    alerts: {
+      enabled: false,          
+      thresholdMinutes: 15,  
+    },
   };
 
-  const config = useMemo(() => {
-    return defaultConfig;
-  }, []);
-
+  
 
   // Save events to localStorage whenever events state changes
   useEffect(() => {
@@ -248,7 +268,7 @@ function App() {
     <div className="">
       <Calendar
         events={events}
-        config={config}
+        config={defaultConfig}
        onEventUpdate={handleEventUpdate}
         onEventClick={handleEventClick}
         onDayClick={handleDayClick}

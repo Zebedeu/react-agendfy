@@ -42,8 +42,8 @@ export const WeekEvent = ({
   const handleResize = (e, direction, ref, delta) => {
     if (!isDraggable || !onEventResize) return;
 
-    const eventStart = ensureDate(event.start, config?.timeZone!);
-    const eventEnd = ensureDate(event.end, config?.timeZone!);
+    const eventStart = ensureDate(event.start);
+    const eventEnd = ensureDate(event.end);
 
     if (direction === "bottom") {
       const additionalMinutes = Math.round((delta.height / 40) * config?.slotDuration!);
@@ -113,7 +113,7 @@ export const WeekEvent = ({
       }}
       maxHeight={
         enableResizing
-          ? `${(differenceInMinutes(maxEndTime, ensureDate(event.start, config?.timeZone)) / config?.slotDuration!) * 40}px`
+          ? `${(differenceInMinutes(maxEndTime, ensureDate(event.start)) / config?.slotDuration!) * 40}px`
           : undefined
       }
     >

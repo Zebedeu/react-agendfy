@@ -18,6 +18,7 @@ import { ensureDate } from "../../../../Utils/DateTrannforms";
 import {  EventProps, WeekProps } from "../../../../types";
 import { TZDate } from "@date-fns/tz";
 import { DayColumn } from "./DayColumn";
+import { calculateRedLineOffset } from "../../../../Utils/calculateRedLineOffset";
 
 
  const WeekView = ({
@@ -137,12 +138,13 @@ import { DayColumn } from "./DayColumn";
     [events, config?.timeZone]
   );
 
-  const now = new TZDate(new Date(), config?.timeZone);
-  let redLineOffset = (differenceInMinutes(now, startOfDay(now)) / config?.slotDuration!) * 40;
-  const totalHeight = timeSlots.length * 40;
-  if (redLineOffset < 0) redLineOffset = 0;
-  if (redLineOffset > totalHeight - 2) redLineOffset = totalHeight - 2;
-
+  
+  const redLineOffset = calculateRedLineOffset(
+    currentDate,
+    parseInt(slotMin, 10),
+    config?.slotDuration || 30,
+    config?.timeZone
+  );
   const isDraggable = typeof onEventUpdate === "function";
 
   return (
@@ -154,8 +156,8 @@ import { DayColumn } from "./DayColumn";
             <div className="h-12 flex items-center justify-center text-xs text-gray-500">{config?.all_day}</div>
           </div>
           {daysOfWeek.map((dayIndex) => {
-            const dayDate = new TZDate(addDays(currentWeekStart, dayIndex), config?.timeZone);
-
+            const dayDate = addDays(currentWeekStart, dayIndex);
+            
             // Filtra eventos all-day (ou multi-day) para o dia corrente
             const allDayEvents = events.filter((event: EventProps) => {
               if (!event.isMultiDay && !event.isAllDay) return false;

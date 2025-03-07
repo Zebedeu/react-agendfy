@@ -67,12 +67,12 @@ export const expandRecurringEvents = (events, startDate, endDate, timezone) => {
 };
 
 // Função auxiliar para garantir que uma string de data seja um objeto Date válido
-export const ensureDate = (dateStr, timezone) => {
-  if (dateStr instanceof Date) return new TZDate(dateStr, timezone);
+export const ensureDate = (dateStr, timezone = null) => {
+  if (dateStr instanceof Date) return dateStr;
 
   try {
     if (dateStr.includes("T") || dateStr.includes("Z")) {
-      return new TZDate(parseISO(dateStr), timezone);
+      return  parseISO(dateStr);
     } else {
       return new Date(dateStr.replace(" ", "T"));
     }

@@ -26,9 +26,9 @@ export const WeekTimeSlot = memo(
 
     const handleClickSlot = useCallback(() => {
       if (typeof onSlotClick === "function") {
-        onSlotClick(new TZDate(slotTime, config?.timeZone)); // Use TZDate for slot click
+        onSlotClick(slotTime); // Use TZDate for slot click
       }
-    }, [onSlotClick, slotTime, config?.timeZone]);
+    }, [onSlotClick, slotTime]);
 
     // Mapeamento simples para eventos do slot (na grade de horários)
     const positionedEvents: EventProps[] = useMemo(() => {
@@ -42,7 +42,7 @@ export const WeekTimeSlot = memo(
             left: `${(i * 100) / total}%`,
             width: `${100 / total}%`,
             height: `${
-              (differenceInMinutes(ensureDate(event.end, config?.timeZone), ensureDate(event.start, config?.timeZone)) /
+              (differenceInMinutes(ensureDate(event.end), ensureDate(event.start)) /
                 config?.slotDuration!) *
               40
             }px`,
