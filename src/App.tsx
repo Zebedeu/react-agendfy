@@ -177,7 +177,7 @@ function App() {
   const [filteredResources, setFilteredResources] = useState([]);
 
   const defaultConfig = {
-    timeZone: 'Africa/Luanda',
+    timeZone: 'Africa/Lagos',
     defaultView: "week",
     slotDuration: 15,
     slotLabelFormat: "HH:mm",
@@ -225,6 +225,7 @@ function App() {
 
 
   const handleResizedUpdate = useCallback((updatedEvent) => {
+    console.log(updatedEvent)
     console.log("Resized event:", updatedEvent.title);
     // Assuming onEventUpdate in Calendar component expects the updated event to replace the old one
     // You might need to adjust this logic based on how your Calendar component handles updates

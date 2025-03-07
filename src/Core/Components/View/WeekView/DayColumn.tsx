@@ -1,4 +1,3 @@
-
 import React, { memo, useMemo } from "react";
 import { differenceInMinutes, format, isSameDay, setHours, setMinutes, startOfDay } from "date-fns";
 import { WeekTimeSlot } from "./WeekTimeSlot";
@@ -22,7 +21,8 @@ export const DayColumn = memo(
     isDraggable,
   }: DayColumnProps) => {
 
-    const isToday = isSameDay(dayDate, new Date());
+    // Usar TZDate para obter "hoje" no fuso horário configurado
+    const isToday = isSameDay(dayDate, new TZDate(undefined, config?.timeZone));
     const dayStart = startOfDay(dayDate);
 
     console.log(isToday)
@@ -79,7 +79,7 @@ export const DayColumn = memo(
                   backgroundColor: "rgba(0, 128, 0, 0.1)",
                   pointerEvents: "none", // para não interferir na interação
                   zIndex: 0,
-                }}  
+                }}
               />
             );
           })}

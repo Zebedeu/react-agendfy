@@ -2,11 +2,11 @@ import React from "react";
 import { Resizable } from "re-resizable";
 import BaseEvent from "../../BaseEvent";
 import { addDays, addMinutes, differenceInMinutes, endOfDay, isAfter, setHours, startOfDay, subDays } from "date-fns";
-import { ensureDate } from "../../../../Utils/DateTrannforms";
 import { useDraggable } from "@dnd-kit/core";
 import { useEffect, useMemo, useState } from "react";
 import { BaseEventProps } from "../../../../types";
 import {  TZDate } from '@date-fns/tz';
+import { ensureDate } from "../../../../Utils/DateTrannforms";
 
 export const WeekEvent = ({
   event,
@@ -42,8 +42,8 @@ export const WeekEvent = ({
   const handleResize = (e, direction, ref, delta) => {
     if (!isDraggable || !onEventResize) return;
 
-    const eventStart = ensureDate(event.start);
-    const eventEnd = ensureDate(event.end);
+    const eventStart = ensureDate(event.start); // Timezone added here
+    const eventEnd = ensureDate(event.end); // Timezone added here
 
     if (direction === "bottom") {
       const additionalMinutes = Math.round((delta.height / 40) * config?.slotDuration!);
@@ -58,7 +58,7 @@ export const WeekEvent = ({
       }
 
       if (isAfter(newEndTime, eventStart)) {
-        onEventResize({ ...event, end: newEndTime });
+        onEventResize({ ...event, end: newEndTime.toISOString() }); // toISOString added here
       }
     }
 
@@ -66,7 +66,7 @@ export const WeekEvent = ({
       const daysAdded = Math.round(delta.width / dayWidth);
       if (daysAdded > 0) {
         const newEnd = addDays(eventEnd, daysAdded);
-        onEventResize({ ...event, end: newEnd });
+        onEventResize({ ...event, end: newEnd.toISOString() }); // toISOString added here
       }
     }
 
@@ -74,7 +74,7 @@ export const WeekEvent = ({
       const daysRemoved = Math.round(delta.width / dayWidth);
       if (daysRemoved > 0) {
         const newStart = subDays(eventStart, daysRemoved);
-        +    onEventResize({ ...event, start: newStart });
+        +    onEventResize({ ...event, start: newStart.toISOString() }); // toISOString added here
       }
     }
 
@@ -94,7 +94,6 @@ export const WeekEvent = ({
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
         opacity: isDragging ? 0.5 : 1,
-        zIndex: 1000,
       }
     : undefined;
 
@@ -113,7 +112,7 @@ export const WeekEvent = ({
       }}
       maxHeight={
         enableResizing
-          ? `${(differenceInMinutes(maxEndTime, ensureDate(event.start)) / config?.slotDuration!) * 40}px`
+          ? `${(differenceInMinutes(maxEndTime, new TZDate(ensureDate(event.start))) / config?.slotDuration!) * 40}px` // Timezone added here
           : undefined
       }
     >

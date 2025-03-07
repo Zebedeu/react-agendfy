@@ -4,6 +4,7 @@ import { RRule } from "rrule";
 
 // Função para expandir eventos recorrentes
 export const expandRecurringEvents = (events, startDate, endDate, timezone) => {
+
   // Converte startDate e endDate para objetos Date se necessário
   const start = typeof startDate === "string" ? new TZDate(parseISO(startDate), timezone) : new TZDate(startDate, timezone);
   const end = typeof endDate === "string" ? new TZDate(parseISO(endDate), timezone) : new TZDate(endDate, timezone);
@@ -67,7 +68,7 @@ export const expandRecurringEvents = (events, startDate, endDate, timezone) => {
 };
 
 // Função auxiliar para garantir que uma string de data seja um objeto Date válido
-export const ensureDate = (dateStr, timezone = null) => {
+export const ensureDate = (dateStr) => {
   if (dateStr instanceof Date) return dateStr;
 
   try {
