@@ -22,10 +22,12 @@ export const WeekTimeSlot = memo(
     isDraggable,
   }: TimeSlotProps) => {
     const slotTime = getSlotTime(dayDate, slotMin, config?.slotDuration!, index, config?.timeZone);
-    const { setNodeRef, isOver } = useDroppable({ id: slotTime });
+
+    const { setNodeRef, isOver } = useDroppable({ id: slotTime.toISOString() });
 
     const handleClickSlot = useCallback(() => {
       if (typeof onSlotClick === "function") {
+    
         onSlotClick(slotTime); // Use TZDate for slot click
       }
     }, [onSlotClick, slotTime]);
@@ -42,7 +44,7 @@ export const WeekTimeSlot = memo(
             left: `${(i * 100) / total}%`,
             width: `${100 / total}%`,
             height: `${
-              (differenceInMinutes(ensureDate(event.end, config?.timeZone), ensureDate(event.start, config?.timeZone)) /
+              (differenceInMinutes(ensureDate(event.end), ensureDate(event.start)) /
                 config?.slotDuration!) *
               40
             }px`,
