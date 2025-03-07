@@ -4,7 +4,6 @@ import { useDraggable } from "@dnd-kit/core";
 import generateTooltipContent from "../../Utils/generateTooltipContent";
 import ResourceDisplay from "./Resource/ResourceDisplay";
 import { BaseEventProps } from "../../types";
-import { Resizable } from "re-resizable";
 import { TZDate } from "@date-fns/tz";
 
 const BaseEvent = ({
@@ -78,7 +77,7 @@ const BaseEvent = ({
   };
 
   const displayTitle = event.title + "\b";
-  const tooltipContent = generateTooltipContent(event, isMultiDay, isStart, isEnd, config?.timeZone);
+  const tooltipContent = generateTooltipContent(event, isMultiDay, isStart, isEnd);
 
   return (
 

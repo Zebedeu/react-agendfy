@@ -35,7 +35,7 @@ export interface Config {
   listView:string;
   all_day: string;
   filter_resources: string;
-  clier_filter?: string;
+  clear_filter?: string;
   businessHours: {
     enabled: boolean,
     intervals: []
@@ -170,3 +170,44 @@ interface ListEventProps {
   currentDate: Date; // Or TZDate if you are consistently using TZDate
   config: CalendarConfigProps; // Use CalendarConfigProps for config prop
 }
+
+// MonthView.types.ts
+
+import { EventProps } from "../../../../types";
+import { Locale } from "date-fns";
+
+export interface MonthViewProps {
+  events?: EventProps[];
+  resources?: ResourceProps[];
+  currentDate?: Date;
+  onEventUpdate?: (updatedEvent: EventProps) => void;
+  onEventResize?: (updatedEvent: EventProps) => void;
+  onDayClick?: (day: Date) => void;
+  onEventClick?: (event: EventProps) => void;
+  config: Config;
+  showResourceView?: boolean;
+}
+
+export interface CalendarDayProps {
+  day: TZDate | null;
+  events?: EventProps[];
+  onDayClick?: (day: TZDate) => void;
+  onEventClick?: (event: EventProps) => void;
+  onEventResize?: (event: EventProps) => void;
+  isDroppable?: boolean;
+  isDropTarget?: boolean;
+  config: Config;
+}
+
+export interface CalendarHeaderProps {
+  view: "month" | "week" | "day" | string; // Você pode restringir as opções se necessário
+  onViewChange: (view: string) => void;
+  currentDate: Date | TZDate; // Pode ser Date ou TZDate, conforme sua implementação
+  onNavigateToday: () => void;
+  onNavigateBack: () => void;
+  onNavigateForward: () => void;
+  config: Config;
+  resources?: Resource[]; // Recursos, opcionalmente, com valor padrão []
+  onResourceFilterChange?: (filter: string) => void; // Callback para alteração de filtro de recursos
+}
+

@@ -234,7 +234,7 @@ const Calendar: FC<CalendarProps> = ({
             onNavigateToday={handleNavigateToday}
             onNavigateBack={handleNavigateBack}
             onNavigateForward={handleNavigateForward}
-            locale={localeConfig}
+            config={localeConfig}
             resources={resources}
             onResourceFilterChange={handleResourceFilterChange}
           />

@@ -130,7 +130,7 @@ describe("WeekEvent Component", () => {
     fireEvent.click(simulateBottomButton);
 
     // For bottom resize, delta.height = 40; additionalMinutes = Math.round((40/40)*15) = 15 minutes.
-    const expectedNewEnd = addMinutes(new Date(dummyEvent.end), 15);
+    const expectedNewEnd = addMinutes(new Date(dummyEvent.end), 15).toISOString();
     expect(dummyProps.onEventResize).toHaveBeenCalledWith({
       ...dummyEvent,
       end: expectedNewEnd,
@@ -173,7 +173,7 @@ describe("WeekEvent Component", () => {
     fireEvent.click(simulateRightButton);
 
     // For right resize, delta.width = 150, daysAdded = Math.round(150/100) = 2.
-    const expectedNewEnd = addDays(new Date(dummyEvent.end), 2);
+    const expectedNewEnd = addDays(new Date(dummyEvent.end), 2).toISOString();
     expect(dummyProps.onEventResize).toHaveBeenCalledWith({
       ...dummyEvent,
       end: expectedNewEnd,
@@ -186,7 +186,7 @@ describe("WeekEvent Component", () => {
     fireEvent.click(simulateLeftButton);
 
     // For left resize, delta.width = 150, daysRemoved = Math.round(150/100) = 2.
-    const expectedNewStart = subDays(new Date(dummyEvent.start), 2);
+    const expectedNewStart = subDays(new Date(dummyEvent.start), 2).toISOString();;
     expect(dummyProps.onEventResize).toHaveBeenCalledWith({
       ...dummyEvent,
       start: expectedNewStart,

@@ -20,7 +20,7 @@ export const TimeSlot: React.FC<TimeSlotProps> = ({
 }: TimeSlotProps) => {
 
 
-  const slotTime = getSlotTime(dayDate, slotMin, config?.slotDuration!, index);
+  const slotTime = getSlotTime(dayDate, slotMin, config?.slotDuration!, index, config?.timeZone!);
 
   const { setNodeRef } = useDroppable({ id: slotTime });
 

@@ -1,10 +1,10 @@
-
 import React, { memo, useMemo } from "react";
 import { differenceInMinutes, format, isSameDay, setHours, setMinutes, startOfDay } from "date-fns";
 import { WeekTimeSlot } from "./WeekTimeSlot";
 import { useBusinessHours } from "../../../../Utils/businessHours";
 import { DayColumnProps, EventProps } from "../../../../types";
 import { TZDate } from '@date-fns/tz';
+import { getLocale } from "../../../../Utils/locate";
 
 export const DayColumn = memo(
   ({
@@ -22,10 +22,9 @@ export const DayColumn = memo(
     isDraggable,
   }: DayColumnProps) => {
 
-    const isToday = isSameDay(dayDate, new Date());
+    // Usar TZDate para obter "hoje" no fuso horário configurado
+    const isToday = isSameDay(dayDate, new TZDate( new Date(), config?.timeZone));
     const dayStart = startOfDay(dayDate);
-
-    console.log(isToday)
 
     // Calcula os intervalos de expediente para o dia, se estiver ativado na configuração
 
@@ -57,8 +56,8 @@ export const DayColumn = memo(
           }}
         >
           <div className="text-center">
-            <div className="text-sm font-medium">{format(dayDate, "EEE", { locale: config } as any)}</div>
-            <div className="text-xs text-gray-500">{format(dayDate, "dd/MM", { locale: config } as any)}</div>
+            <div className="text-sm font-medium">{format(dayDate, "EEE", { locale: getLocale(config?.lang) } as any)}</div>
+            <div className="text-xs text-gray-500">{format(dayDate, "dd/MM", { locale: getLocale(config?.lang) } as any)}</div>
           </div>
         </div>
         <div className="relative" style={{ minHeight: timeSlots.length * 40, position: "relative" }}>
@@ -79,7 +78,7 @@ export const DayColumn = memo(
                   backgroundColor: "rgba(0, 128, 0, 0.1)",
                   pointerEvents: "none", // para não interferir na interação
                   zIndex: 0,
-                }}  
+                }}
               />
             );
           })}

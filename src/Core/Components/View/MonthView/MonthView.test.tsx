@@ -131,7 +131,7 @@ describe('MonthView Component', () => {
       <MonthView
         events={[]}
         currentDate={currentDate}
-        locale={localeTest}
+        config={localeTest}
       />
     );
     // O cabeçalho é renderizado como uma grid com 7 colunas
@@ -145,7 +145,7 @@ describe('MonthView Component', () => {
       <MonthView
         events={[]}
         currentDate={currentDate}
-        locale={localeTest}
+        config={localeTest}
       />
     );
     // Procura por um número de dia esperado; para currentDate em 15 de janeiro, espera que "15" esteja presente
@@ -159,7 +159,7 @@ describe('MonthView Component', () => {
       <MonthView
         events={[]}
         currentDate={currentDate}
-        locale={localeTest}
+        config={localeTest}
         onDayClick={onDayClickMock}
       />
     );
@@ -202,7 +202,7 @@ describe('MonthView Component', () => {
       <MonthView
         events={testEvents}
         currentDate={currentDate}
-        locale={localeTest}
+        config={localeTest}
         onEventClick={() => {}}
       />
     );
@@ -220,7 +220,7 @@ describe('MonthView Component', () => {
       <MonthView
         events={[]}
         currentDate={currentDate}
-        locale={localeTest}
+        config={localeTest}
         resources={testResources}
         showResourceView={true}
       />
@@ -235,7 +235,7 @@ describe('MonthView Component', () => {
       <MonthView
         events={testEvents}
         currentDate={currentDate}
-        locale={localeTest}
+        config={localeTest}
         onEventUpdate={onEventUpdateMock}
       />
     );

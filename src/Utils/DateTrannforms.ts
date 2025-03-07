@@ -4,6 +4,7 @@ import { RRule } from "rrule";
 
 // Função para expandir eventos recorrentes
 export const expandRecurringEvents = (events, startDate, endDate, timezone) => {
+
   // Converte startDate e endDate para objetos Date se necessário
   const start = typeof startDate === "string" ? new TZDate(parseISO(startDate), timezone) : new TZDate(startDate, timezone);
   const end = typeof endDate === "string" ? new TZDate(parseISO(endDate), timezone) : new TZDate(endDate, timezone);
@@ -67,17 +68,24 @@ export const expandRecurringEvents = (events, startDate, endDate, timezone) => {
 };
 
 // Função auxiliar para garantir que uma string de data seja um objeto Date válido
-export const ensureDate = (dateStr, timezone = null) => {
-  if (dateStr instanceof Date) return dateStr;
+
+export const ensureDate = (dateInput: string | Date, timeZone?: string): Date => {
+  // Se já for uma instância de TZDate, retorne-a diretamente
+  if (dateInput instanceof TZDate) return dateInput;
+  // Se for Date e temos fuso, converte para TZDate; caso contrário, retorna o Date
+  if (dateInput instanceof Date) return timeZone ? new TZDate(dateInput, timeZone) : dateInput;
 
   try {
-    if (dateStr.includes("T") || dateStr.includes("Z")) {
-      return  parseISO(dateStr);
+    let parsedDate: Date;
+    if (dateInput.includes("T") || dateInput.includes("Z")) {
+      parsedDate = parseISO(dateInput);
     } else {
-      return new Date(dateStr.replace(" ", "T"));
+      // Tenta converter colocando "T" entre a data e a hora
+      parsedDate = new Date(dateInput.replace(" ", "T"));
     }
+    return timeZone ? new TZDate(parsedDate, timeZone) : parsedDate;
   } catch (e) {
-    console.error("Error converting date:", dateStr, e);
-    return new Date(); // Fallback para data atual
+    console.error("Error converting date:", dateInput, e);
+    return new Date(); // fallback para a data atual
   }
 };

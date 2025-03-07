@@ -2,6 +2,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DayColumn } from './DayColumn';
+import { TZDate } from '@date-fns/tz';
 
 // Mock the WeekTimeSlot component to control its rendering
 jest.mock('./WeekTimeSlot', () => ({
@@ -106,7 +107,7 @@ describe('DayColumn Component', () => {
 
   it('applies today styling if dayDate is today', () => {
     // Set dayDate to today.
-    const today = new Date();
+    const today = new TZDate(new Date());
     render(
       <DayColumn
         dayDate={today}

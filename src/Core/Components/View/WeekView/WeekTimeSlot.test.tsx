@@ -5,6 +5,15 @@ import { WeekTimeSlot } from './WeekTimeSlot';
 import { TZDate } from '@date-fns/tz';
 
 // Mock the useDroppable hook from @dnd-kit/core
+
+jest.mock('@date-fns/tz', () => {
+  const originalModule = jest.requireActual('@date-fns/tz');
+  return {
+    ...originalModule,
+    TZDate: originalModule.TZDate, // Or mock implementation if needed for specific timezone tests
+  };
+});
+
 jest.mock('@dnd-kit/core', () => ({
   useDroppable: jest.fn(() => ({
     setNodeRef: jest.fn(),
@@ -28,7 +37,7 @@ const dummyConfig = {
   all_day: "All Day",
 };
 
-const dummyDayDate = new Date("2023-01-01T00:00:00Z");
+const dummyDayDate = new Date(2023, 0, 1); // January 1, 2023
 const dummySlotMin = "0";
 
 describe('WeekTimeSlot Component', () => {
