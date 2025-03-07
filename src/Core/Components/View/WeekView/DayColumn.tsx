@@ -23,7 +23,7 @@ export const DayColumn = memo(
   }: DayColumnProps) => {
 
     // Usar TZDate para obter "hoje" no fuso horário configurado
-    const isToday = isSameDay(dayDate, new TZDate(undefined, config?.timeZone));
+    const isToday = isSameDay(dayDate, new TZDate( new Date(), config?.timeZone));
     const dayStart = startOfDay(dayDate);
 
     // Calcula os intervalos de expediente para o dia, se estiver ativado na configuração

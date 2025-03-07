@@ -1,20 +1,28 @@
 import React from "react";
-import { Resizable } from "re-resizable";
+import { NumberSize,  ResizeDirection, Resizable } from "re-resizable";
 import { BaseEventProps, Config, EventProps } from "../../../../types";
 import ResourceDisplay from "../../Resource/ResourceDisplay";
 import { useDraggable } from "@dnd-kit/core";
 import { useMemo, useState } from "react";
 import { ensureDate } from "../../../../Utils/DateTrannforms";
 import { addDays, addHours, format } from "date-fns";
+import { TZDate } from "@date-fns/tz";
 
-const DEFAULT_MAX_WIDTH =160;
+const DEFAULT_MAX_WIDTH = 160;
 
-export const EventItem = ({ isStart, isEnd, event, isPreview = false, onEventClick, onEventResize, config }: BaseEventProps) => {
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: event.id,
-      data: { event },
-    });
+export const EventItem: React.FC<BaseEventProps> = ({
+  isStart,
+  isEnd,
+  event,
+  isPreview = false,
+  onEventClick,
+  onEventResize,
+  config,
+}) => {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: event.id,
+    data: { event },
+  });
 
   const style = transform
     ? {
@@ -46,11 +54,11 @@ export const EventItem = ({ isStart, isEnd, event, isPreview = false, onEventCli
     cursor-pointer
   `;
 
-  const handleResizeEvent = (e, direction, ref, delta) => {
+  const handleResizeEvent = (e: MouseEvent | TouchEvent, direction: ResizeDirection, ref:HTMLDivElement, delta: NumberSize) => {
     const newWidth = ref.style.width;
     const newHeight = ref.style.height;
-    
-    setDimensions({
+
+     setDimensions({
       width: newWidth,
       height: newHeight,
     });
@@ -58,17 +66,18 @@ export const EventItem = ({ isStart, isEnd, event, isPreview = false, onEventCli
     if (onEventResize && (direction === "right" || direction === "left")) {
       const dayWidth = DEFAULT_MAX_WIDTH; // Largura aproximada de um dia no calendário
       let daysAdded = Math.round(delta.width / dayWidth);
-      
+
       if (direction === "left") {
         daysAdded = -daysAdded;
       }
-      
-      const eventStart = ensureDate(event.start, config?.timeZone!);
-      const eventEnd = ensureDate(event.end, config?.timeZone!);
-      
+
+      // Converte start e end para o fuso definido
+      const eventStart = ensureDate(event.start, config?.timeZone);
+      const eventEnd = ensureDate(event.end, config?.timeZone);
+
       let newStart = eventStart;
       let newEnd = eventEnd;
-      
+
       if (direction === "right") {
         newEnd = addDays(eventEnd, daysAdded);
       } else if (direction === "left") {
@@ -80,13 +89,13 @@ export const EventItem = ({ isStart, isEnd, event, isPreview = false, onEventCli
         eventStart.getMinutes(),
         eventStart.getSeconds()
       );
-      
+
       newEnd.setHours(
         eventEnd.getHours(),
         eventEnd.getMinutes(),
         eventEnd.getSeconds()
       );
-      
+
       if (newStart >= newEnd) {
         if (direction === "right") {
           newEnd = addHours(newStart, 1);
@@ -94,17 +103,18 @@ export const EventItem = ({ isStart, isEnd, event, isPreview = false, onEventCli
           newStart = addHours(newEnd, -1);
         }
       }
-      
-      const formattedStart = format(newStart, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-      const formattedEnd = format(newEnd, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-      
+
+      // Cria instâncias TZDate para preservar o fuso horário
+      const tzNewStart = new TZDate(newStart, config?.timeZone);
+      const tzNewEnd = new TZDate(newEnd, config?.timeZone);
+
+     
       onEventResize({
         ...event,
-        recurrence: '',
-        start: formattedStart,
-        end: formattedEnd,
-        isMultiDay: true
-
+        recurrence: "",
+        start: tzNewStart.toISOString(),
+        end: tzNewEnd.toISOString(),
+        isMultiDay: true,
       });
     }
   };
@@ -137,6 +147,10 @@ export const EventItem = ({ isStart, isEnd, event, isPreview = false, onEventCli
           cursor: "w-resize",
         },
       }}
+      enable={{
+        right: resizeHandles.includes("right"),
+        left: resizeHandles.includes("left"),
+      }}
     >
       <div
         ref={setNodeRef}
@@ -151,8 +165,9 @@ export const EventItem = ({ isStart, isEnd, event, isPreview = false, onEventCli
         }}
       >
         <div className="flex items-center justify-between">
-        <span>{event.title}</span>
-        <span>{format(event.start, 'HH:mm')}</span>
+          <span>{event.title}</span>
+          {/* Use ensureDate para converter event.start para TZDate e formatar corretamente */}
+          <span>{format(ensureDate(event.start, config?.timeZone), "HH:mm")}</span>
         </div>
         {event.resources && event.resources.length > 0 && (
           <div className="mt-1">

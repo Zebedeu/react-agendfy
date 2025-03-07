@@ -98,7 +98,7 @@ function MyCalendarApp() {
         dayView: 'Day',
         listView: 'List',
         all_day: 'All Day',
-        clier_filter: 'Clear Filters',
+        clear_filter: 'Clear Filters',
         filter_resources: 'Filter Resources',
 
     };
@@ -305,7 +305,7 @@ The `config` prop is a JavaScript object that allows you to customize various as
 | `dayView`          | `string`| `'Day'`           |  Text for the Day view button.                                              |
 | `listView`         | `string`| `'List'`          |  Text for the List view button.                                             |
 | `all_day`          | `string`| `'All Day'`       |  Text for "All Day" events.                                                |
-| `clier_filter`     | `string`| `'Clear Filters'` |  Text for the "Clear Filters" button in resource filter.                    |
+| `clear_filter`     | `string`| `'Clear Filters'` |  Text for the "Clear Filters" button in resource filter.                    |
 | `filter_resources` | `string`| `'Filter'`        |  Text for the "Filter" button in resource filter.                         |
 | `businessHours`    | `object`| `undefined`       |  Configuration object for business hours highlighting (see below).          |
 
@@ -409,7 +409,7 @@ Basic localization is supported for calendar text elements via the `config` prop
   - `dayView`
   - `listView`
   - `all_day`
-  - `clier_filter`
+  - `clear_filter`
   - `filter_resources`
   - `lang`:  Set the `lang` property to a language code (e.g., 'pt' for Portuguese, 'en' for English) to apply basic localization. Currently, only text element translations need to be manually provided in the `config`.
 
@@ -427,7 +427,7 @@ const config = useMemo(() => ({
     dayView: 'Dia',
     listView: 'Lista',
     all_day: 'Dia Inteiro',
-    clier_filter: 'Limpar Filtro',
+    clear_filter: 'Limpar Filtro',
     filter_resources: 'Filtrar Recursos',
 }), []);
 ```

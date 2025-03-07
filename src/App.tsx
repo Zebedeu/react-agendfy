@@ -183,7 +183,7 @@ function App() {
     slotLabelFormat: "HH:mm",
     slotMin: "06:00",
     slotMax: "23:59",
-    lang: 'en',
+    lang: 'pt',
     today: 'Today',
     monthView: 'Month',
     weekView: 'Week',
@@ -225,7 +225,7 @@ function App() {
 
 
   const handleResizedUpdate = useCallback((updatedEvent) => {
-    console.log("Resized event:", updatedEvent.title);
+    console.log("Resized event:", updatedEvent);
     // Assuming onEventUpdate in Calendar component expects the updated event to replace the old one
     // You might need to adjust this logic based on how your Calendar component handles updates
     const updatedEventsList = events.map(event =>

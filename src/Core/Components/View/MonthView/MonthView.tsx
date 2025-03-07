@@ -11,14 +11,13 @@ import {
   eachDayOfInterval,
   differenceInDays,
   startOfWeek,
-  addHours,
 } from "date-fns";
-import ResourceDisplay from "../../Resource/ResourceDisplay";
 import { ensureDate, expandRecurringEvents } from "../../../../Utils/DateTrannforms";
 import ResourceView from "../../Resource/ResourceView";
-import { EventProps } from "../../../../types";
+import { EventProps, MonthViewProps } from "../../../../types";
 import { CalendarDay } from "./CalendarDay";
-
+import { TZDate } from "@date-fns/tz";
+import { getLocale } from "../../../../Utils/locate";
 
 const MonthView = ({
   events = [],
@@ -30,7 +29,7 @@ const MonthView = ({
   onEventClick,
   config,
   showResourceView = false,
-}) => {
+}: MonthViewProps) => {
   const [draggingEvent, setDraggingEvent] = useState(null);
   const [dragOffset, setDragOffset] = useState(0);
   const [currentDropTarget, setCurrentDropTarget] = useState(null);
@@ -54,15 +53,21 @@ const MonthView = ({
                 : `${event.end}T23:59:59`;
             }
 
-            const startDate = parseISO(normalizedEvent.start.toLocaleString());
-            const endDate = parseISO(normalizedEvent.end.toLocaleString());
+            // Converte as strings para uma instância de TZDate (se timeZone for informado)
+            const startDate = ensureDate(normalizedEvent.start, config?.timeZone);
+            const endDate = ensureDate(normalizedEvent.end, config?.timeZone);
 
             if (!isValid(startDate) || !isValid(endDate)) {
               console.error("Data inválida no evento:", event);
               return null;
             }
 
-            if (!normalizedEvent.resources && event.resourceIds && Array.isArray(event.resourceIds) && resources.length > 0) {
+            if (
+              !normalizedEvent.resources &&
+              event.resourceIds &&
+              Array.isArray(event.resourceIds) &&
+              resources.length > 0
+            ) {
               normalizedEvent.resources = event.resourceIds
                 .map((id) => resources.find((r) => r.id === id))
                 .filter(Boolean);
@@ -76,13 +81,14 @@ const MonthView = ({
         })
         .filter(Boolean);
     },
-    [resources]
+    [resources, config?.timeZone]
   );
 
-  const expandedEvents: EventProps[]= useMemo(() => {
+  const expandedEvents: EventProps[] = useMemo(() => {
     try {
-      const monthStart = startOfMonth(currentDate);
-      const monthEnd = endOfMonth(currentDate);
+      // Cria o início e fim do mês usando TZDate
+      const monthStart = startOfMonth(new TZDate(currentDate, config?.timeZone));
+      const monthEnd = endOfMonth(new TZDate(currentDate, config?.timeZone));
 
       const viewStart = addDays(monthStart, -7);
       const viewEnd = addDays(monthEnd, 7);
@@ -90,18 +96,19 @@ const MonthView = ({
       const normalizedEvents = normalizeEvents(events);
 
       if (normalizedEvents.length > 0) {
-        return expandRecurringEvents(normalizedEvents, viewStart, viewEnd);
+        return expandRecurringEvents(normalizedEvents, viewStart, viewEnd, config?.timeZone);
       }
       return [];
     } catch (error) {
       console.error("Erro ao expandir eventos:", error);
       return [];
     }
-  }, [events, resources, currentDate, normalizeEvents]);
+  }, [events, resources, currentDate, normalizeEvents, config?.timeZone]);
 
   const generateMonthGrid = useCallback(() => {
-    const monthStart = startOfMonth(currentDate);
-    const monthEnd = endOfMonth(currentDate);
+    // Gera a grade mensal com base em TZDate
+    const monthStart = startOfMonth(new TZDate(currentDate, config?.timeZone));
+    const monthEnd = endOfMonth(new TZDate(currentDate, config?.timeZone));
     const startWeekday = getDay(monthStart);
 
     const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
@@ -118,9 +125,9 @@ const MonthView = ({
       weeks[weekIndex].push(day);
       return weeks;
     }, []);
-  }, [currentDate]);
+  }, [currentDate, config?.timeZone]);
 
-  const handleDragStart = (event) => {
+  const handleDragStart = (event: any) => {
     try {
       const { active } = event;
       if (!active || !active.data.current) return;
@@ -159,16 +166,16 @@ const MonthView = ({
     }
   };
 
-  const handleDragOver = (event) => {
+  const handleDragOver = (event: any) => {
     const { over } = event;
-    if (over && over.id && over.id.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    if (over && over.id && typeof over.id === "string" && over.id.match(/^\d{4}-\d{2}-\d{2}$/)) {
       setCurrentDropTarget(over.id);
     } else {
       setCurrentDropTarget(null);
     }
   };
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: any) => {
     try {
       const { active, over, delta } = event;
       setDraggingEvent(null);
@@ -191,8 +198,11 @@ const MonthView = ({
       const originalEnd = ensureDate(draggedEvent.end, config?.timeZone);
       const duration = differenceInDays(originalEnd, originalStart);
 
-      const newStart = addDays(newDate, -dragOffset);
-      const newEnd = addDays(newStart, duration);
+      // Cria novas instâncias TZDate para newStart e newEnd
+      const newStartDate = addDays(newDate, -dragOffset);
+      const newStart = new TZDate(newStartDate, config?.timeZone);
+      const newEndDate = addDays(newStart, duration);
+      const newEnd = new TZDate(newEndDate, config?.timeZone);
 
       newStart.setHours(
         originalStart.getHours(),
@@ -215,12 +225,15 @@ const MonthView = ({
           : ev
       );
 
-      const updatedEvent = updatedEvents.find((ev) => ev.id === active.id);
+      const updatedEvent = updatedEvents.find((ev) => ev.id === eventId);
+
+      if(typeof onEventClick === 'function') {
 
       if (Math.abs(delta.y) < 1) {
         onEventClick(updatedEvent);
         return;
       }
+    }
 
       if (typeof onEventUpdate === "function") {
         onEventUpdate(updatedEvent);
@@ -250,24 +263,26 @@ const MonthView = ({
         <div className="w-full border border-gray-200 rounded-lg bg-white shadow-sm">
           <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-50">
             {eachDayOfInterval({
-              start: startOfWeek(currentDate, { locale: config } as any ),
-              end: addDays(startOfWeek(currentDate, { locale: config }), 6),
+              start: startOfWeek(new TZDate(currentDate, config?.timeZone)),
+              end: addDays(startOfWeek(new TZDate(currentDate, config?.timeZone)), 6),
             }).map((day) => (
               <div
-                key={format(day, "EEEEEE", { locale: config })}
+                key={format(day, "EEEEEE", { locale: getLocale(config?.lang) })}
                 className="p-2 text-center text-sm font-medium text-gray-700 border-r border-gray-200 last:border-r-0"
               >
-                {format(day, "EEEEEE", { locale: config })}
+                {format(day, "EEEEEE", { locale: getLocale(config?.lang) })}
               </div>
             ))}
           </div>
           <div className="flex-1">
-            {weeks.map((week, weekIndex) => (
+            {weeks.map((week: Date[], weekIndex: number) => (
               <div
                 key={weekIndex}
                 className="grid grid-cols-7 border-b border-gray-200 last:border-b-0"
               >
-                {week.map((day, dayIndex) => (
+                {week.map((day: Date, dayIndex: number) => {
+
+                return (
                   <CalendarDay
                     key={
                       day
@@ -283,7 +298,7 @@ const MonthView = ({
                     isDropTarget={day ? format(day, "yyyy-MM-dd") === currentDropTarget : false}
                     config={config}
                   />
-                ))}
+                )})}
               </div>
             ))}
           </div>

@@ -1,11 +1,29 @@
 import React from "react";
 import { useDroppable } from "@dnd-kit/core";
-import { differenceInDays, endOfDay, format, isSameDay, isWithinInterval, startOfDay } from "date-fns";
+import {
+  differenceInDays,
+  endOfDay,
+  format,
+  isSameDay,
+  isWithinInterval,
+  startOfDay,
+} from "date-fns";
 import { ensureDate } from "../../../../Utils/DateTrannforms";
-import { EventProps } from "../../../../types";
 import { EventItem } from "./EventItem";
+import { CalendarDayProps, Resource } from "../../../../types";
+import { TZDate } from "@date-fns/tz";
 
-export const CalendarDay = ({ day, events = [], onDayClick, onEventClick, onEventResize, isDroppable = true, isDropTarget = false, config }) => {
+export const CalendarDay: React.FC<CalendarDayProps> = ({
+  day,
+  events = [],
+  onDayClick,
+  onEventClick,
+  onEventResize,
+  isDroppable = true,
+  isDropTarget = false,
+  config,
+}) => {
+  // Como day é do tipo TZDate, podemos formatá-lo diretamente.
   const dateStr = day ? format(day, "yyyy-MM-dd") : "";
 
   const { setNodeRef } = useDroppable({
@@ -19,8 +37,9 @@ export const CalendarDay = ({ day, events = [], onDayClick, onEventClick, onEven
     );
   }
 
-  const dayEvents = events.filter((event: EventProps) => {
+  const dayEvents = events.filter((event) => {
     try {
+      // Asseguramos que event.start e event.end sejam convertidos para TZDate com o fuso definido.
       const eventStart = ensureDate(event.start, config?.timeZone);
       const eventEnd = ensureDate(event.end, config?.timeZone);
       return isWithinInterval(day, {
@@ -33,21 +52,27 @@ export const CalendarDay = ({ day, events = [], onDayClick, onEventClick, onEven
     }
   });
 
-  const sortedEvents = [...dayEvents].sort((a: EventProps, b: EventProps) => {
+  const sortedEvents = [...dayEvents].sort((a, b) => {
     const timeA = ensureDate(a.start, config?.timeZone);
     const timeB = ensureDate(b.start, config?.timeZone);
     if (timeA < timeB) return -1;
     if (timeA > timeB) return 1;
 
-    const durationA = differenceInDays(ensureDate(a.end, config?.timeZone), ensureDate(a.start, config?.timeZone));
-    const durationB = differenceInDays(ensureDate(b.end, config?.timeZone), ensureDate(b.start, config?.timeZone));
+    const durationA = differenceInDays(
+      ensureDate(a.end, config?.timeZone),
+      ensureDate(a.start, config?.timeZone)
+    );
+    const durationB = differenceInDays(
+      ensureDate(b.end, config?.timeZone),
+      ensureDate(b.start, config?.timeZone)
+    );
     return durationA - durationB;
   });
 
   const MAX_VISIBLE_EVENTS = 3;
   const visibleEvents = sortedEvents.slice(0, MAX_VISIBLE_EVENTS);
   const hiddenEventsCount = Math.max(0, sortedEvents.length - MAX_VISIBLE_EVENTS);
-  const isToday = isSameDay(day, new Date());
+  const isToday = isSameDay(day, new TZDate(new Date(), config?.timeZone));
 
   let backgroundColor = "";
   if (isDropTarget) {
@@ -74,7 +99,9 @@ export const CalendarDay = ({ day, events = [], onDayClick, onEventClick, onEven
       `}
     >
       <div className="flex justify-between items-center mb-2">
-        <span className={`text-sm font-medium ${isToday ? "text-blue-600 font-bold" : ""}`}>
+        <span
+          className={`text-sm font-medium ${isToday ? "text-blue-600 font-bold" : ""}`}
+        >
           {format(day, "d")}
         </span>
         {hiddenEventsCount > 0 && (
@@ -87,7 +114,7 @@ export const CalendarDay = ({ day, events = [], onDayClick, onEventClick, onEven
                 .map((ev) => {
                   const resourcesInfo =
                     ev.resources && ev.resources.length > 0
-                      ? ` [${ev.resources.map((r) => r.name).join(", ")}]`
+                      ? ` [${ev.resources.map((r: Resource) => r.name).join(", ")}]`
                       : "";
                   return `${ev.title} (${format(ensureDate(ev.start, config?.timeZone), "HH:mm")})${resourcesInfo}`;
                 })
@@ -101,7 +128,7 @@ export const CalendarDay = ({ day, events = [], onDayClick, onEventClick, onEven
         )}
       </div>
       <div className="space-y-1">
-        {visibleEvents.map((event: EventProps) => {
+        {visibleEvents.map((event) => {
           const eventStart = ensureDate(event.start, config?.timeZone);
           const eventEnd = ensureDate(event.end, config?.timeZone);
           const isMultiDayEvent = !isSameDay(eventStart, eventEnd);

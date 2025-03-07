@@ -40,7 +40,7 @@ describe("ListView Component", () => {
     dayView: 'Dia',
     listView: 'Lista',
     all_day: 'Todo o dia',
-    clier_filter: 'Limpar Filtros',
+    clear_filter: 'Limpar Filtros',
     filter_resources: 'Filtrar',
     businessHours: {
       enabled: true,

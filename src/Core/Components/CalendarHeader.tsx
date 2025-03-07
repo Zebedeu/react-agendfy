@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { endOfWeek, format, startOfWeek } from "date-fns";
+import { getLocale } from "../../Utils/locate";
+import { config } from "../../Utils/config";
+import { CalendarHeaderProps, Resource } from "../../types";
 
 const CalendarHeader = ({
   view,
@@ -8,24 +11,24 @@ const CalendarHeader = ({
   onNavigateToday,
   onNavigateBack,
   onNavigateForward,
-  locale,
+  config,
   resources = [],
   onResourceFilterChange,
-}) => {
-  const [selectedResources, setSelectedResources] = useState([]);
+}: CalendarHeaderProps) => {
+  const [selectedResources, setSelectedResources] = useState<Resource[]>([]);
   const [filterOpen, setFilterOpen] = useState(false);
 
   const displayDate = () => {
     if (view === "month") {
-      return format(currentDate, "MMMM yyyy", { locale });
+      return format(currentDate, "MMMM yyyy", { locale: getLocale(config.lang) });
     } else if (view === "week") {
-      const start = format(startOfWeek(currentDate, { weekStartsOn: 0 }), "dd MMM", { locale });
-      const end = format(endOfWeek(currentDate, { weekStartsOn: 0 }), "dd MMM yyyy", { locale });
+      const start = format(startOfWeek(currentDate, { weekStartsOn: 0 }), "dd MMM", { locale: getLocale(config.lang) });
+      const end = format(endOfWeek(currentDate, { weekStartsOn: 0 }), "dd MMM yyyy", { locale: getLocale(config.lang) });
       return `${start} - ${end}`;
     } else if (view === "day") {
-      return format(currentDate, "EEE, dd MMMM yyyy", { locale });
+      return format(currentDate, "EEE, dd MMMM yyyy", { locale: getLocale(config.lang) });
     } else {
-      return format(currentDate, "EEE, dd MMMM yyyy", { locale });
+      return format(currentDate, "EEE, dd MMMM yyyy", { locale: getLocale(config.lang) });
     }
   };
 
@@ -50,7 +53,7 @@ const CalendarHeader = ({
           &lt;
         </button>
         <button onClick={onNavigateToday} className="p-2 rounded hover:bg-gray-200">
-          {locale.today}
+          {config.today}
         </button>
         <button onClick={onNavigateForward} className="p-2 rounded hover:bg-gray-200">
           &gt;
@@ -67,25 +70,25 @@ const CalendarHeader = ({
             onClick={() => onViewChange("month")}
             className={`p-2 rounded hover:bg-gray-200 ${view === "month" ? "bg-blue-200" : ""}`}
           >
-            {locale.monthView}
+            {config.monthView}
           </button>
           <button
             onClick={() => onViewChange("week")}
             className={`p-2 rounded hover:bg-gray-200 ${view === "week" ? "bg-blue-200" : ""}`}
           >
-            {locale.weekView}
+            {config.weekView}
           </button>
           <button
             onClick={() => onViewChange("day")}
             className={`p-2 rounded hover:bg-gray-200 ${view === "day" ? "bg-blue-200" : ""}`}
           >
-            {locale.dayView}
+            {config.dayView}
           </button>
           <button
             onClick={() => onViewChange("list")}
             className={`p-2 rounded hover:bg-gray-200 ${view === "list" ? "bg-blue-200" : ""}`}
           >
-            {locale.listView}
+            {config.listView}
           </button>
         </div>
 
@@ -95,11 +98,11 @@ const CalendarHeader = ({
             onClick={() => setFilterOpen(!filterOpen)}
             className="p-2 bg-gray-100 rounded hover:bg-gray-200 flex items-center"
           >
-           {locale.filter_resources} {selectedResources.length > 0 && `(${selectedResources.length})`}
+           {config.filter_resources} {selectedResources.length > 0 && `(${selectedResources.length})`}
           </button>
           {filterOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-50 p-2">
-              {resources.map((resource) => (
+              {resources.map((resource: Resource) => (
                 <label key={resource.id} className="flex items-center space-x-2 py-1">
                   <input
                     type="checkbox"
@@ -118,7 +121,7 @@ const CalendarHeader = ({
                 }}
                 className="mt-2 text-xs text-red-500 hover:underline"
               >
-               {locale.clear_filter}
+               {config.clear_filter}
               </button>
             </div>
           )}
