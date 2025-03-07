@@ -22,9 +22,10 @@ export const DayColumn = memo(
     isDraggable,
   }: DayColumnProps) => {
 
-    const isToday = isSameDay(dayDate, new TZDate(new Date(), config?.timeZone));
+    const isToday = isSameDay(dayDate, new Date());
     const dayStart = startOfDay(dayDate);
 
+    console.log(isToday)
 
     // Calcula os intervalos de expediente para o dia, se estiver ativado na configuração
 
@@ -52,12 +53,12 @@ export const DayColumn = memo(
             isToday ? "bg-blue-100" : ""
           }`}
           onClick={() => {
-            if (typeof onSlotClick === "function") onSlotClick(new TZDate(dayDate, config?.timeZone)); // Use TZDate for day click
+            if (typeof onSlotClick === "function") onSlotClick(dayDate); // Use TZDate for day click
           }}
         >
           <div className="text-center">
-            <div className="text-sm font-medium">{format(dayDate, "EEE" as any)}</div>
-            <div className="text-xs text-gray-500">{format(dayDate, "dd/MM" as any)}</div>
+            <div className="text-sm font-medium">{format(dayDate, "EEE", { locale: config } as any)}</div>
+            <div className="text-xs text-gray-500">{format(dayDate, "dd/MM", { locale: config } as any)}</div>
           </div>
         </div>
         <div className="relative" style={{ minHeight: timeSlots.length * 40, position: "relative" }}>

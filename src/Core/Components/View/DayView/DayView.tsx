@@ -16,6 +16,7 @@ import { ensureDate } from "../../../../Utils/DateTrannforms";
 import { DayViewProps, EventProps } from "../../../../types";
 import { TZDate } from "@date-fns/tz";
 import { TimeSlot } from "./TimeSlot";
+import { calculateRedLineOffset } from "../../../../Utils/calculateRedLineOffset";
 
 
 
@@ -115,15 +116,15 @@ const DayView: React.FC<DayViewProps> = ({
   );
 
 
-  let redLineOffset = 0;
-  const today = new TZDate(new Date(), config?.timeZone); // TZDate for today
+  const today = new TZDate(new Date(), config?.timeZone);
   const isToday = isSameDay(currentDate, today);
-  if (isToday) {
-    const viewStart = setHours(startOfDay(today), parsedSlotMin);
-    let diffMinutes = differenceInMinutes(today, viewStart);
-    if (diffMinutes < 0) diffMinutes = 0;
-    redLineOffset = (diffMinutes / (config?.slotDuration || 30)) * 40; // Default slotDuration if locale is undefined
-  }
+
+    const redLineOffset = calculateRedLineOffset(
+      currentDate,
+      parsedSlotMin,
+      config?.slotDuration || 30,
+      config?.timeZone
+    );
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over, delta } = event;
