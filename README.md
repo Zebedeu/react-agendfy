@@ -45,13 +45,13 @@
 ## Installation
 
 ```bash
-npm install react-agendfy date-fns date-fns-tz rrule @dnd-kit/core @dnd-kit/modifiers @dnd-kit/utilities re-resizable
+npm install react-agendfy
 ```
 
 or
 
 ```bash
-yarn add react-agendfy date-fns date-fns-tz rrule @dnd-kit/core @dnd-kit/modifiers @dnd-kit/utilities re-resizable
+yarn add react-agendfy
 ```
 
 Ensure you have installed all peer dependencies listed in the `peerDependencies` section of the `package.json`.
