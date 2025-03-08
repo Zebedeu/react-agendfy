@@ -29,7 +29,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     setToasts((prev) => [...prev, { id, ...toast }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, toast.duration || 5000);
+    }, toast.duration || 30000); // 30s
   }, []);
 
   const removeToast = useCallback((id: number) => {
