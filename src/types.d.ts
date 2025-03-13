@@ -61,7 +61,7 @@ export interface CalendarProps {
   filteredResources?: string[];
   emailAdapter?: EmailAdapter;
   emailConfig?: {
-    defaultRecipient?: string;
+    defaultRecipient: string;
   };
 }
 

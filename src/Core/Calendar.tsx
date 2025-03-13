@@ -12,6 +12,8 @@ import { normalizeEvents, filterEvents } from "../Utils/calendarHelpers";
 import { format } from "date-fns";
 import {  useToast } from "./Components/Toast/Toast";
 import { TZDate } from "@date-fns/tz";
+import { useEventReminder } from "./Notify/useEventReminder";
+import { NotificationService } from "./Notify/NotificationService";
 
 const MonthViewMemo = memo(MonthView);
 const WeekViewMemo = memo(WeekView);
@@ -111,49 +113,23 @@ const Calendar: FC<CalendarProps> = ({
     }
   }, [alertConfig.enabled]);
 
+  const notificationService = useMemo(
+    () =>
+      new NotificationService({
+        emailAdapter,
+        emailConfig,
+      }),
+    [emailAdapter, emailConfig]
+  );
+  useEventReminder({
+    events,
+    notificationService,
+    addToast,
+    alertConfig,
+    config: localeConfig
+  });
 
-  useEffect(() => {
-    if (!alertConfig.enabled) return;
-    const intervalId = setInterval(() => {
-      const now = new Date();
-      events.forEach((event) => {
-        if (!event.alertBefore) return;
-        const threshold = event.alertBefore * 60 * 1000;
-        const eventStart = new Date(event.start);
-        if (
-          eventStart > now &&
-          eventStart.getTime() - now.getTime() <= threshold &&
-          !alertedEvents.has(event.id)
-        ) {
-          if ("Notification" in window && Notification.permission === "granted") {
-            new Notification("Próximo evento", {
-              body: `${event.title} começa às ${format(eventStart, "HH:mm")}`,
-            });
-          } else {
-            addToast({
-              title: "Alerta de Evento",
-              message: `${event.title} começa às ${format(eventStart, "HH:mm")}`,
-              duration: 5000,
-            });
-          }
-          if (emailAdapter) {
-            const subject = `Alerta: ${event.title}`;
-            const body = `O evento "${event.title}" começará às ${format(
-              eventStart,
-              "HH:mm"
-            )}. Por favor, verifique sua agenda.`;
-            const recipient = emailConfig?.defaultRecipient;
-            emailAdapter
-              .sendEmail(subject, body, recipient)
-              .catch((err) => console.error("Erro ao enviar e-mail:", err));
-          }
-          setAlertedEvents((prev) => new Set(prev).add(event.id));
-        }
-      });
-    }, 60000);
-    return () => clearInterval(intervalId);
-  }, [events, alertedEvents, alertConfig, addToast, emailAdapter, emailConfig]);
-  
+
   const normalizedEvents = useMemo(() => normalizeEvents(events), [events]);
   const getFilteredEvents = useMemo(
     () => filterEvents(normalizedEvents, localFilteredResources),
