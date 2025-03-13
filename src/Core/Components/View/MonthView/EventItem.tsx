@@ -1,11 +1,10 @@
-import React from "react";
-import { NumberSize,  ResizeDirection, Resizable } from "re-resizable";
+import React, { useMemo, useState } from "react";
+import { NumberSize, ResizeDirection, Resizable } from "re-resizable";
 import { BaseEventProps, Config, EventProps } from "../../../../types";
 import ResourceDisplay from "../../Resource/ResourceDisplay";
 import { useDraggable } from "@dnd-kit/core";
-import { useMemo, useState } from "react";
 import { ensureDate } from "../../../../Utils/DateTrannforms";
-import { addDays, addHours, format } from "date-fns";
+import { addDays, addHours, format, differenceInDays } from "date-fns";
 import { TZDate } from "@date-fns/tz";
 
 const DEFAULT_MAX_WIDTH = 160;
@@ -24,10 +23,10 @@ export const EventItem: React.FC<BaseEventProps> = ({
     data: { event },
   });
 
+  // Aplica transformações e opacidade quando o item estiver sendo arrastado
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        opacity: isDragging ? 0.7 : 1,
         position: "relative",
         zIndex: isDragging ? 1000 : 1,
       }
@@ -45,20 +44,22 @@ export const EventItem: React.FC<BaseEventProps> = ({
     ...style,
   };
 
-  const className = `
-    text-xs font-semibold
-    rounded px-1.5 py-0.5
-    text-white truncate
-    ${isDragging ? "shadow-lg" : "shadow"}
-    ${isPreview ? "opacity-50" : ""}
-    cursor-pointer
-  `;
+  // Define as classes base, adicionando as classes condicionais
+  const baseClass = "react-agenfy-event-item";
+  const draggingClass = isDragging ? "react-agenfy-event-item-dragging" : "";
+  const previewClass = isPreview ? "react-agenfy-event-item-preview" : "";
+  const combinedClass = `${baseClass} ${draggingClass} ${previewClass}`;
 
-  const handleResizeEvent = (e: MouseEvent | TouchEvent, direction: ResizeDirection, ref:HTMLDivElement, delta: NumberSize) => {
+  const handleResizeEvent = (
+    e: MouseEvent | TouchEvent,
+    direction: ResizeDirection,
+    ref: HTMLDivElement,
+    delta: NumberSize
+  ) => {
     const newWidth = ref.style.width;
     const newHeight = ref.style.height;
 
-     setDimensions({
+    setDimensions({
       width: newWidth,
       height: newHeight,
     });
@@ -108,7 +109,6 @@ export const EventItem: React.FC<BaseEventProps> = ({
       const tzNewStart = new TZDate(newStart, config?.timeZone);
       const tzNewEnd = new TZDate(newEnd, config?.timeZone);
 
-     
       onEventResize({
         ...event,
         recurrence: "",
@@ -157,21 +157,20 @@ export const EventItem: React.FC<BaseEventProps> = ({
         {...listeners}
         {...attributes}
         style={containerStyle}
-        className={className}
+        className={combinedClass}
         title={event.title}
         onClick={(e) => {
           e.stopPropagation();
           onEventClick?.(event);
         }}
       >
-        <div className="flex items-center justify-between">
+        <div className="react-agenfy-event-item-content">
           <span>{event.title}</span>
-          {/* Use ensureDate para converter event.start para TZDate e formatar corretamente */}
           <span>{format(ensureDate(event.start, config?.timeZone), "HH:mm")}</span>
         </div>
         {event.resources && event.resources.length > 0 && (
-          <div className="mt-1">
-            <ResourceDisplay resources={event.resources} />
+          <div className="react-agenfy-event-item-resources">
+            <ResourceDisplay resources={event.resources} maxVisible={2} />
           </div>
         )}
       </div>

@@ -22,8 +22,12 @@ const CalendarHeader = ({
     if (view === "month") {
       return format(currentDate, "MMMM yyyy", { locale: getLocale(config.lang) });
     } else if (view === "week") {
-      const start = format(startOfWeek(currentDate, { weekStartsOn: 0 }), "dd MMM", { locale: getLocale(config.lang) });
-      const end = format(endOfWeek(currentDate, { weekStartsOn: 0 }), "dd MMM yyyy", { locale: getLocale(config.lang) });
+      const start = format(startOfWeek(currentDate, { weekStartsOn: 0 }), "dd MMM", {
+        locale: getLocale(config.lang),
+      });
+      const end = format(endOfWeek(currentDate, { weekStartsOn: 0 }), "dd MMM yyyy", {
+        locale: getLocale(config.lang),
+      });
       return `${start} - ${end}`;
     } else if (view === "day") {
       return format(currentDate, "EEE, dd MMMM yyyy", { locale: getLocale(config.lang) });
@@ -32,7 +36,7 @@ const CalendarHeader = ({
     }
   };
 
-  const handleResourceChange = (e) => {
+  const handleResourceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const resourceId = e.target.value;
     const isChecked = e.target.checked;
     let newSelected;
@@ -46,72 +50,70 @@ const CalendarHeader = ({
   };
 
   return (
-    <div className="flex items-center justify-between p-4 border-b border-gray-200">
+    <div className="react-agenfy-calendar-header">
       {/* Navegação de datas */}
-      <div className="flex items-center space-x-2">
-        <button onClick={onNavigateBack} className="p-2 rounded hover:bg-gray-200">
+      <div className="react-agenfy-date-nav">
+        <button onClick={onNavigateBack} className="react-agenfy-btn">
           &lt;
         </button>
-        <button onClick={onNavigateToday} className="p-2 rounded hover:bg-gray-200">
+        <button onClick={onNavigateToday} className="react-agenfy-btn">
           {config.today}
         </button>
-        <button onClick={onNavigateForward} className="p-2 rounded hover:bg-gray-200">
+        <button onClick={onNavigateForward} className="react-agenfy-btn">
           &gt;
         </button>
       </div>
 
       {/* Exibição da data */}
-      <h2 className="text-xl font-semibold">{displayDate()}</h2>
+      <h2 className="react-agenfy-calendar-header-date">{displayDate()}</h2>
 
       {/* Botões de visualização e filtro */}
-      <div className="flex items-center space-x-4">
-        <div className="flex space-x-2">
+      <div className="react-agenfy-header-actions">
+        <div className="react-agenfy-view-buttons">
           <button
             onClick={() => onViewChange("month")}
-            className={`p-2 rounded hover:bg-gray-200 ${view === "month" ? "bg-blue-200" : ""}`}
+            className={`react-agenfy-view-btn ${view === "month" ? "react-agenfy-view-btn-active" : ""}`}
           >
             {config.monthView}
           </button>
           <button
             onClick={() => onViewChange("week")}
-            className={`p-2 rounded hover:bg-gray-200 ${view === "week" ? "bg-blue-200" : ""}`}
+            className={`react-agenfy-view-btn ${view === "week" ? "react-agenfy-view-btn-active" : ""}`}
           >
             {config.weekView}
           </button>
           <button
             onClick={() => onViewChange("day")}
-            className={`p-2 rounded hover:bg-gray-200 ${view === "day" ? "bg-blue-200" : ""}`}
+            className={`react-agenfy-view-btn ${view === "day" ? "react-agenfy-view-btn-active" : ""}`}
           >
             {config.dayView}
           </button>
           <button
             onClick={() => onViewChange("list")}
-            className={`p-2 rounded hover:bg-gray-200 ${view === "list" ? "bg-blue-200" : ""}`}
+            className={`react-agenfy-view-btn ${view === "list" ? "react-agenfy-view-btn-active" : ""}`}
           >
             {config.listView}
           </button>
         </div>
 
         {/* Filtro de Recursos */}
-        <div className="relative">
-          <button
-            onClick={() => setFilterOpen(!filterOpen)}
-            className="p-2 bg-gray-100 rounded hover:bg-gray-200 flex items-center"
-          >
-           {config.filter_resources} {selectedResources.length > 0 && `(${selectedResources.length})`}
+        <div className="react-agenfy-filter-container">
+          <button onClick={() => setFilterOpen(!filterOpen)} className="react-agenfy-filter-btn">
+            {config.filter_resources}{" "}
+            {selectedResources.length > 0 && `(${selectedResources.length})`}
           </button>
           {filterOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-50 p-2">
+            <div className="react-agenfy-filter-dropdown">
               {resources.map((resource: Resource) => (
-                <label key={resource.id} className="flex items-center space-x-2 py-1">
+                <label key={resource.id} className="react-agenfy-filter-option">
                   <input
                     type="checkbox"
                     value={resource.id}
                     checked={selectedResources.includes(resource.id)}
                     onChange={handleResourceChange}
-                    className="form-checkbox h-4 w-4 text-blue-600"
+                    className="react-agenfy-checkbox"
                   />
-                  <span className="text-sm">{resource.name}</span>
+                  <span className="react-agenfy-resource-label">{resource.name}</span>
                 </label>
               ))}
               <button
@@ -119,9 +121,9 @@ const CalendarHeader = ({
                   setSelectedResources([]);
                   onResourceFilterChange([]);
                 }}
-                className="mt-2 text-xs text-red-500 hover:underline"
+                className="react-agenfy-clear-btn"
               >
-               {config.clear_filter}
+                {config.clear_filter}
               </button>
             </div>
           )}

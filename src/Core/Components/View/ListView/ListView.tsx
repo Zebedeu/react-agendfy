@@ -9,15 +9,21 @@ import {
   startOfDay,
   endOfDay,
 } from "date-fns";
-import { TZDate } from "@date-fns/tz"; // Import TZDate
+import { TZDate } from "@date-fns/tz";
 import { ListEvent } from "./ListEvent";
-import { EventProps } from "../../../../types";
+import { EventProps, ListViewProps } from "../../../../types";
+import { getLocale } from "../../../../Utils/locate";
+import './../../../../css/ListView.css';
 
-
-const ListView = ({ events, onEventClick, currentDate = new Date(), locale, config }) => { // Add config prop
+const ListView = ({
+  events,
+  onEventClick,
+  currentDate = new Date(),
+  config,
+}: ListViewProps) => {
   // Define o intervalo do mês atual
   const monthStart = startOfMonth(new TZDate(currentDate, config?.timeZone));
-  const monthEnd = endOfMonth(new TZDate(currentDate, config?.timeZone));  
+  const monthEnd = endOfMonth(new TZDate(currentDate, config?.timeZone));
 
   // Gera um array com todos os dias do mês
   const days = useMemo(() => {
@@ -39,12 +45,12 @@ const ListView = ({ events, onEventClick, currentDate = new Date(), locale, conf
     });
     events.forEach((event: EventProps) => {
       const eventStart = new TZDate(parseISO(event.start.toString()), config?.timeZone);
-      const eventEnd = new TZDate(parseISO(event.end.toString()), config?.timeZone);    
+      const eventEnd = new TZDate(parseISO(event.end.toString()), config?.timeZone);
       days.forEach((day) => {
         if (
           isWithinInterval(day, {
             start: startOfDay(new TZDate(eventStart, config?.timeZone)),
-            end: startOfDay(new TZDate(eventEnd, config?.timeZone)),  
+            end: startOfDay(new TZDate(eventEnd, config?.timeZone)),
           })
         ) {
           const dayKey = format(day, "yyyy-MM-dd");
@@ -66,37 +72,34 @@ const ListView = ({ events, onEventClick, currentDate = new Date(), locale, conf
 
   if (daysWithEvents.length === 0) {
     return (
-      <div className="p-8 flex flex-col items-center justify-center">
-        <p className="text-center text-gray-500 text-lg">
-        There are no events for this period.
+      <div className="react-agenfy-listview-empty">
+        <p className="react-agenfy-listview-empty-text">
+          There are no events for this period.
         </p>
-      {/*   <p className="text-center text-gray-400 mt-2">
-          Em breve, poderá aparecer um SVG aqui!
-        </p> */}
       </div>
     );
   }
 
   return (
-    <div className="w-full">
+    <div className="react-agenfy-listview-container">
       {daysWithEvents.map((day) => {
-        const dayKey = format(day, "yyyy-MM-dd", { locale });
+        const dayKey = format(day, "yyyy-MM-dd", { locale: getLocale(config?.timeZone ) });
         const dayEvents = eventsByDay[dayKey] || [];
         return (
-          <div key={dayKey} className="border-b border-gray-200 p-4">
-            <div className="mb-3">
-              <h2 className="text-xl font-semibold text-gray-800">
-                {format(new TZDate(day, config?.timeZone), "EEEE, dd MMMM", { locale })} {/* Use TZDate and timezone */}
+          <div key={dayKey} className="react-agenfy-listview-day-container">
+            <div className="react-agenfy-listview-day-header-wrapper">
+              <h2 className="react-agenfy-listview-day-header">
+                {format(new TZDate(day, config?.timeZone), "EEEE, dd MMMM", { locale:  getLocale(config?.timeZone ) })}
               </h2>
             </div>
-            <div className="space-y-2">
+            <div className="react-agenfy-listview-day-events">
               {dayEvents.map((event: EventProps) => (
                 <ListEvent
                   key={event.id}
                   event={event}
                   onEventClick={onEventClick}
                   currentDate={day}
-                  config={config} // Pass config to ListEvent
+                  config={config}
                 />
               ))}
             </div>

@@ -7,7 +7,6 @@ import { ensureDate } from "../../../../Utils/DateTrannforms";
 import { EventItem } from "./EventItem";
 import { TZDate } from "@date-fns/tz";
 
-
 export const TimeSlot: React.FC<TimeSlotProps> = ({
   index,
   slotEvents,
@@ -18,24 +17,21 @@ export const TimeSlot: React.FC<TimeSlotProps> = ({
   parsedSlotMax,
   config,
 }: TimeSlotProps) => {
-
-
   const slotTime = getSlotTime(dayDate, slotMin, config?.slotDuration!, index, config?.timeZone!);
 
   const { setNodeRef } = useDroppable({ id: slotTime });
 
   const handleClickSlot = useCallback(() => {
     if (onSlotClick) {
-      onSlotClick(new TZDate(slotTime, config?.timeZone)); // Use TZDate for slot click
+      onSlotClick(new TZDate(slotTime, config?.timeZone));
     }
   }, [onSlotClick, slotTime, config?.timeZone]);
 
   const positionedEvents = useMemo(() => {
     if (!slotEvents || slotEvents.length === 0) return [];
 
-
-    const eventsByStartTime = slotEvents.reduce((acc: {[key: string]: EventProps[]}, event: EventProps) => {
-      const startTime = format(ensureDate(event.start, config?.timeZone), "yyyy-MM-dd HH:mm"); // EnsureDate and format with timezone
+    const eventsByStartTime = slotEvents.reduce((acc: { [key: string]: EventProps[] }, event: EventProps) => {
+      const startTime = format(ensureDate(event.start, config?.timeZone), "yyyy-MM-dd HH:mm");
       acc[startTime] = acc[startTime] || [];
       acc[startTime].push(event);
       return acc;
@@ -61,20 +57,15 @@ export const TimeSlot: React.FC<TimeSlotProps> = ({
     return positioned;
   }, [slotEvents, config?.timeZone]);
 
-
   return (
-    <div
-      ref={setNodeRef}
-      className="border-b border-gray-300 h-10 relative"
-      onClick={handleClickSlot}
-    >
-      <span className="absolute left-2 top-2 text-sm z-30">
-        {format(new TZDate(slotTime, config?.timeZone), "HH:mm")}  {/* Use TZDate for format */}
+    <div ref={setNodeRef} className="react-agenfy-timeslot-container" onClick={handleClickSlot}>
+      <span className="react-agenfy-timeslot-label">
+        {format(new TZDate(slotTime, config?.timeZone), "HH:mm")}
       </span>
-      <div className="absolute inset-0 pl-12">
+      <div className="react-agenfy-timeslot-events">
         {positionedEvents.map((event: EventProps) => {
-          const eventStart = ensureDate(event.start, config?.timeZone); // EnsureDate with timezone
-          const eventEnd = ensureDate(event.end, config?.timeZone);   // EnsureDate with timezone
+          const eventStart = ensureDate(event.start, config?.timeZone);
+          const eventEnd = ensureDate(event.end, config?.timeZone);
           const isMultiDayEvent = !isSameDay(eventStart, eventEnd);
           const isEventStart = isSameDay(eventStart, dayDate);
           const isEventEnd = isSameDay(eventEnd, dayDate);
@@ -90,7 +81,6 @@ export const TimeSlot: React.FC<TimeSlotProps> = ({
               config={config}
               dayDate={dayDate}
               parsedSlotMax={parsedSlotMax}
-              
             />
           );
         })}

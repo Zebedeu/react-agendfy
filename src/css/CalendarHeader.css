@@ -1,0 +1,169 @@
+
+
+/* Container do header do calendário */
+.react-agenfy-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--padding-1rem);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Navegação de datas */
+.react-agenfy-date-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-0_5rem);
+}
+
+/* Botões genéricos */
+.react-agenfy-btn {
+  padding: var(--padding-0_5rem);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+.react-agenfy-btn:hover {
+  background-color: var(--color-bg-hover);
+}
+
+/* Data exibida no header */
+.react-agenfy-calendar-header-date {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+}
+
+/* Ações no header */
+.react-agenfy-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-1rem);
+}
+
+/* Botões de visualização */
+.react-agenfy-view-buttons {
+  display: flex;
+  gap: var(--gap-0_5rem);
+}
+
+.react-agenfy-view-btn {
+  padding: var(--padding-0_5rem);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+.react-agenfy-view-btn:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.react-agenfy-view-btn-active {
+  background-color: var(--color-bg-view-btn-active);
+}
+
+/* Container do filtro */
+.react-agenfy-filter-container {
+  position: relative;
+}
+
+.react-agenfy-filter-btn {
+  padding: var(--padding-0_5rem);
+  background-color: var(--color-bg-filter-btn);
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+}
+
+.react-agenfy-filter-btn:hover {
+  background-color: var(--color-bg-hover);
+}
+
+/* Dropdown do filtro */
+.react-agenfy-filter-dropdown {
+  position: absolute;
+  right: 0;
+  margin-top: var(--margin-top-0_5rem);
+  width: var(--width-filter-dropdown);
+  background-color: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--color-box-shadow);
+  z-index: 50;
+  padding: var(--padding-0_5rem);
+}
+
+/* Opção do filtro */
+.react-agenfy-filter-option {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-0_5rem);
+  padding: var(--padding-0_25rem) 0;
+}
+
+/* Checkbox customizado */
+.react-agenfy-checkbox {
+  height: 1rem;
+  width: 1rem;
+  accent-color: var(--color-accent-checkbox);
+}
+
+/* Rótulo do recurso */
+.react-agenfy-resource-label {
+  font-size: var(--font-size-sm);
+}
+
+/* Botão para limpar filtro */
+.react-agenfy-clear-btn {
+  margin-top: var(--margin-top-0_5rem);
+  font-size: var(--font-size-xs);
+  color: var(--color-clear-btn);
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.react-agenfy-clear-btn:hover {
+  text-decoration: underline;
+}
+
+/* Media Queries para Responsividade */
+@media (max-width: 640px) {
+  .react-agenfy-calendar-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--padding-1rem);
+  }
+  
+  .react-agenfy-date-nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .react-agenfy-calendar-header-date {
+    font-size: var(--font-size-lg);
+    text-align: center;
+    width: 100%;
+  }
+  
+  .react-agenfy-header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: var(--padding-0_5rem);
+  }
+  
+  .react-agenfy-view-buttons {
+    flex-wrap: wrap;
+    gap: var(--gap-0_25rem);
+  }
+  
+  .react-agenfy-filter-dropdown {
+    width: 100%;
+    right: auto;
+    left: 0;
+  }
+}

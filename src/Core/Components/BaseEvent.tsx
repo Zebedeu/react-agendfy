@@ -19,7 +19,6 @@ const BaseEvent = ({
   isDraggable = true,
   customClassName = "",
 }: BaseEventProps) => {
-
   const dragId = isMultiDay ? event.originalEventId || event.id : event.id;
   const draggableProps = isDraggable
     ? useDraggable({
@@ -39,13 +38,12 @@ const BaseEvent = ({
   let computedTop = positionStyle.top || "0";
   let computedHeight = positionStyle.height;
 
-  // Only calculate height if not provided in positionStyle
   if (!computedHeight) {
     if (isMultiDay && dayDate) {
-      const dayStart = startOfDay(new TZDate(dayDate, config?.timeZone)); // TZDate with timezone
-      const dayEnd = endOfDay(new TZDate(dayDate, config?.timeZone));     // TZDate with timezone
-      const actualStart = new TZDate(parseISO(event.start.toString()), config?.timeZone); // TZDate with timezone
-      const actualEnd = new TZDate(parseISO(event.end.toString()), config?.timeZone);   // TZDate with timezone
+      const dayStart = startOfDay(new TZDate(dayDate, config?.timeZone));
+      const dayEnd = endOfDay(new TZDate(dayDate, config?.timeZone));
+      const actualStart = new TZDate(parseISO(event.start.toString()), config?.timeZone);
+      const actualEnd = new TZDate(parseISO(event.end.toString()), config?.timeZone);
       const effectiveStart = isStart ? actualStart : dayStart;
       const effectiveEnd = isEnd ? actualEnd : dayEnd;
       computedHeight =
@@ -56,12 +54,13 @@ const BaseEvent = ({
           : "0";
     } else {
       computedHeight =
-        (differenceInMinutes(new TZDate(parseISO(event.end.toString()), config?.timeZone), new TZDate(parseISO(event.start.toString()), config?.timeZone)) / config?.slotDuration!) *
-        40;
+        (differenceInMinutes(
+          new TZDate(parseISO(event.end.toString()), config?.timeZone),
+          new TZDate(parseISO(event.start.toString()), config?.timeZone)
+        ) / config?.slotDuration!) * 40;
     }
 
-    // Convert to string with 'px' if it's a number
-    if (typeof computedHeight === 'number') {
+    if (typeof computedHeight === "number") {
       computedHeight = `${computedHeight}px`;
     }
   }
@@ -80,26 +79,24 @@ const BaseEvent = ({
   const tooltipContent = generateTooltipContent(event, isMultiDay, isStart, isEnd);
 
   return (
-
     <div
       ref={setNodeRef}
       {...listeners}
       {...attributes}
       style={eventStyle}
-      className={`absolute text-white p-2 rounded-md cursor-pointer flex flex-col overflow-hidden z-20 ${
-        isPreview ? "opacity-50" : ""
-      } ${customClassName}`}
+      className={`react-agenfy-baseevent ${isPreview ? "react-agenfy-baseevent--preview" : ""} ${customClassName}`}
       title={tooltipContent}
       onClick={(e) => {
         if (!isDragging && onEventClick) onEventClick(event);
         e.stopPropagation();
       }}
     >
-      <div className="text-xs opacity-90">
-        {displayTitle} {format(new TZDate(parseISO(event.start.toString()), config?.timeZone), "HH:mm")} -{" "}
-        {format( new TZDate(parseISO(event.end.toString()), config?.timeZone), "HH:mm")}
+      <div className="react-agenfy-baseevent__time">
+        {displayTitle}{" "}
+        {format(new TZDate(parseISO(event.start.toString()), config?.timeZone), "HH:mm")} -{" "}
+        {format(new TZDate(parseISO(event.end.toString()), config?.timeZone), "HH:mm")}
       </div>
-      <ResourceDisplay resources={event.resources} />
+      <ResourceDisplay resources={event.resources} maxVisible={2} />
     </div>
   );
 };

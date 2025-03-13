@@ -125,8 +125,8 @@ describe('DayColumn Component', () => {
       />
     );
     // The top-level div should have the "bg-blue-50" class if the day is today
-    const topLevelDiv = document.querySelector('div.flex-1');
-    expect(topLevelDiv?.className).toMatch(/bg-blue-50/);
+    const topLevelDiv = document.querySelector('div.react-agenfy-container');
+    expect(topLevelDiv?.className).toMatch(/react-agenfy-today/);
   });
 
   it('renders business intervals overlay', () => {

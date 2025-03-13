@@ -1,0 +1,50 @@
+/* Container principal do DayView */
+.react-agenfy-dayview-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid #e5e7eb; /* border-gray-200 */
+}
+
+/* Responsividade: ajustes para telas menores */
+@media (max-width: 640px) {
+  .react-agenfy-dayview-container {
+    /* Possíveis ajustes, como redução de padding/margem se necessário */
+    border-width: 1px;
+  }
+}
+
+/* Container principal do TimeSlot */
+.react-agenfy-timeslot-container {
+  position: relative;
+  border-bottom: 1px solid #d1d5db; /* Cor similar ao border-gray-300 */
+  height: 2.5rem; /* Aproximadamente h-10 */
+  cursor: pointer;
+}
+
+/* Label de horário, posicionado no canto */
+.react-agenfy-timeslot-label {
+  position: absolute;
+  left: 0.5rem; /* Aproximadamente left-2 */
+  top: 0.5rem;  /* Aproximadamente top-2 */
+  font-size: 0.875rem; /* Equivalente a text-sm */
+  z-index: 30;
+}
+
+/* Container para os eventos, com padding à esquerda */
+.react-agenfy-timeslot-events {
+  position: absolute;
+  inset: 0;
+  padding-left: 3rem; /* Aproximadamente pl-12 */
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .react-agenfy-timeslot-container {
+    height: 2rem;
+  }
+  .react-agenfy-timeslot-label {
+    font-size: 0.75rem;
+  }
+}

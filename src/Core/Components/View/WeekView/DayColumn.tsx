@@ -1,9 +1,16 @@
 import React, { memo, useMemo } from "react";
-import { differenceInMinutes, format, isSameDay, setHours, setMinutes, startOfDay } from "date-fns";
+import {
+  differenceInMinutes,
+  format,
+  isSameDay,
+  setHours,
+  setMinutes,
+  startOfDay,
+} from "date-fns";
 import { WeekTimeSlot } from "./WeekTimeSlot";
 import { useBusinessHours } from "../../../../Utils/businessHours";
 import { DayColumnProps, EventProps } from "../../../../types";
-import { TZDate } from '@date-fns/tz';
+import { TZDate } from "@date-fns/tz";
 import { getLocale } from "../../../../Utils/locate";
 
 export const DayColumn = memo(
@@ -21,14 +28,11 @@ export const DayColumn = memo(
     config,
     isDraggable,
   }: DayColumnProps) => {
-
     // Usar TZDate para obter "hoje" no fuso horário configurado
-    const isToday = isSameDay(dayDate, new TZDate( new Date(), config?.timeZone));
+    const isToday = isSameDay(dayDate, new TZDate(new Date(), config?.timeZone));
     const dayStart = startOfDay(dayDate);
 
-    // Calcula os intervalos de expediente para o dia, se estiver ativado na configuração
-
-    // Mapeia os eventos para os slots (excluindo os all-day/multi-day, que serão renderizados na área all-day)
+    // Mapeia os eventos para os slots
     const eventsMapping = useMemo(() => {
       const mapping: Record<string, EventProps[]> = {};
       timeSlots.forEach((index) => {
@@ -46,26 +50,40 @@ export const DayColumn = memo(
     const businessIntervals = useBusinessHours(dayDate, config?.businessHours);
 
     return (
-      <div className={`flex-1 min-w-0 relative ${isToday ? "bg-blue-50" : ""}`}>
+      <div
+        className={`react-agenfy-daycolumn-container ${
+          isToday ? "react-agenfy-daycolumn-today" : ""
+        }`}
+      >
         <div
-          className={`h-12 border-b border-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-50 ${
-            isToday ? "bg-blue-100" : ""
+          className={`react-agenfy-daycolumn-header  cursor-pointer ${
+            isToday ? "react-agenfy-daycolumn-header-today" : ""
           }`}
           onClick={() => {
-            if (typeof onSlotClick === "function") onSlotClick(dayDate); // Use TZDate for day click
+            if (typeof onSlotClick === "function") onSlotClick(dayDate);
           }}
         >
-          <div className="text-center">
-            <div className="text-sm font-medium">{format(dayDate, "EEE", { locale: getLocale(config?.lang) } as any)}</div>
-            <div className="text-xs text-gray-500">{format(dayDate, "dd/MM", { locale: getLocale(config?.lang) } as any)}</div>
+          <div className="react-agenfy-daycolumn-header-text">
+            <div className="react-agenfy-daycolumn-weekday">
+              {format(dayDate, "EEE", { locale: getLocale(config?.lang) })}
+            </div>
+            <div className="react-agenfy-daycolumn-date">
+              {format(dayDate, "dd/MM", { locale: getLocale(config?.lang) })}
+            </div>
           </div>
         </div>
-        <div className="relative" style={{ minHeight: timeSlots.length * 40, position: "relative" }}>
-          {/* Renderiza overlay dos horários de expediente */}
+        <div
+          className="react-agenfy-daycolumn-slot-container"
+          style={{ minHeight: timeSlots.length * 40 }}
+        >
+          {/* Overlay dos horários de expediente */}
           {businessIntervals.map((interval, idx) => {
-            // Calcula a posição vertical (top) e a altura em pixels
-            const top = (differenceInMinutes(interval.start, dayStart) / config?.slotDuration!) * 40;
-            const height = (differenceInMinutes(interval.end, interval.start) / config?.slotDuration!) * 40;
+            const top =
+              (differenceInMinutes(interval.start, dayStart) / config?.slotDuration!) *
+              40;
+            const height =
+              (differenceInMinutes(interval.end, interval.start) / config?.slotDuration!) *
+              40;
             return (
               <div
                 key={idx}
@@ -76,17 +94,20 @@ export const DayColumn = memo(
                   left: 0,
                   right: 0,
                   backgroundColor: "rgba(0, 128, 0, 0.1)",
-                  pointerEvents: "none", // para não interferir na interação
+                  pointerEvents: "none",
                   zIndex: 0,
                 }}
               />
             );
           })}
 
-          {/* Renderiza os timeslots e os eventos */}
+          {/* Renderiza os timeslots e eventos */}
           {timeSlots.map((index) => {
             const slotTime = setMinutes(
-              setHours(dayStart, parsedSlotMin + Math.floor((index * config?.slotDuration!) / 60)),
+              setHours(
+                dayStart,
+                parsedSlotMin + Math.floor((index * config?.slotDuration!) / 60)
+              ),
               (index * config?.slotDuration!) % 60
             ).toISOString();
             return (

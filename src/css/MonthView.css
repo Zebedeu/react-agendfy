@@ -1,0 +1,179 @@
+/* Container da MonthView */
+.react-agenfy-monthview-container {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-white);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+/* Cabeçalho com os nomes dos dias */
+.react-agenfy-monthview-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-bg-gray-50);
+}
+
+/* Rótulo de cada dia no cabeçalho */
+.react-agenfy-monthview-day-label {
+  padding: var(--padding-0_5rem);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-gray-700);
+  border-right: 1px solid var(--color-border);
+}
+
+.react-agenfy-monthview-day-label:last-child {
+  border-right: none;
+}
+
+/* Container da grade de semanas/dias */
+.react-agenfy-monthview-grid-container {
+  /* Ajuste conforme a necessidade */
+}
+
+/* Cada linha da semana */
+.react-agenfy-monthview-week-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.react-agenfy-monthview-week-row:last-child {
+  border-bottom: none;
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .react-agenfy-monthview-header,
+  .react-agenfy-monthview-week-row {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+  
+  .react-agenfy-monthview-day-label {
+    padding: 0.4rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Estilos base para o componente EventItem */
+.react-agenfy-event-item {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  padding: var(--padding-0_125rem) var(--padding-0_375rem);
+  color: var(--color-bg-white); /* texto branco */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-duration) var(--transition-timing);
+  max-width: 100%;
+}
+
+/* Quando o item está sendo arrastado */
+.react-agenfy-event-item-dragging {
+  box-shadow: var(--shadow-lg);
+  opacity: 0.7;
+}
+
+/* Modo preview para itens */
+.react-agenfy-event-item-preview {
+  opacity: 0.5;
+}
+
+/* Conteúdo interno: título e horário */
+.react-agenfy-event-item-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Container para exibição dos recursos */
+.react-agenfy-event-item-resources {
+  margin-top: var(--margin-0_25rem);
+}
+
+/* Container principal do dia */
+.react-agenfy-calendar-day {
+  min-height: 120px;
+  padding: var(--padding-0_5rem);
+  border-right: 1px solid var(--color-border);
+  transition: background-color var(--transition-duration) var(--transition-timing);
+  cursor: pointer;
+  min-width: 0;
+}
+
+/* Hover no dia */
+.react-agenfy-calendar-day:hover {
+  background-color: var(--color-bg-gray-50);
+}
+
+/* Dia vazio */
+.react-agenfy-calendar-day-empty {
+  background-color: var(--color-bg-gray-50);
+  border-right: 1px solid var(--color-border);
+  min-height: 120px;
+}
+
+/* Cabeçalho do dia com data e contador */
+.react-agenfy-calendar-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--margin-0_5rem);
+}
+
+/* Número do dia */
+.react-agenfy-day-number {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: inherit;
+}
+
+/* Destaque para o dia atual */
+.react-agenfy-day-number-today {
+  color: var(--color-text-blue-600);
+  font-weight: 700;
+}
+
+/* Contador de eventos ocultos */
+.react-agenfy-hidden-events {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-gray-500);
+  background-color: var(--color-bg-gray-100);
+  padding: var(--padding-0_125rem) var(--padding-0_375rem);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: color var(--transition-duration) var(--transition-timing);
+}
+
+.react-agenfy-hidden-events:hover {
+  color: var(--color-text-gray-700-hover);
+}
+
+/* Espaçamento entre os eventos do dia */
+.react-agenfy-day-events > * + * {
+  margin-top: var(--margin-0_25rem);
+}
+
+/* Classes de background customizadas */
+.react-agenfy-bg-green-200 {
+  background-color: var(--color-bg-green-200);
+}
+
+.react-agenfy-bg-blue-50 {
+  background-color: var(--color-bg-blue-50);
+}
+
+.react-agenfy-bg-white {
+  background-color: var(--color-bg-white);
+}
+
+.react-agenfy-bg-gray-50 {
+  background-color: var(--color-bg-gray-50);
+}

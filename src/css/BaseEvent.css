@@ -1,0 +1,58 @@
+
+/* Estilo base para o componente BaseEvent */
+.react-agenfy-baseevent {
+  position: absolute;
+  color: #ffffff;
+  padding: var(--baseevent-padding-medium);
+  border-radius: var(--baseevent-border-radius-medium);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 20;
+}
+
+/* Estado de preview */
+.react-agenfy-baseevent--preview {
+  opacity: 0.5;
+}
+
+/* Estilo do tempo interno do BaseEvent */
+.react-agenfy-baseevent__time {
+  font-size: var(--baseevent-time-font-size-medium);
+  opacity: 0.9;
+}
+
+/* Regras responsivas */
+/* Telas pequenas (máximo 640px) */
+@media (max-width: 640px) {
+  .react-agenfy-baseevent {
+    padding: var(--baseevent-padding-small);
+    border-radius: var(--baseevent-border-radius-small);
+  }
+  .react-agenfy-baseevent__time {
+    font-size: var(--baseevent-time-font-size-small);
+  }
+}
+
+/* Telas médias (mínimo 768px) */
+@media (min-width: 768px) {
+  .react-agenfy-baseevent {
+    padding: var(--baseevent-padding-medium);
+    border-radius: var(--baseevent-border-radius-medium);
+  }
+  .react-agenfy-baseevent__time {
+    font-size: var(--baseevent-time-font-size-medium);
+  }
+}
+
+/* Telas muito grandes (mínimo 1024px) */
+@media (min-width: 1024px) {
+  .react-agenfy-baseevent {
+    padding: var(--baseevent-padding-large);
+    border-radius: var(--baseevent-border-radius-large);
+  }
+  .react-agenfy-baseevent__time {
+    font-size: var(--baseevent-time-font-size-large);
+  }
+}

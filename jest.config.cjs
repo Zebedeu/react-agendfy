@@ -10,7 +10,7 @@ module.exports = {
 
   // Mapeamento para importação de arquivos estáticos (ex.: CSS)
   moduleNameMapper: {
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/styleMock.cjs'
   },
 
   // Arquivo de configuração para testes (ex.: extensão dos matchers do Testing Library)

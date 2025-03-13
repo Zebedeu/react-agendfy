@@ -64,7 +64,6 @@ export interface CalendarProps {
     defaultRecipient: string;
   };
 }
-
 export interface BaseEventProps {
   event: EventProps;
   onEventClick?: (event: EventProps) => void;
@@ -164,17 +163,23 @@ export interface WeekProps  {
   config: Config,
 }
 
-interface ListEventProps {
+export interface ListViewProps {
+  events: EventProps;
+  onEventClick?: (event: EventProps) => void; // Optional function prop
+  currentDate: Date; // Or TZDate if you are consistently using TZDate
+  config: Config; // Use CalendarConfigProps for config prop
+}
+
+
+export interface ListEventProps {
   event: EventProps;
   onEventClick?: (event: EventProps) => void; // Optional function prop
   currentDate: Date; // Or TZDate if you are consistently using TZDate
-  config: CalendarConfigProps; // Use CalendarConfigProps for config prop
+  config: Config; // Use CalendarConfigProps for config prop
+
 }
 
 // MonthView.types.ts
-
-import { EventProps } from "../../../../types";
-import { Locale } from "date-fns";
 
 export interface MonthViewProps {
   events?: EventProps[];

@@ -5,26 +5,28 @@ import generateTooltipContent from "../../../../Utils/generateTooltipContent";
 import ResourceDisplay from "../../Resource/ResourceDisplay";
 import { ListEventProps } from "../../../../types";
 
-export const ListEvent = ({ event, onEventClick, currentDate, config }: ListEventProps) => { // Add config prop
+
+export const ListEvent = ({ event, onEventClick, currentDate, config }: ListEventProps) => {
   const tooltipContent = generateTooltipContent(event, false, true, true);
 
   return (
     <div
-    data-testid="list-event-container"
-      className="p-3 my-2 rounded-lg cursor-pointer flex items-center justify-between shadow-md transition transform hover:scale-105"
+      data-testid="list-event-container"
+      className="react-agenfy-listevent-container"
       style={{ backgroundColor: event.color }}
       title={tooltipContent}
       onClick={() => onEventClick && onEventClick(event)}
     >
-      <div className="flex flex-col">
-        <span className="font-bold text-sm text-white">{event.title}</span>
-        <span className="text-xs text-white">
-          {format(new TZDate(parseISO(event.start.toString()), config?.timeZone!), "HH:mm")} - {format(new TZDate(parseISO(event.end.toString()), config?.timeZone!), "HH:mm")} {/* Use TZDate and timezone */}
+      <div className="react-agenfy-listevent-content">
+        <span className="react-agenfy-listevent-title">{event.title}</span>
+        <span className="react-agenfy-listevent-time">
+          {format(new TZDate(parseISO(event.start.toString()), config?.timeZone!), "HH:mm")} -{" "}
+          {format(new TZDate(parseISO(event.end.toString()), config?.timeZone!), "HH:mm")}
         </span>
       </div>
       {event.resources && event.resources.length > 0 && (
-        <div className="ml-3">
-          <ResourceDisplay resources={event.resources} />
+        <div className="react-agenfy-listevent-resource">
+          <ResourceDisplay resources={event.resources} maxVisible={2} />
         </div>
       )}
     </div>

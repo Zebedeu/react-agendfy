@@ -23,23 +23,20 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
   isDropTarget = false,
   config,
 }) => {
-  // Como day é do tipo TZDate, podemos formatá-lo diretamente.
   const dateStr = day ? format(day, "yyyy-MM-dd") : "";
-
   const { setNodeRef } = useDroppable({
     id: dateStr,
     disabled: !isDroppable,
   });
 
+  // Se não houver dia, renderiza um bloco vazio
   if (!day) {
-    return (
-      <div className="bg-gray-50 border-r border-gray-200 min-h-[120px]" />
-    );
+    return <div className="react-agenfy-calendar-day-empty" />;
   }
 
+  // Filtra os eventos que ocorrem neste dia
   const dayEvents = events.filter((event) => {
     try {
-      // Asseguramos que event.start e event.end sejam convertidos para TZDate com o fuso definido.
       const eventStart = ensureDate(event.start, config?.timeZone);
       const eventEnd = ensureDate(event.end, config?.timeZone);
       return isWithinInterval(day, {
@@ -74,39 +71,30 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
   const hiddenEventsCount = Math.max(0, sortedEvents.length - MAX_VISIBLE_EVENTS);
   const isToday = isSameDay(day, new TZDate(new Date(), config?.timeZone));
 
-  let backgroundColor = "";
+  // Define a classe de background conforme a condição:
+  // Se for drop target, usa verde; se for hoje, azul; se for droppable, branco; senão, cinza claro.
+  let backgroundColorClass = "";
   if (isDropTarget) {
-    backgroundColor = "bg-green-200";
+    backgroundColorClass = "react-agenfy-bg-green-200";
   } else if (isToday) {
-    backgroundColor = "bg-blue-50";
+    backgroundColorClass = "react-agenfy-bg-blue-50";
   } else {
-    backgroundColor = isDroppable ? "bg-white" : "bg-gray-50";
+    backgroundColorClass = isDroppable ? "react-agenfy-bg-white" : "react-agenfy-bg-gray-50";
   }
 
   return (
     <div
       ref={setNodeRef}
       onClick={() => onDayClick?.(day)}
-      className={`
-        min-h-[120px]
-        p-2
-        border-r
-        border-gray-200
-        transition-colors
-        duration-200
-        hover:bg-gray-50
-        ${backgroundColor}
-      `}
+      className={`react-agenfy-calendar-day ${backgroundColorClass}`}
     >
-      <div className="flex justify-between items-center mb-2">
-        <span
-          className={`text-sm font-medium ${isToday ? "text-blue-600 font-bold" : ""}`}
-        >
+      <div className="react-agenfy-calendar-day-header">
+        <span className={`react-agenfy-day-number ${isToday ? "react-agenfy-day-number-today" : ""}`}>
           {format(day, "d")}
         </span>
         {hiddenEventsCount > 0 && (
           <span
-            className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer bg-gray-100 px-1.5 py-0.5 rounded-full"
+            className="react-agenfy-hidden-events"
             onClick={(e) => {
               e.stopPropagation();
               const eventsInfo = sortedEvents
@@ -119,7 +107,6 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
                   return `${ev.title} (${format(ensureDate(ev.start, config?.timeZone), "HH:mm")})${resourcesInfo}`;
                 })
                 .join("\n");
-
               alert(`Mais ${hiddenEventsCount} eventos:\n${eventsInfo}`);
             }}
           >
@@ -127,7 +114,7 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
           </span>
         )}
       </div>
-      <div className="space-y-1">
+      <div className="react-agenfy-day-events">
         {visibleEvents.map((event) => {
           const eventStart = ensureDate(event.start, config?.timeZone);
           const eventEnd = ensureDate(event.end, config?.timeZone);

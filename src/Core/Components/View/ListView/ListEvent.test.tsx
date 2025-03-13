@@ -96,7 +96,7 @@ describe('ListEvent Component', () => {
 
   it('Deve definir o atributo "title" com o conteúdo do tooltip gerado', () => {
     const { container } = render(<ListEvent event={defaultEvent} currentDate={new Date()} config={defaultConfig} />);
-    const listEventDiv = container.querySelector('div.rounded-lg') as HTMLElement; // Seleciona com querySelector e classe CSS (ajusta seletor se necessário)
+    const listEventDiv = container.querySelector('div.react-agenfy-listevent-container') as HTMLElement; // Seleciona com querySelector e classe CSS (ajusta seletor se necessário)
     expect(listEventDiv).toHaveAttribute('title', 'Tooltip for Evento de Teste');
   });
 

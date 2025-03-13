@@ -18,6 +18,7 @@ import { EventProps, MonthViewProps } from "../../../../types";
 import { CalendarDay } from "./CalendarDay";
 import { TZDate } from "@date-fns/tz";
 import { getLocale } from "../../../../Utils/locate";
+import "./../../../../css/MonthView.css";
 
 const MonthView = ({
   events = [],
@@ -227,13 +228,12 @@ const MonthView = ({
 
       const updatedEvent = updatedEvents.find((ev) => ev.id === eventId);
 
-      if(typeof onEventClick === 'function') {
-
-      if (Math.abs(delta.y) < 1) {
-        onEventClick(updatedEvent);
-        return;
+      if (typeof onEventClick === "function") {
+        if (Math.abs(delta.y) < 1) {
+          onEventClick(updatedEvent);
+          return;
+        }
       }
-    }
 
       if (typeof onEventUpdate === "function") {
         onEventUpdate(updatedEvent);
@@ -260,45 +260,44 @@ const MonthView = ({
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <div className="w-full border border-gray-200 rounded-lg bg-white shadow-sm">
-          <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-50">
+        <div className="react-agenfy-monthview-container">
+          <div className="react-agenfy-monthview-header">
             {eachDayOfInterval({
               start: startOfWeek(new TZDate(currentDate, config?.timeZone)),
               end: addDays(startOfWeek(new TZDate(currentDate, config?.timeZone)), 6),
             }).map((day) => (
               <div
                 key={format(day, "EEEEEE", { locale: getLocale(config?.lang) })}
-                className="p-2 text-center text-sm font-medium text-gray-700 border-r border-gray-200 last:border-r-0"
+                className="react-agenfy-monthview-day-label"
               >
                 {format(day, "EEEEEE", { locale: getLocale(config?.lang) })}
               </div>
             ))}
           </div>
-          <div className="flex-1">
+          <div className="react-agenfy-monthview-grid-container">
             {weeks.map((week: Date[], weekIndex: number) => (
-              <div
-                key={weekIndex}
-                className="grid grid-cols-7 border-b border-gray-200 last:border-b-0"
-              >
+              <div key={weekIndex} className="react-agenfy-monthview-week-row">
                 {week.map((day: Date, dayIndex: number) => {
-
-                return (
-                  <CalendarDay
-                    key={
-                      day
-                        ? format(day, "yyyy-MM-dd")
-                        : `empty-${weekIndex}-${dayIndex}`
-                    }
-                    day={day}
-                    events={expandedEvents}
-                    onDayClick={onDayClick}
-                    onEventResize={onEventResize}
-                    isDroppable={!!day}
-                    onEventClick={onEventClick}
-                    isDropTarget={day ? format(day, "yyyy-MM-dd") === currentDropTarget : false}
-                    config={config}
-                  />
-                )})}
+                  return (
+                    <CalendarDay
+                      key={
+                        day
+                          ? format(day, "yyyy-MM-dd")
+                          : `empty-${weekIndex}-${dayIndex}`
+                      }
+                      day={day}
+                      events={expandedEvents}
+                      onDayClick={onDayClick}
+                      onEventResize={onEventResize}
+                      isDroppable={!!day}
+                      onEventClick={onEventClick}
+                      isDropTarget={
+                        day ? format(day, "yyyy-MM-dd") === currentDropTarget : false
+                      }
+                      config={config}
+                    />
+                  );
+                })}
               </div>
             ))}
           </div>

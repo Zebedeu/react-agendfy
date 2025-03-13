@@ -67,15 +67,16 @@ export const WeekEvent = ({
       if (daysAdded > 0) {
         const newEnd = addDays(eventEnd, daysAdded);
         onEventResize({ ...event, end: newEnd.toISOString() }); // toISOString added here
-      }
+      } 
     }
 
     if (direction === "left") {
-      const daysRemoved = Math.round(delta.width / dayWidth);
+
+       const daysRemoved = Math.round(delta.width / dayWidth);
       if (daysRemoved > 0) {
         const newStart = subDays(eventStart, daysRemoved);
         +    onEventResize({ ...event, start: newStart.toISOString() }); // toISOString added here
-      }
+      } 
     }
 
     setSize({
@@ -100,7 +101,7 @@ export const WeekEvent = ({
   return (
     <Resizable
       size={size}
-      enable={{ top: true, right: true, bottom: true, left: true }}
+      enable={{ top: true, right: false, bottom: true, left: false }}
       onResizeStop={handleResize}
       className="absolute"
       style={{
