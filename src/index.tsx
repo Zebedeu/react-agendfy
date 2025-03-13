@@ -13,3 +13,4 @@ const WrappedCalendar: React.FC<CalendarProps> = (props) => {
 };
 
 export { WrappedCalendar as Calendar };
+export type { CalendarProps, EmailAdapter } from "./types";

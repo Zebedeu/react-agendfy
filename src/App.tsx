@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns';
 import Calendar from './Core/Calendar';
 import { ToastProvider } from './Core/Components/Toast/Toast';
-import { EmailAdapter } from './Utils/EmailAdapter';
+import { EmailAdapter } from './types';
 
 export class ExampleEmailAdapter implements EmailAdapter {
   async sendEmail(subject: string, body: string, recipient?: string): Promise<void> {

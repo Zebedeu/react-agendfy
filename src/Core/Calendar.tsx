@@ -9,7 +9,6 @@ import PropTypes from "prop-types";
 import { CalendarProps, EventProps } from "../types";
 import { getNewDate } from "../Utils/calendarNavigation";
 import { normalizeEvents, filterEvents } from "../Utils/calendarHelpers";
-import { format } from "date-fns";
 import {  useToast } from "./Components/Toast/Toast";
 import { TZDate } from "@date-fns/tz";
 import { useEventReminder } from "./Notify/useEventReminder";

@@ -211,3 +211,16 @@ export interface CalendarHeaderProps {
   onResourceFilterChange?: (filter: string) => void; // Callback para alteração de filtro de recursos
 }
 
+
+export interface EmailAdapter {
+  sendEmail(subject: string, body: string, recipient?: string): Promise<void>;
+}
+
+
+export interface NotificationServiceConfig {
+  emailAdapter?: EmailAdapter;
+  emailConfig?: {
+    defaultRecipient: string;
+  };
+}
+

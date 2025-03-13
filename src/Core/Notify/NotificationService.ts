@@ -1,22 +1,5 @@
 import { format } from "date-fns";
-
-export interface EmailAdapter {
-  sendEmail(subject: string, body: string, recipient?: string): Promise<void>;
-}
-
-export interface NotificationServiceConfig {
-  emailAdapter?: EmailAdapter;
-  emailConfig?: {
-    defaultRecipient: string;
-  };
-}
-
-export interface EventData {
-  id: string;
-  title: string;
-  start: string;
-  alertBefore?: number; // em minutos
-}
+import { EmailAdapter, EventProps, NotificationServiceConfig } from "../../types";
 
 export interface ToastProps {
   title: string;
@@ -33,7 +16,7 @@ export class NotificationService {
     this.emailConfig = config.emailConfig;
   }
 
-  public async notifyEvent(event: EventData, addToast: (toast: ToastProps) => void): Promise<void> {
+  public async notifyEvent(event: EventProps, addToast: (toast: ToastProps) => void): Promise<void> {
     const eventStart = new Date(event.start);
     const formattedTime = format(eventStart, "HH:mm");
 

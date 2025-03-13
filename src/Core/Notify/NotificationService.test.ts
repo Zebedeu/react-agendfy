@@ -1,11 +1,23 @@
 // NotificationService.test.ts
-import { NotificationService, EmailAdapter, EventData, ToastProps } from "./NotificationService";
+import { EmailAdapter, EventProps } from "../../types";
+import { NotificationService, ToastProps } from "./NotificationService";
 import { format } from "date-fns";
 
 // Cria um evento de exemplo para os testes
-const sampleEvent: EventData = {
+const sampleEvent: EventProps = {
   id: "1",
   title: "Evento Teste",
+  end: "2025-03-13T13:00:00.000Z",
+  color: "#3490dc",
+  isAllDay: false,
+  isMultiDay: false,
+  resources: [
+    {
+      id: "r1",
+      name: "Conference Room",
+      type: "room",
+    },
+  ],
   start: new Date().toISOString(),
   alertBefore: 10,
 };

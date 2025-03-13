@@ -1,13 +1,13 @@
 // useEventReminder.ts
 import { useEffect, useState } from "react";
 import { addMinutes, isAfter } from "date-fns";
-import { NotificationService, EventData, ToastProps } from "./NotificationService";
-import { Config } from "../../types";
+import { NotificationService, ToastProps } from "./NotificationService";
+import { Config, EventProps } from "../../types";
 import { config } from "../../Utils/config";
 import { TZDate } from "@date-fns/tz";
 
 interface UseEventReminderProps {
-  events: EventData[];
+  events: EventProps[];
   notificationService: NotificationService;
   addToast: (toast: ToastProps) => void;
   alertConfig: { enabled: boolean };
@@ -31,7 +31,7 @@ export const useEventReminder = ({
       events.forEach((event) => {
         if (!event.alertBefore || alertedEvents.has(event.id)) return;
 
-        const eventStart = new TZDate(event.start, config.timeZone);
+        const eventStart = new TZDate(event.start.toString(), config.timeZone);
         const alertTime = addMinutes(eventStart, -event.alertBefore);
 
         if (isAfter(now, alertTime)) {
