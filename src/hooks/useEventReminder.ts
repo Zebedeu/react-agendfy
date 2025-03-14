@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { addMinutes, isAfter } from "date-fns";
-import { config } from "../../Utils/config";
+import { config } from "../Utils/config";
 import { TZDate } from "@date-fns/tz";
-import { UseEventReminderProps } from "../../types/Notification";
+import { UseEventReminderProps } from "../types/Notification";
 
 
 export const useEventReminder = ({

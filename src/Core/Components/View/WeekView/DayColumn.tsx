@@ -51,12 +51,12 @@ export const DayColumn = memo(
 
     return (
       <div
-        className={`react-agenfy-daycolumn-container ${
-          isToday ? "react-agenfy-daycolumn-today" : ""
+        className={`react-agenfy-daycolumn-container react-agenfy-today ${
+          isToday ? "react-agenfy-daycolumn-today react-agenfy-today" : ""
         }`}
       >
         <div
-          className={`react-agenfy-daycolumn-header  cursor-pointer ${
+          className={`react-agenfy-daycolumn-header  react-agenfy-header-today ${
             isToday ? "react-agenfy-daycolumn-header-today" : ""
           }`}
           onClick={() => {

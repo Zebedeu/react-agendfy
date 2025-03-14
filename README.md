@@ -23,6 +23,7 @@
 6.  [Resources Object Structure](#resources-object-structure)
 7.  [Email Adapter](#email-adapter)
 8.  [Localization (i18n)](#localization-i18n)
+9   [Calendar Export (ICS Format)](#calendar-export-ics-format)
 9.  [Plugin Support](#plugin-support)
     * [Plugin Types](#plugin-types)
 10.  [Contributing](#contributing)

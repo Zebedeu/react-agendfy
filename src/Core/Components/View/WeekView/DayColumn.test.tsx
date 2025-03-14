@@ -76,7 +76,7 @@ describe('DayColumn Component', () => {
   
     // Procura a div com classe "cursor-pointer" e simula um clique
     const headerDiv = screen.getByText((content, element) =>
-      element?.className.includes('cursor-pointer')
+      element?.className.includes('react-agenfy-header-today')
     );
     fireEvent.click(headerDiv);
     expect(dummyOnSlotClick).toHaveBeenCalled();
@@ -125,7 +125,7 @@ describe('DayColumn Component', () => {
       />
     );
     // The top-level div should have the "bg-blue-50" class if the day is today
-    const topLevelDiv = document.querySelector('div.react-agenfy-container');
+    const topLevelDiv = document.querySelector('div.react-agenfy-daycolumn-container');
     expect(topLevelDiv?.className).toMatch(/react-agenfy-today/);
   });
 
