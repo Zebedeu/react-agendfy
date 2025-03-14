@@ -15,7 +15,7 @@ const WrappedCalendar: React.FC<CalendarProps> = (props) => {
 
 export { WrappedCalendar as Calendar };
 export type { CalendarProps, EventProps} from "./types";
-export type { NotificationServiceConfig, EmailAdapter} from "./types/Notification";
-export type { CalendarPlugin} from "./types/Plugns";
-export type { DataSourcePlugin, DataSourceConfigProps } from "./types/DataSource";
-export type { FilterPluginProps, SearchPluginProps } from "./types/Search";
+export type { NotificationServiceConfig, EmailAdapter} from "./types/notification";
+export type { CalendarPlugin} from "./types/plugns";
+export type { DataSourcePlugin, DataSourceConfigProps } from "./types/dataSource";
+export type { FilterPluginProps, SearchPluginProps } from "./types/search";

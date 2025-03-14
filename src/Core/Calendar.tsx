@@ -13,23 +13,23 @@ import DayView from "./Components/View/DayView/DayView";
 import WeekView from "./Components/View/WeekView/WeekView";
 import MonthView from "./Components/View/MonthView/MonthView";
 import ListView from "./Components/View/ListView/ListView";
+import { getLocale } from "../Utils/locate";
 import { CalendarProps, EventProps, Resource } from "../types";
+import { getNewDate } from "../Utils/calendarNavigation";
 import { normalizeEvents } from "../Utils/calendarHelpers";
 import { useToast } from "./Components/Toast/Toast";
+import { TZDate } from "@date-fns/tz";
+import { useEventReminder } from "../hooks/useEventReminder";
 import { NotificationService } from "./Notify/NotificationService";
-import { CalendarPlugin } from "../types/Plugns";
+import { CalendarPlugin } from "../types/plugns";
 import {
   updateEventsList,
   getFilteredEventsList,
   exportCalendarEvents,
 } from "./../Utils/CalendarUtils";
-
-// Importação dos hooks extraídos
-import useLocaleConfig from "../hooks/useLocaleConfig";
 import useCalendarNavigation from "../hooks/useCalendarNavigation";
-import useNotificationPermission from "../hooks/useNotificationPermission";
-import useDataSourceEvents from "../hooks/useDataSourceEvents";
 import usePluginManagement from "../hooks/usePluginManagement";
+import useDataSourceEvents from "../hooks/useDataSourceEvents";
 
 const MonthViewMemo = memo(MonthView);
 const WeekViewMemo = memo(WeekView);
@@ -78,7 +78,7 @@ const Calendar: FC<CalendarProps> = ({
   filteredResources = [],
   emailAdapter,
   emailConfig,
-  plugins,
+  plugins = [],
 }) => {
 
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -87,24 +87,73 @@ const Calendar: FC<CalendarProps> = ({
   const [pluginFilteredEvents, setPluginFilteredEvents] = useState<EventProps[]>(initialEvents);
   const [pluginSearchResults, setPluginSearchResults] = useState<EventProps[]>(initialEvents);
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [dataSourceEvents, setDataSourceEvents] = useState<EventProps[]>([]);
+  const [isDataSourceLoading, setIsDataSourceLoading] = useState(false);
+  const [dataSourceError, setDataSourceError] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState(config.defaultView);
 
   const addToast = useToast();
 
-  const [localeConfig, setLocaleConfig] = useLocaleConfig(config, defaultConfig);
+   const [localeConfig, setLocaleConfig] = useState(() => {
+    const finalConfig = { ...defaultConfig, ...config };
+    return { ...finalConfig, ...getLocale(finalConfig.lang) };
+  });
+  const lastRelevantConfigRef = useRef(config);
 
+  useEffect(() => {
+    if (config && typeof config === "object") {
+      const isRelevantChange =
+        !lastRelevantConfigRef.current ||
+        config.lang !== lastRelevantConfigRef.current.lang ||
+        config.defaultView !== lastRelevantConfigRef.current.defaultView;
+      if (isRelevantChange) {
+        setLocaleConfig((prevConfig) => ({
+          ...prevConfig,
+          ...config,
+          ...getLocale(config.lang || prevConfig.lang),
+        }));
+        lastRelevantConfigRef.current = config;
+      }
+    }
+  }, [config]);
 
-  useNotificationPermission(localeConfig.alerts.enabled);
+  useEffect(() => {
+    setEvents(initialEvents);
+    setPluginFilteredEvents(initialEvents);
+    setPluginSearchResults(initialEvents);
+    setIsSearchActive(false);
+  }, [initialEvents]);
+
+  useEffect(() => {
+    setLocalFilteredResources(filteredResources);
+  }, [filteredResources]);
+
+   useEffect(() => {
+    if (
+      localeConfig.alerts.enabled &&
+      "Notification" in window &&
+      Notification.permission !== "granted"
+    ) {
+      Notification.requestPermission();
+    }
+  }, [localeConfig.alerts.enabled]);
 
   const notificationService = useMemo(
-    () => new NotificationService({ emailAdapter, emailConfig }),
+    () =>
+      new NotificationService({
+        emailAdapter,
+        emailConfig,
+      }),
     [emailAdapter, emailConfig]
   );
 
-
-  useEffect(() => {
-    // Exemplo de uso do hook de lembrete – pode ser extraído também, se necessário
-  }, [events, notificationService, addToast, localeConfig]);
+  useEventReminder({
+    events,
+    notificationService,
+    addToast,
+    alertConfig: localeConfig.alerts,
+    config: localeConfig,
+  });
 
 
   const normalizedEvents = useMemo(() => normalizeEvents(events), [events]);
@@ -127,6 +176,12 @@ const Calendar: FC<CalendarProps> = ({
   }, [filteredEvents, localeConfig]);
 
 
+  const handleViewChange = useCallback((newView: string) => {
+    setCurrentView(newView);
+    setLocaleConfig((prev) => ({ ...prev, defaultView: newView }));
+  }, []);
+
+
   const { navigateToday, navigateBack, navigateForward } = useCalendarNavigation({
     currentDate,
     defaultView: localeConfig.defaultView,
@@ -142,7 +197,7 @@ const Calendar: FC<CalendarProps> = ({
     },
     [onEventUpdate]
   );
-
+  
   const handleEventResizeInternal = useCallback(
     (resizeEvent: EventProps) => {
       setEvents((currentEvents) => updateEventsList(currentEvents, resizeEvent));
@@ -152,7 +207,7 @@ const Calendar: FC<CalendarProps> = ({
   );
 
 
-  const { filterPlugins, searchPlugins, dataSourcePlugins, customViewPlugins } =
+    const { filterPlugins, searchPlugins, dataSourcePlugins, customViewPlugins } =
     usePluginManagement(plugins);
 
   const handleFilterChangeFromPlugin = useCallback((filtered: EventProps[]) => {
@@ -164,6 +219,8 @@ const Calendar: FC<CalendarProps> = ({
     setIsSearchActive(searchTerm.length > 0);
   }, []);
 
+
+
   useDataSourceEvents(dataSourcePlugins, localeConfig, currentDate);
 
   const handleResourceFilterChange = useCallback((selected: SetStateAction<string[]>) => {
@@ -172,8 +229,8 @@ const Calendar: FC<CalendarProps> = ({
 
   const availableViews = useMemo(() => {
     const defaultViews = [
-      { name: "week", label: localeConfig.weekView },
       { name: "month", label: localeConfig.monthView },
+      { name: "week", label: localeConfig.weekView },
       { name: "day", label: localeConfig.dayView },
       { name: "list", label: localeConfig.listView },
     ];
@@ -303,16 +360,17 @@ const Calendar: FC<CalendarProps> = ({
     }
   };
 
+
   return (
     <div className="react-agenfy-layout">
       <div className="react-agenfy-layout-header">
         <CalendarHeader
-          view={localeConfig.defaultView}
-          onViewChange={(newView) => {
-            setCurrentView(newView);
-            setLocaleConfig((prev) => ({ ...prev, defaultView: newView }));
-          }}
-          currentDate={currentDate}
+         view={localeConfig.defaultView}
+         onViewChange={(newView) => {
+           setCurrentView(newView);
+           setLocaleConfig((prev) => ({ ...prev, defaultView: newView }));
+         }}
+           currentDate={currentDate}
           onNavigateToday={navigateToday}
           onNavigateBack={navigateBack}
           onNavigateForward={navigateForward}

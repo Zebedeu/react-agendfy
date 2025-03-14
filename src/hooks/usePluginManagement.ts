@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { CalendarPlugin } from "../types/Plugns";
+import { CalendarPlugin } from "../types/plugns";
 
 const usePluginManagement = (plugins: CalendarPlugin[]) => {
   const filterPlugins = useMemo(

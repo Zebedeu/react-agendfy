@@ -1,3 +1,4 @@
+import { FC, ReactNode } from "react";
 
 export interface CalendarPlugin {
     type: 'header' | 'view' | 'eventRenderer' | 'slotRenderer' | 'interaction' | 'filter' | 'search' | 'dataSource';
