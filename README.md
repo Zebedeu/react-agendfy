@@ -434,9 +434,15 @@ const config = useMemo(() => ({
 }), []);
 ```
 
+## Calendar Export (ICS Format)
+
+The calendar component also includes built-in support for exporting calendar events in the widely compatible ICS (iCalendar) format. This feature allows users to easily download their calendar data and import it into other calendar applications such as Google Calendar, Outlook Calendar, Apple Calendar, and more. The export functionality can typically be triggered via a button or option in the calendar header.
+
 ## Plugin Support
 
-The calendar component is designed to be extensible through a plugin system, allowing developers to add custom functionalities without modifying the core calendar code.
+The calendar component also includes built-in support for exporting calendar events in the widely compatible ICS (iCalendar) format. This feature allows users to easily download their calendar data and import it into other calendar applications such as Google Calendar, Outlook Calendar, Apple Calendar, and more. The export functionality can typically be triggered via a button or option in the calendar header.
+
+By default, the button for exporting the calendar is enabled (`export: true` in the configuration). You can customize the text displayed on this button by changing the value of the `calendar_export` attribute in the calendar's configuration object. For example, setting `calendar_export: "Download Calendar"` would change the button's text to "Download Calendar".
 
 ### Plugin Types
 
