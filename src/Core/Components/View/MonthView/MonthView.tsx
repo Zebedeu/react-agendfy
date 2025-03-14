@@ -18,7 +18,6 @@ import { EventProps, MonthViewProps } from "../../../../types";
 import { CalendarDay } from "./CalendarDay";
 import { TZDate } from "@date-fns/tz";
 import { getLocale } from "../../../../Utils/locate";
-import "./../../../../css/MonthView.css";
 
 const MonthView = ({
   events = [],

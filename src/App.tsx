@@ -1,8 +1,9 @@
-import React, { useMemo, useRef, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useRef, useState, useEffect, useCallback, FC } from 'react';
 import { format } from 'date-fns';
 import Calendar from './Core/Calendar';
 import { ToastProvider } from './Core/Components/Toast/Toast';
 import { EmailAdapter } from './Utils/EmailAdapter';
+import EventTitleFilterPlugin from './Plugins/EventTitleFilterPlugin';
 
 export class ExampleEmailAdapter implements EmailAdapter {
   async sendEmail(subject: string, body: string, recipient?: string): Promise<void> {
@@ -369,10 +370,14 @@ function App() {
       enabled: true,          
       thresholdMinutes: 15,  
     },
+    export: true,
+    calendar_export: 'exportar'
   };
 
   
-
+const config = useMemo(()=> {
+    return defaultConfig;
+}, [])
   // Save events to localStorage whenever events state changes
   useEffect(() => {
     localStorage.setItem('calendarEvents', JSON.stringify(events));
@@ -428,14 +433,24 @@ function App() {
       return Promise.resolve();
     },
   };
+
+  const MyLeftHeaderPlugin: React.FC = () => <button>Plugin Esquerdo</button>;
+  const MyRightHeaderPlugin: React.FC = () => <input type="text" placeholder="Pesquisar" />;
+  const MyCustomViewComponent: React.FC<any> = ({ events }) => {
+
+    return (
+      <div>Minha Visualização Customizada!</div>
+    )
+  };
   
+
   return (
     <ToastProvider>
     <div className="">
       <Calendar
         events={events}
-        config={defaultConfig}
-       onEventUpdate={handleEventUpdate}
+        config={{ ...config }}
+        onEventUpdate={handleEventUpdate}
         onEventClick={handleEventClick}
         onDayClick={handleDayClick}
         onSlotClick={handleSlotClick}
@@ -445,11 +460,26 @@ function App() {
         onResourceFilterChange={handleResourceFilterChange}
       emailAdapter={new ExampleEmailAdapter()} // Injeção do adaptador de e-mail
         emailConfig={{ defaultRecipient: "usuario@exemplo.com" }}
+        plugins={[
+          { location: 'left', type:'header',  component: MyLeftHeaderPlugin, key: 'left-plugin' },
+          { location: 'right',type:'header', component: MyRightHeaderPlugin, props: { className: 'search-input' }, key: 'right-plugin' },
+          { location: 'view', type:'header', viewName: 'custom view', component: MyCustomViewComponent, key: 'custom-view-key' },
+          {
+            type: 'filter',
+            location: 'left', // Para exibir no lado esquerdo do header
+            component: EventTitleFilterPlugin,
+            key: 'title-filter', // Uma chave única para este plugin
+          },
+        ]}       
 
       />
     </div>
     </ToastProvider>
   );
 }
+
+const MyCustomView: FC<any> = ({ events, currentDate, config, onEventClick }) => (
+  <div>oiiii </div>
+);
 
 export default App;

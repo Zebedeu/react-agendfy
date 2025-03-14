@@ -1,27 +1,31 @@
 import React, { useState } from "react";
 import { endOfWeek, format, startOfWeek } from "date-fns";
 import { getLocale } from "../../Utils/locate";
-import { config } from "../../Utils/config";
 import { CalendarHeaderProps, Resource } from "../../types";
 
-const CalendarHeader = ({
-  view,
+
+const CalendarHeader: React.FC<CalendarHeaderProps> = ({
+  currentView,
+  availableViews,
   onViewChange,
   currentDate,
   onNavigateToday,
   onNavigateBack,
   onNavigateForward,
   config,
-  resources = [],
+  resources,
   onResourceFilterChange,
-}: CalendarHeaderProps) => {
-  const [selectedResources, setSelectedResources] = useState<Resource[]>([]);
+  onDownloadcalendar,
+  leftControls,
+  rightControls,
+}) => {
+  const [selectedResources, setSelectedResources] = useState<Resource[]>([]); // Changed to stringfor simplicity based on usage
   const [filterOpen, setFilterOpen] = useState(false);
 
   const displayDate = () => {
-    if (view === "month") {
+    if (currentView === "month") {
       return format(currentDate, "MMMM yyyy", { locale: getLocale(config.lang) });
-    } else if (view === "week") {
+    } else if (currentView === "week") {
       const start = format(startOfWeek(currentDate, { weekStartsOn: 0 }), "dd MMM", {
         locale: getLocale(config.lang),
       });
@@ -29,7 +33,7 @@ const CalendarHeader = ({
         locale: getLocale(config.lang),
       });
       return `${start} - ${end}`;
-    } else if (view === "day") {
+    } else if (currentView === "day") {
       return format(currentDate, "EEE, dd MMMM yyyy", { locale: getLocale(config.lang) });
     } else {
       return format(currentDate, "EEE, dd MMMM yyyy", { locale: getLocale(config.lang) });
@@ -51,6 +55,9 @@ const CalendarHeader = ({
 
   return (
     <div className="react-agenfy-calendar-header">
+      {/* Left Controls Plugin */}
+      {leftControls && <div className="react-agenfy-header-controls-left">{leftControls}</div>}
+
       {/* Navegação de datas */}
       <div className="react-agenfy-date-nav">
         <button onClick={onNavigateBack} className="react-agenfy-btn">
@@ -63,37 +70,21 @@ const CalendarHeader = ({
           &gt;
         </button>
       </div>
-
       {/* Exibição da data */}
       <h2 className="react-agenfy-calendar-header-date">{displayDate()}</h2>
 
       {/* Botões de visualização e filtro */}
       <div className="react-agenfy-header-actions">
         <div className="react-agenfy-view-buttons">
-          <button
-            onClick={() => onViewChange("month")}
-            className={`react-agenfy-view-btn ${view === "month" ? "react-agenfy-view-btn-active" : ""}`}
-          >
-            {config.monthView}
-          </button>
-          <button
-            onClick={() => onViewChange("week")}
-            className={`react-agenfy-view-btn ${view === "week" ? "react-agenfy-view-btn-active" : ""}`}
-          >
-            {config.weekView}
-          </button>
-          <button
-            onClick={() => onViewChange("day")}
-            className={`react-agenfy-view-btn ${view === "day" ? "react-agenfy-view-btn-active" : ""}`}
-          >
-            {config.dayView}
-          </button>
-          <button
-            onClick={() => onViewChange("list")}
-            className={`react-agenfy-view-btn ${view === "list" ? "react-agenfy-view-btn-active" : ""}`}
-          >
-            {config.listView}
-          </button>
+        {availableViews.map(viewInfo => (
+            <button
+              key={viewInfo.name}
+              onClick={() => onViewChange(viewInfo.name)}
+              className={`react-agenfy-view-btn ${currentView === viewInfo.name ? "react-agenfy-view-btn-active" : ""}`}
+            >
+              {viewInfo.label}
+            </button>
+          ))}
         </div>
 
         {/* Filtro de Recursos */}
@@ -128,7 +119,13 @@ const CalendarHeader = ({
             </div>
           )}
         </div>
+        {config.export && (
+          <button onClick={onDownloadcalendar} className="react-agenfy-download-btn">{config.calendar_export}</button>
+        )}
       </div>
+
+      {/* Right Controls Plugin */}
+      {rightControls && <div className="react-agenfy-header-controls-right">{rightControls}</div>}
     </div>
   );
 };

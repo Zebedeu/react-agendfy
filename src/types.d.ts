@@ -1,3 +1,4 @@
+import CalendarHeader from "./Core/Components/CalendarHeader";
 import { EmailAdapter } from "./Utils/EmailAdapter";
 
 export interface EventProps {
@@ -10,6 +11,7 @@ export interface EventProps {
   isMultiDay: boolean;
   recurrence?: string;
   resources?: Resource[];
+  background?: string
   positionStyle?: EventPositionStyle;
   [key: string]: any;
 }
@@ -44,7 +46,10 @@ export interface Config {
     enabled: boolean,          
     thresholdMinutes: number,  
   },
-  emailAdapter?: null
+  emailAdapter?: null,
+  export?: boolean,
+  calendar_export: string,
+  [key: string]: any;
  
 
 }
@@ -63,6 +68,10 @@ export interface CalendarProps {
   emailConfig?: {
     defaultRecipient: string;
   };
+  plugins?: CalendarPlugin[];
+  customViews?: Record<string, FC<any>>;
+
+
 }
 export interface BaseEventProps {
   event: EventProps;
@@ -205,17 +214,19 @@ export interface CalendarDayProps {
 }
 
 export interface CalendarHeaderProps {
-  view: "month" | "week" | "day" | string; // Você pode restringir as opções se necessário
+  view: "month" | "week" | "day" | string; 
   onViewChange: (view: string) => void;
-  currentDate: Date | TZDate; // Pode ser Date ou TZDate, conforme sua implementação
+  currentDate: Date | TZDate; 
   onNavigateToday: () => void;
   onNavigateBack: () => void;
   onNavigateForward: () => void;
   config: Config;
-  resources?: Resource[]; // Recursos, opcionalmente, com valor padrão []
-  onResourceFilterChange?: (filter: string) => void; // Callback para alteração de filtro de recursos
+  resources?: Resource[]; 
+  onResourceFilterChange?: (filter: string) => void; 
+  onDownloadcalendar?: (filter: string) => void;
+  leftControls?: ReactNode | ReactNode;
+  rightControls?: ReactNode | ReactNode;
 }
-
 
 export interface EmailAdapter {
   sendEmail(subject: string, body: string, recipient?: string): Promise<void>;
@@ -229,3 +240,25 @@ export interface NotificationServiceConfig {
   };
 }
 
+export interface CalendarPlugin {
+  type: 'header' | 'view' | 'eventRenderer' | 'slotRenderer' | 'interaction' | 'filter' | 'search';
+  location?: 'left' | 'right' | string;
+  viewName?: string;
+  rendererType?: 'event' | 'slot';
+  render?: (props: any) => ReactNode;
+  component?: FC<any>;
+  props?: Record<string, any>;
+  key?: string | number;
+}
+
+export interface FilterPluginProps {
+  events: EventProps;
+  onFilterChange: (filteredEvents: EventProps) => void;
+  config: CalendarConfig;
+}
+
+export interface SearchPluginProps {
+  events: EventProps;
+  onSearch: (searchTerm: string) => EventProps;
+  config: CalendarConfig;
+}
