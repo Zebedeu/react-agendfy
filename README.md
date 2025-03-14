@@ -23,8 +23,10 @@
 6.  [Resources Object Structure](#resources-object-structure)
 7.  [Email Adapter](#email-adapter)
 8.  [Localization (i18n)](#localization-i18n)
-9.  [Contributing](#contributing)
-10. [License](#license)
+9.  [Plugin Support](#plugin-support)
+    * [Plugin Types](#plugin-types)
+10.  [Contributing](#contributing)
+11. [License](#license)
 
 ## Features
 
@@ -430,6 +432,72 @@ const config = useMemo(() => ({
     clear_filter: 'Limpar Filtro',
     filter_resources: 'Filtrar Recursos',
 }), []);
+```
+
+## Plugin Support
+
+The calendar component is designed to be extensible through a plugin system, allowing developers to add custom functionalities without modifying the core calendar code.
+
+### Plugin Types
+
+The calendar currently supports the following types of plugins:
+
+* **`header`:** These plugins are displayed in the calendar's header. They can be positioned on the `'left'` or `'right'` side. Examples include filter and search controls.
+* **`view`:** These plugins allow the addition of entirely new calendar views, identified by a unique `viewName`.
+* **`filter`:** A specific type of `header` plugin that provides UI for filtering calendar events based on certain criteria.
+* **`search`:** A specific type of `header` plugin that provides UI for searching through calendar events.
+* **`dataSource`:** These plugins enable the calendar to fetch event data from external sources, such as third-party APIs (e.g., Google Calendar).
+
+### Plugin Structure
+
+Plugins are passed to the `Calendar` component via the `plugins` prop as an array of objects. Each plugin object should have at least a `type` property and may include other properties depending on the plugin type:
+
+* `type`: (Required) A string indicating the type of the plugin (e.g., `'header'`, `'view'`, `'filter'`, `'search'`, `'dataSource'`).
+* `location`: (For `header` plugins) A string specifying the location in the header: `'left'` or `'right'`.
+* `viewName`: (For `view` plugins) A unique string identifying the custom view.
+* `component`: (Optional) A React component (functional or class) that renders the plugin's UI or functionality. For `dataSource` plugins, this might handle configuration or initialization.
+* `props`: (Optional) An object containing additional props that will be passed down to the plugin's `component`.
+* `key`: (Optional) A unique key for the plugin, useful for React's rendering optimization.
+
+### Usage
+
+To use a plugin, you need to import its component (if it has one) and add a plugin object to the `plugins` array prop of the `Calendar` component.
+
+```jsx
+import MyCustomFilter from './plugins/MyCustomFilter';
+import GoogleCalendarPlugin from './plugins/GoogleCalendarPlugin';
+import MyCustomView from './plugins/MyCustomView';
+
+const App = () => {
+  const calendarPlugins = [
+    {
+      type: 'filter',
+      location: 'left',
+      component: MyCustomFilter,
+      key: 'custom-filter',
+    },
+    {
+      type: 'view',
+      viewName: 'customAgenda',
+      component: MyCustomView,
+      props: { label: 'Agenda View' },
+      key: 'agenda-view',
+    },
+    {
+      type: 'dataSource',
+      ...GoogleCalendarPlugin, // Assuming your GoogleCalendarPlugin object has the necessary properties
+      key: 'google-calendar-source',
+    },
+    // ... other plugins
+  ];
+
+  return (
+    <Calendar
+      // ... other Calendar props
+      plugins={calendarPlugins}
+    />
+  );
+};
 ```
 
 ![print screen](img/1.png)

@@ -1,17 +1,9 @@
 import { useEffect, useState } from "react";
 import { addMinutes, isAfter } from "date-fns";
-import { NotificationService, ToastProps } from "./NotificationService";
-import { Config, EventProps } from "../../types";
 import { config } from "../../Utils/config";
 import { TZDate } from "@date-fns/tz";
+import { UseEventReminderProps } from "../../types/Notification";
 
-interface UseEventReminderProps {
-  events: EventProps;
-  notificationService: NotificationService;
-  addToast: (toast: ToastProps) => void;
-  alertConfig: { enabled: boolean };
-  config: Config
-}
 
 export const useEventReminder = ({
   events,

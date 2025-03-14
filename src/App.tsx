@@ -3,7 +3,8 @@ import { format } from 'date-fns';
 import Calendar from './Core/Calendar';
 import { ToastProvider } from './Core/Components/Toast/Toast';
 import { EmailAdapter } from './Utils/EmailAdapter';
-import EventTitleFilterPlugin from './Plugins/EventTitleFilterPlugin';
+import EventTitleFilterPlugin from './Plugins/Filter/EventTitleFilterPlugin';
+import googleCalendarPlugin from './Plugins/Google/GoogleCalendarPlugin';
 
 export class ExampleEmailAdapter implements EmailAdapter {
   async sendEmail(subject: string, body: string, recipient?: string): Promise<void> {
@@ -464,12 +465,15 @@ const config = useMemo(()=> {
           { location: 'left', type:'header',  component: MyLeftHeaderPlugin, key: 'left-plugin' },
           { location: 'right',type:'header', component: MyRightHeaderPlugin, props: { className: 'search-input' }, key: 'right-plugin' },
           { location: 'view', type:'header', viewName: 'custom view', component: MyCustomViewComponent, key: 'custom-view-key' },
+          { location: 'view', type:'header', viewName: 'notas', component: MyCustomView, key: 'custom-nota-key' },
           {
             type: 'filter',
             location: 'left', // Para exibir no lado esquerdo do header
             component: EventTitleFilterPlugin,
             key: 'title-filter', // Uma chave única para este plugin
           },
+          googleCalendarPlugin,
+
         ]}       
 
       />

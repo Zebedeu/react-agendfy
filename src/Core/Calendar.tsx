@@ -15,7 +15,7 @@ import MonthView from "./Components/View/MonthView/MonthView";
 import ListView from "./Components/View/ListView/ListView";
 import { getLocale } from "../Utils/locate";
 import PropTypes from "prop-types";
-import { CalendarProps, EventProps } from "../types";
+import { CalendarProps, EventProps, Resource } from "../types";
 import { getNewDate } from "../Utils/calendarNavigation";
 import { normalizeEvents, filterEvents } from "../Utils/calendarHelpers";
 import { useToast } from "./Components/Toast/Toast";
@@ -23,6 +23,7 @@ import { TZDate } from "@date-fns/tz";
 import { useEventReminder } from "./Notify/useEventReminder";
 import { NotificationService } from "./Notify/NotificationService";
 import { generateICalContent } from "../Utils/downlaodEvent";
+import { CalendarPlugin } from "../types/plugns";
 
 const MonthViewMemo = memo(MonthView);
 const WeekViewMemo = memo(WeekView);
@@ -82,6 +83,11 @@ const Calendar: FC<CalendarProps> = ({
     const [pluginSearchResults, setPluginSearchResults] = useState<EventProps[]>([]);
     const [isSearchActive, setIsSearchActive] = useState(false);
   
+    const [dataSourceEvents, setDataSourceEvents] = useState<EventProps[]>([]);
+    const [isDataSourceLoading, setIsDataSourceLoading] = useState(false);
+    const [dataSourceError, setDataSourceError] = useState<string | null>(null);
+  
+
   const addToast = useToast();
 
   const [localeConfig, setLocaleConfig] = useState(() => {
@@ -213,23 +219,51 @@ const Calendar: FC<CalendarProps> = ({
   );
 
   const filterPlugins = useMemo(
-    () => plugins.filter(plugin => plugin.type === 'filter'),
+    () => plugins.filter((plugin: CalendarPlugin) => plugin.type === 'filter'),
     [plugins]
   );
 
   const searchPlugins = useMemo(
-    () => plugins.filter(plugin => plugin.type === 'search'),
+    () => plugins.filter((plugin: CalendarPlugin) => plugin.type === 'search'),
     [plugins]
   );
-  const handleFilterChangeFromPlugin = useCallback((filtered: EventProps) => {
+  const handleFilterChangeFromPlugin = useCallback((filtered: EventProps[]) => {
     setPluginFilteredEvents(filtered);
   }, []);
 
-  const handleSearchFromPlugin = useCallback((searchTerm: string, results: EventProps) => {
+  const handleSearchFromPlugin = useCallback((searchTerm: string, results: EventProps[]) => {
     setPluginSearchResults(results);
     setIsSearchActive(searchTerm.length > 0);
   }, []);
 
+  const dataSourcePlugins = useMemo(
+    () => plugins.filter((plugin: CalendarPlugin) => plugin.type === 'dataSource'),
+    [plugins]
+  );
+
+  const fetchEventsFromDataSources = useCallback(async (startDate: Date, endDate: Date) => {
+    setIsDataSourceLoading(true);
+    setDataSourceError(null);
+    const fetchedEvents: EventProps[] = [];
+    for (const plugin of dataSourcePlugins) {
+      try {
+        const eventsFromSource = await plugin.fetchEvents(startDate, endDate, localeConfig);
+        fetchedEvents.push(...eventsFromSource);
+      } catch (error: any) {
+        console.error(`Error fetching events from ${plugin.name}:`, error);
+        setDataSourceError(`Error fetching events from ${plugin.name}: ${error.message}`);
+      }
+    }
+    setDataSourceEvents(fetchedEvents);
+    setIsDataSourceLoading(false);
+  }, [dataSourcePlugins, localeConfig]);
+
+  // Fetch events when the date range changes (e.g., on navigation)
+  useEffect(() => {
+    const startDate = getNewDate(currentDate, localeConfig.defaultView, -1); // Adjust as needed
+    const endDate = getNewDate(currentDate, localeConfig.defaultView, 1);   // Adjust as needed
+    fetchEventsFromDataSources(startDate, endDate);
+  }, [currentDate, localeConfig.defaultView, fetchEventsFromDataSources]);
 
 
   const handleEventResizeInternal = useCallback(
@@ -259,7 +293,7 @@ const Calendar: FC<CalendarProps> = ({
   );
 
   const customViewPlugins = useMemo(
-    () => plugins.filter(plugin => plugin.location === 'view'),
+    () => plugins.filter((plugin: CalendarPlugin) => plugin.location === 'view'),
     [plugins]
   );
 
@@ -271,7 +305,7 @@ const Calendar: FC<CalendarProps> = ({
       { name: 'list', label: localeConfig.listView },
     ];
 
-    const customViewsFromPlugins = customViewPlugins.map(plugin => ({
+    const customViewsFromPlugins = customViewPlugins.map((plugin: CalendarPlugin) => ({
       name: plugin.viewName,
       label: plugin.props?.label || plugin.viewName, // Usar label da prop se existir, senão usar viewName
     }));
@@ -281,7 +315,7 @@ const Calendar: FC<CalendarProps> = ({
 
   const allCustomViews = useMemo(() => {
     const views: Record<string, FC<any>> = {};
-    customViewPlugins.forEach(plugin => {
+    customViewPlugins.forEach((plugin: CalendarPlugin) => {
       if (plugin.viewName && plugin.component) {
         views[plugin.viewName] = plugin.component;
       }
@@ -295,10 +329,10 @@ const Calendar: FC<CalendarProps> = ({
     () => {
       let filteredByResource = filterEvents(normalizedEvents, localFilteredResources);
       let filteredByPlugin = pluginFilteredEvents.filter(event =>
-        filteredByResource.some(e => e.id === event.id)
+        filteredByResource.some((e: Resource) => e.id === event.id)
       );
       return isSearchActive ? pluginSearchResults.filter(event =>
-        filteredByPlugin.some(e => e.id === event.id)
+        filteredByPlugin.some((e) => e.id === event.id)
       ) : filteredByPlugin;
     },
     [normalizedEvents, localFilteredResources, pluginFilteredEvents, pluginSearchResults, isSearchActive]
@@ -306,9 +340,8 @@ const Calendar: FC<CalendarProps> = ({
 
   const headerLeftPlugins = useMemo(
     () => {
-      const leftPlugins = filterPlugins.filter(plugin => plugin.location === 'left');
-      console.log("Header Left Plugins:", leftPlugins);
-      return leftPlugins.map(plugin => (
+      const leftPlugins = filterPlugins.filter((plugin: CalendarPlugin) => plugin.location === 'left');
+      return leftPlugins.map((plugin: CalendarPlugin) => (
         plugin.component ? (
           <plugin.component
             key={plugin.key || Math.random()}
@@ -324,7 +357,7 @@ const Calendar: FC<CalendarProps> = ({
   );
 
   const headerRightPlugins = useMemo(
-    () => plugins.filter(plugin => plugin.type === 'search' && plugin.location === 'right').map(plugin => (
+    () => plugins.filter((plugin: CalendarPlugin) => plugin.type === 'search' && plugin.location === 'right').map((plugin: CalendarPlugin) => (
       plugin.component ? (
         <plugin.component
           key={plugin.key || Math.random()}

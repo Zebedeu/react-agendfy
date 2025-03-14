@@ -1,6 +1,6 @@
-// plugins/EventTitleFilterPlugin.tsx
 import React, { useState, useCallback } from 'react';
-import { FilterPluginProps, EventProps, CalendarConfig } from '../types';
+import { FilterPluginProps } from '../../types/Search';
+import { EventProps } from '../../types';
 
 interface EventTitleFilterProps extends FilterPluginProps {
   // You can add any specific props for this filter if needed
@@ -13,7 +13,7 @@ const EventTitleFilterPlugin: React.FC<EventTitleFilterProps> = ({ events, onFil
   const handleInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const text = event.target.value.toLowerCase();
     setFilterText(text);
-    const filteredEvents = events.filter(event =>
+    const filteredEvents = events.filter((event: EventProps) =>
       event.title.toLowerCase().includes(text)
     );
     onFilterChange(filteredEvents);

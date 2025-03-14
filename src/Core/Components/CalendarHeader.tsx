@@ -76,7 +76,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
       {/* Botões de visualização e filtro */}
       <div className="react-agenfy-header-actions">
         <div className="react-agenfy-view-buttons">
-        {availableViews.map(viewInfo => (
+        {availableViews.map((viewInfo) => (
             <button
               key={viewInfo.name}
               onClick={() => onViewChange(viewInfo.name)}

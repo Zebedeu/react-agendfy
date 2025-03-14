@@ -48,6 +48,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "date-fns": "^4.1.0",
     "re-resizable": "^6.11.2",
+    "react-google-calendar-api": "^2.3.0",
     "rrule": "^2.8.1"
   },
   "devDependencies": {

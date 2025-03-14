@@ -68,7 +68,7 @@ export interface CalendarProps {
   emailConfig?: {
     defaultRecipient: string;
   };
-  plugins?: CalendarPlugin[];
+  plugins?: CalendarPlugin;
   customViews?: Record<string, FC<any>>;
 
 
@@ -160,7 +160,7 @@ export interface DayColumnProps {
 }
 
 export interface WeekProps  {
-  events:EventProps,
+  events:EventProps[],
   onEventUpdate?: (event: EventProps) => void;
   onEventClick?: (event: EventProps) => void;
   onSlotClick?: (slotTime: Date) => void;
@@ -173,7 +173,7 @@ export interface WeekProps  {
 }
 
 export interface ListViewProps {
-  events: EventProps;
+  events: EventProps[];
   onEventClick?: (event: EventProps) => void; // Optional function prop
   currentDate: Date; // Or TZDate if you are consistently using TZDate
   config: Config; // Use CalendarConfigProps for config prop
@@ -216,49 +216,16 @@ export interface CalendarDayProps {
 export interface CalendarHeaderProps {
   view: "month" | "week" | "day" | string; 
   onViewChange: (view: string) => void;
+  availableViews: { name: string; label: string }[];
+  currentView: string;
   currentDate: Date | TZDate; 
   onNavigateToday: () => void;
   onNavigateBack: () => void;
   onNavigateForward: () => void;
-  config: Config;
+  config?: Config;
   resources?: Resource[]; 
   onResourceFilterChange?: (filter: string) => void; 
   onDownloadcalendar?: (filter: string) => void;
   leftControls?: ReactNode | ReactNode;
   rightControls?: ReactNode | ReactNode;
-}
-
-export interface EmailAdapter {
-  sendEmail(subject: string, body: string, recipient?: string): Promise<void>;
-}
-
-
-export interface NotificationServiceConfig {
-  emailAdapter?: EmailAdapter;
-  emailConfig?: {
-    defaultRecipient: string;
-  };
-}
-
-export interface CalendarPlugin {
-  type: 'header' | 'view' | 'eventRenderer' | 'slotRenderer' | 'interaction' | 'filter' | 'search';
-  location?: 'left' | 'right' | string;
-  viewName?: string;
-  rendererType?: 'event' | 'slot';
-  render?: (props: any) => ReactNode;
-  component?: FC<any>;
-  props?: Record<string, any>;
-  key?: string | number;
-}
-
-export interface FilterPluginProps {
-  events: EventProps;
-  onFilterChange: (filteredEvents: EventProps) => void;
-  config: CalendarConfig;
-}
-
-export interface SearchPluginProps {
-  events: EventProps;
-  onSearch: (searchTerm: string) => EventProps;
-  config: CalendarConfig;
 }

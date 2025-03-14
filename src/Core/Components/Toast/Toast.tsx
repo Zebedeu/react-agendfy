@@ -1,23 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import ToastNotification from "./ToastNotification";
-
-interface Toast {
-  id: number;
-  title: string;
-  message: string;
-  duration?: number;
-  imageUrl?: string;
-  time?: string;
-}
-
-interface ToastProviderProps {
-  children: React.ReactNode;
-}
-
-interface ToastContextValue {
-  addToast: (toast: Omit<Toast, "id">) => void;
-  removeToast: (id: number) => void;
-}
+import { Toast, ToastContextValue, ToastProviderProps } from "../../../types/Notification";
 
 const ToastContext = createContext<ToastContextValue | undefined>(undefined);
 

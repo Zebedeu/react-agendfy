@@ -121,14 +121,14 @@ export const WeekEvent = ({
         <BaseEvent
           event={event}
           onEventClick={onEventClick}
-          positionStyle={{ width: "100%", height: "100%", top: "0", left: "0" }}
+          positionStyle={{ top: "0", left: "0" }}
           config={config}
           isMultiDay={isMultiDay}
           isStart={isStart}
           isEnd={isEnd}
           dayDate={dayDate}
           isDraggable={isDraggable}
-          customClassName="w-full h-full"
+          customClassName=""
           parsedSlotMax={endHour}
         />
       </div>
