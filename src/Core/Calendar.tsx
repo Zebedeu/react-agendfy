@@ -124,10 +124,11 @@ const Calendar: FC<CalendarProps> = ({
     setIsSearchActive(false);
   }, [initialEvents]);
 
-  useEffect(() => {
+  
+ /*   useEffect(() => {
     setLocalFilteredResources(filteredResources);
   }, [filteredResources]);
-
+  */
    useEffect(() => {
     if (
       localeConfig.alerts.enabled &&
@@ -219,9 +220,13 @@ const Calendar: FC<CalendarProps> = ({
     setIsSearchActive(searchTerm.length > 0);
   }, []);
 
+  const stableDataSourcePlugins = useMemo(
+    () => dataSourcePlugins,
+    [JSON.stringify(dataSourcePlugins)]
+  );  const stableLocaleConfig = useMemo(() => config, [config]);
+  
+  useDataSourceEvents(stableDataSourcePlugins, stableLocaleConfig, currentDate);
 
-
-  useDataSourceEvents(dataSourcePlugins, localeConfig, currentDate);
 
   const handleResourceFilterChange = useCallback((selected: SetStateAction<string[]>) => {
     setLocalFilteredResources(selected);

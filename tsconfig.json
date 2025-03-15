@@ -11,19 +11,18 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
     "jsx": "react-jsx",
     "declaration": true, 
     "declarationDir": "dist/types",
     "outDir": "dist",
-    "emitDeclarationOnly": false,
+    "emitDeclarationOnly": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
 
   },
-  "include": ["src" ],
-  "references": [{ "path": "./tsconfig.json" }],
-  "exclude": [
+"include": ["src/**/*.ts", "src/**/*.tsx", "types.d.ts"],
+"exclude": [
     "node_modules",
     "**/*.test.ts",
     "**/*.test.tsx"

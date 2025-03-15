@@ -1,7 +1,5 @@
 import "./index.css";
 import React from "react";
-import Calendar from "./Core/Calendar";
-import { ToastProvider } from "./Core/Components/Toast/Toast";
 import {
   CalendarProps,
   EventProps,
@@ -19,6 +17,8 @@ import {
   SearchPluginProps,
 } from "./types/search";
 import { CalendarPlugin } from "./types/plugns";
+import { ToastProvider } from "./Core/Components/Toast/Toast";
+import Calendar from "./Core/Calendar";
 
 const WrappedCalendar: React.FC<CalendarProps> = (props) => {
   return (

@@ -2,7 +2,7 @@
   "name": "react-agendfy",
   "private": false,
   "version": "1.0.6",
-  "type": "module",
+  "type": "module",  
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
   "types": "dist/types/index.d.ts",

@@ -11,7 +11,7 @@ export default defineConfig({
       'src/App.tsx',
       'src/main.tsx'
     ],
-    include: ['src/index.tsx']
+    include: ['src/types', 'src/index.tsx']
 
   })],
   build: {
