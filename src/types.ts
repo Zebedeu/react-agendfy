@@ -1,5 +1,7 @@
-import CalendarHeader from "./Core/Components/CalendarHeader";
-import { EmailAdapter } from "./Utils/EmailAdapter";
+import { FC, ReactNode } from "react";
+import { EmailAdapter } from "./types/notification";
+import { CalendarPlugin } from "./types/plugns";
+import { TZDate } from "@date-fns/tz";
 
 export interface EventProps {
   id: string;
@@ -19,7 +21,7 @@ export interface EventProps {
 export interface Resource {
   id: string;
   name: string;
-  type: "room" | "person" | "equipment";
+  type: "room" | "person" | "equipment" | string;
 }
 
 export interface Config {
@@ -164,7 +166,6 @@ export interface WeekProps  {
   onEventUpdate?: (event: EventProps) => void;
   onEventClick?: (event: EventProps) => void;
   onSlotClick?: (slotTime: Date) => void;
-  onDayClick?: (slotTime: Date) => void;
   onEventResize?: (event: EventProps) => void;
   currentDate: Date,
   slotMin: string,
@@ -192,7 +193,7 @@ export interface ListEventProps {
 
 export interface MonthViewProps {
   events?: EventProps[];
-  resources?: ResourceProps[];
+  resources?: Resource[];
   currentDate?: Date;
   onEventUpdate?: (updatedEvent: EventProps) => void;
   onEventResize?: (updatedEvent: EventProps) => void;

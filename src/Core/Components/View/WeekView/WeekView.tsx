@@ -25,7 +25,6 @@ const WeekView = ({
   events,
   onEventUpdate,
   onEventClick,
-  onDayClick,
   onEventResize,
   onSlotClick,
   currentDate,
