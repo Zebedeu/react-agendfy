@@ -515,7 +515,7 @@ const App = () => {
 
 ## Contributing
 
-Contributions are welcome\! Please see the [CONTRIBUTING.md](https://www.google.com/url?sa=E&source=gmail&q=CONTRIBUTING.md) file for guidelines on how to contribute to this project.
+Contributions are welcome\! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines on how to contribute to this project.
 
 ## License
 
