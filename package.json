@@ -15,8 +15,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "jest",
-    "prepare": "husky install"
-
+    "prepare": "husky"
   },
   "files": [
     "dist"
