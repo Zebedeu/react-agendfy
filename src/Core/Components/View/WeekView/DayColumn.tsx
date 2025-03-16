@@ -18,21 +18,21 @@ export const DayColumn = memo(
     dayDate,
     events,
     timeSlots,
-    parsedSlotMin, // startHour
+    parsedSlotMin, 
     onEventClick,
     onSlotClick,
     getEvents,
-    parsedSlotMax, // endHour
+    parsedSlotMax, 
     onEventResize,
     redLineOffset,
     config,
     isDraggable,
   }: DayColumnProps) => {
-    // Usar TZDate para obter "hoje" no fuso horário configurado
+    
     const isToday = isSameDay(dayDate, new TZDate(new Date(), config?.timeZone));
     const dayStart = startOfDay(dayDate);
 
-    // Mapeia os eventos para os slots
+    
     const eventsMapping = useMemo(() => {
       const mapping: Record<string, EventProps[]> = {};
       timeSlots.forEach((index) => {

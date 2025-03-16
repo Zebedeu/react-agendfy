@@ -6,7 +6,7 @@ import { getLocale } from './locate';
 export const generateICalContent = (events: EventProps[], config: Config) => {
   let iCalString = `BEGIN:VCALENDAR\r\n`;
   iCalString += `VERSION:2.0\r\n`;
-  iCalString += `PRODID:-//Your Company//Your App//EN\r\n`;
+  iCalString += `PRODID:-//React Agendfy//React Agendfy//EN\r\n`;
 
 
   events.forEach((event: EventProps) => {

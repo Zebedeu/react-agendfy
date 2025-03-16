@@ -1,17 +1,17 @@
-// DayColumn.test.tsx
+
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DayColumn } from './DayColumn';
 import { TZDate } from '@date-fns/tz';
 
-// Mock the WeekTimeSlot component to control its rendering
+
 jest.mock('./WeekTimeSlot', () => ({
   WeekTimeSlot: ({ index }: any) => (
     <div data-testid="week-time-slot">WeekTimeSlot {index}</div>
   ),
 }));
 
-// Mock the useBusinessHours hook to return a dummy interval
+
 jest.mock('../../../../Utils/businessHours', () => ({
   useBusinessHours: jest.fn(() => {
     const day = new Date('2023-01-01T00:00:00Z');
@@ -28,11 +28,11 @@ describe('DayColumn Component', () => {
     slotDuration: 15,
     businessHours: { enabled: true },
     all_day: 'All Day',
-    lang: 'en ', // Objeto de locale válido
+    
   };
 
   const dummyDayDate = new Date('2023-01-01T12:00:00Z');
-  // Create 4 time slots for simplicity
+  
   const dummyTimeSlots = Array.from({ length: 4 }, (_, i) => i);
   const dummyEvents = [
     {
@@ -42,7 +42,7 @@ describe('DayColumn Component', () => {
       end: '2023-01-01T12:30:00Z',
     },
   ];
-  // Dummy getEvents returns an empty array for each slot key
+  
   const dummyGetEvents = jest.fn(() => []);
   const dummyOnEventClick = jest.fn();
   const dummyOnSlotClick = jest.fn();
@@ -70,11 +70,11 @@ describe('DayColumn Component', () => {
       />
     );
   
-    // Verifica se o cabeçalho exibe a abreviação do dia (ex: "Sun") e a data (ex: "01/01")
+    
     expect(screen.getByText(/Sun/i)).toBeInTheDocument();
     expect(screen.getByText(/01\/01/i)).toBeInTheDocument();
   
-    // Procura a div com classe "cursor-pointer" e simula um clique
+    
     const headerDiv = screen.getByText((content, element) =>
       element?.className.includes('react-agenfy-header-today')
     );
@@ -100,13 +100,13 @@ describe('DayColumn Component', () => {
         isDraggable={dummyIsDraggable}
       />
     );
-    // Expect one WeekTimeSlot per time slot (4 in our dummyTimeSlots)
+    
     const timeSlotElements = screen.getAllByTestId('week-time-slot');
     expect(timeSlotElements.length).toBe(dummyTimeSlots.length);
   });
 
   it('applies today styling if dayDate is today', () => {
-    // Set dayDate to today.
+    
     const today = new TZDate(new Date());
     render(
       <DayColumn
@@ -124,7 +124,7 @@ describe('DayColumn Component', () => {
         isDraggable={dummyIsDraggable}
       />
     );
-    // The top-level div should have the "bg-blue-50" class if the day is today
+    
     const topLevelDiv = document.querySelector('div.react-agenfy-daycolumn-container');
     expect(topLevelDiv?.className).toMatch(/react-agenfy-today/);
   });
@@ -146,7 +146,7 @@ describe('DayColumn Component', () => {
         isDraggable={dummyIsDraggable}
       />
     );
-    // The overlay div for business hours should have a background color of "rgba(0, 128, 0, 0.1)"
+    
     const overlayDiv = document.querySelector('div[style*="rgba(0, 128, 0, 0.1)"]');
     expect(overlayDiv).toBeInTheDocument();
   });

@@ -1,102 +1,89 @@
-/* Container principal da WeekView */
+
 .react-agenfy-weekview-container {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-/* Área All-Day */
 .react-agenfy-weekview-all-day {
   display: flex;
-  border-bottom: 1px solid var(--color-border); /* border-gray-200 */
+  border-bottom: 1px solid var(--color-border);
 }
 
-/* Coluna de rótulo All-Day */
 .react-agenfy-weekview-all-day-label {
-  width: 4rem; /* w-16 */
+  width: 4rem;
   background-color: var(--color-bg-gray-50);
   border-right: 1px solid var(--color-border);
 }
 
-/* Texto do All-Day */
 .react-agenfy-weekview-all-day-text {
-  height: 3rem; /* h-12 */
+  height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-xs); /* text-xs */
+  font-size: var(--font-size-xs);
   color: var(--color-text-gray-500);
 }
 
-/* Colunas de eventos All-Day */
 .react-agenfy-weekview-all-day-column {
   flex: 1;
-  border-right: 1px solid var(--color-border-gray-300); /* border-gray-300 */
-  padding: var(--padding-0_125rem); /* p-1 */
+  border-right: 1px solid var(--color-border-gray-300);
+  padding: var(--padding-0_125rem);
 }
 
-/* Evento All-Day */
 .react-agenfy-weekview-all-day-event {
-  font-size: var(--font-size-xs); /* text-xs */
-  color: #93c5fd; /* text-blue-100 (defina variável se desejar) */
-  padding: var(--padding-0_125rem); /* p-1 */
-  margin-bottom: var(--margin-0_25rem); /* mb-1 */
-  border-radius: var(--radius-sm); /* rounded */
+  font-size: var(--font-size-xs);
+  color: #93c5fd;
+  padding: var(--padding-0_125rem);
+  margin-bottom: var(--margin-0_25rem);
+  border-radius: var(--radius-sm);
 }
 
-/* Área do grid de horários */
 .react-agenfy-weekview-timeslot-grid {
   display: flex;
   width: 100%;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg); /* rounded-lg */
+  border-radius: var(--radius-lg);
   overflow: hidden;
   background-color: var(--color-bg-white);
   box-shadow: var(--shadow-sm);
 }
 
-/* Coluna de rótulos de horários */
 .react-agenfy-weekview-timeslot-label {
-  width: 4rem; /* w-16 */
+  width: 4rem;
   background-color: var(--color-bg-gray-50);
   border-right: 1px solid var(--color-border);
 }
 
-/* Topo da coluna de rótulos */
 .react-agenfy-weekview-timeslot-label-top {
-  height: 3rem; /* h-12 */
+  height: 3rem;
   border-bottom: 1px solid var(--color-border);
 }
 
-/* Cada linha de horário */
 .react-agenfy-weekview-timeslot {
-  height: var(--dayview-timeslot-height); /* h-10 */
+  height: var(--dayview-timeslot-height);
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding-right: var(--padding-0_5rem); /* pr-2 */
+  padding-right: var(--padding-0_5rem);
   font-size: var(--font-size-xs);
   color: var(--color-text-gray-500);
 }
 
-/* Coluna de cada dia no grid */
 .react-agenfy-weekview-day-column {
   flex: 1;
   position: relative;
 }
 
-/* Adiciona borda direita nas colunas dos dias (exceto a última) */
 .react-agenfy-border-right {
   border-right: 1px solid var(--color-border-gray-300);
 }
 
-/* Mensagem de erro (ex: tempo inválido) */
 .react-agenfy-weekview-error {
   padding: var(--padding-1rem);
-  color: #b91c1c; /* vermelho escuro */
+  color: #b91c1c;
 }
 
-/* Container base para o slot de tempo na semana */
 .react-agenfy-weektimeslot {
   position: relative;
   border-bottom: 1px solid var(--color-border);
@@ -104,24 +91,20 @@
   transition: background-color 200ms var(--transition-timing), border-color 200ms var(--transition-timing);
 }
 
-/* Classe para alterar o background quando o slot está sendo "droppable" */
 .react-agenfy-bg-green-200 {
   background-color: var(--color-bg-green-200);
 }
 
-/* Container principal do DayColumn */
 .react-agenfy-daycolumn-container {
   flex: 1;
   min-width: 0;
   position: relative;
 }
 
-/* Adiciona fundo especial se for o dia atual */
 .react-agenfy-daycolumn-today {
   background-color: var(--color-bg-blue-50);
 }
 
-/* Cabeçalho clicável do dia */
 .react-agenfy-daycolumn-header {
   height: 3rem;
   border-bottom: 1px solid var(--color-border);
@@ -137,12 +120,10 @@
   background-color: var(--color-bg-gray-50);
 }
 
-/* Fundo especial do cabeçalho para o dia atual */
 .react-agenfy-daycolumn-header-today {
-  background-color: #dbeafe; /* Cor similar ao blue-100 */
+  background-color: #dbeafe;
 }
 
-/* Texto dentro do cabeçalho */
 .react-agenfy-daycolumn-header-text {
   text-align: center;
 }
@@ -157,12 +138,10 @@
   color: var(--color-text-gray-500);
 }
 
-/* Container para os slots do dia */
 .react-agenfy-daycolumn-slot-container {
   position: relative;
 }
 
-/* Responsividade para DayColumn */
 @media (max-width: 640px) {
   .react-agenfy-daycolumn-header {
     height: 2.5rem;

@@ -23,7 +23,7 @@ export const WeekEvent = ({
 }: BaseEventProps & { endHour: number }) => {
   const dayWidth = 100;
 
-  // Calcula o horário máximo permitido para o evento
+  
   const maxEndTime = useMemo(() => {
     const dayEndTime = setHours(startOfDay(dayDate), endHour);
     return isMultiDay ? endOfDay(dayDate) : dayEndTime;
@@ -45,8 +45,8 @@ export const WeekEvent = ({
   const handleResize = (e, direction, ref, delta) => {
     if (!isDraggable || !onEventResize) return;
 
-    const eventStart = ensureDate(event.start); // Timezone added here
-    const eventEnd = ensureDate(event.end); // Timezone added here
+    const eventStart = ensureDate(event.start); 
+    const eventEnd = ensureDate(event.end); 
 
     if (direction === "bottom") {
       const additionalMinutes = Math.round((delta.height / 40) * config?.slotDuration!);
@@ -61,7 +61,7 @@ export const WeekEvent = ({
       }
 
       if (isAfter(newEndTime, eventStart)) {
-        onEventResize({ ...event, end: newEndTime.toISOString() }); // toISOString added here
+        onEventResize({ ...event, end: newEndTime.toISOString() }); 
       }
     }
 
@@ -69,7 +69,7 @@ export const WeekEvent = ({
       const daysAdded = Math.round(delta.width / dayWidth);
       if (daysAdded > 0) {
         const newEnd = addDays(eventEnd, daysAdded);
-        onEventResize({ ...event, end: newEnd.toISOString() }); // toISOString added here
+        onEventResize({ ...event, end: newEnd.toISOString() }); 
       } 
     }
 
@@ -78,7 +78,7 @@ export const WeekEvent = ({
        const daysRemoved = Math.round(delta.width / dayWidth);
       if (daysRemoved > 0) {
         const newStart = subDays(eventStart, daysRemoved);
-        +    onEventResize({ ...event, start: newStart.toISOString() }); // toISOString added here
+        +    onEventResize({ ...event, start: newStart.toISOString() }); 
       } 
     }
 
@@ -129,7 +129,7 @@ export const WeekEvent = ({
       }}
       maxHeight={
         enableResizing
-          ? `${(differenceInMinutes(maxEndTime, new TZDate(ensureDate(event.start))) / config?.slotDuration!) * 40}px` // Timezone added here
+          ? `${(differenceInMinutes(maxEndTime, new TZDate(ensureDate(event.start))) / config?.slotDuration!) * 40}px` 
           : undefined
       }
     >

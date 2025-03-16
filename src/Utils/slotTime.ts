@@ -12,10 +12,7 @@ export function getSlotTime(
   const hour = Math.floor(minutes / 60) + slotMin;
   const minute = minutes % 60;
 
-  // Obtém o início do dia no fuso horário desejado
   const dayStart = new TZDate(startOfDay(baseDate), timeZone);
-  // Ajusta as horas e os minutos
   const newDate = setMinutes(setHours(dayStart, hour), minute);
-  // Retorna uma nova instância TZDate com o fuso horário
   return new TZDate(newDate, timeZone);
 }

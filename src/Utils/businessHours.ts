@@ -1,8 +1,6 @@
-// utils/businessHours.ts
 import { useMemo } from "react";
 import { startOfDay, endOfDay } from "date-fns";
 
-// Tipos de configuração para os business hours
 export interface BusinessHour {
   daysOfWeek: number[]; // Ex.: [1,2,3,4,5] (segunda a sexta)
   startTime: string;    // "HH:mm" ex.: "09:00"
@@ -14,9 +12,7 @@ export interface BusinessHoursConfig {
   intervals: BusinessHour[];
 }
 
-/**
- * Retorna os intervalos de horário de expediente para uma data.
- */
+
 export function getBusinessHoursIntervalsForDate(
   date: Date,
   config: BusinessHoursConfig
@@ -33,9 +29,6 @@ export function getBusinessHoursIntervalsForDate(
   }, [] as { start: Date; end: Date }[]);
 }
 
-/**
- * Converte uma string "HH:mm" para um objeto Date baseado na data base.
- */
 function getTimeForDate(baseDate: Date, timeString: string): Date {
   const [hours, minutes] = timeString.split(':').map(Number);
   const newDate = new Date(baseDate);
@@ -43,9 +36,7 @@ function getTimeForDate(baseDate: Date, timeString: string): Date {
   return newDate;
 }
 
-/**
- * Hook para obter os intervalos de business hours para uma data.
- */
+
 export function useBusinessHours(currentDate: Date, businessHoursConfig?: BusinessHoursConfig) {
   return useMemo(() => {
     if (!businessHoursConfig || !businessHoursConfig.enabled) return [];

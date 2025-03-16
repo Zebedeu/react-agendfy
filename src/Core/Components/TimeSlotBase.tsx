@@ -4,11 +4,12 @@ import { EventProps, TimeSlotProps as BaseTimeSlotProps } from "../../../../type
 import { TZDate } from "@date-fns/tz";
 import { format } from "date-fns";
 import { getSlotTime } from "../../Utils/slotTime";
+import { Config } from "../../types";
 
 interface CommonTimeSlotProps extends BaseTimeSlotProps {
   dayDate: Date;
   slotMin: string;
-  config?: any; // Seria bom ter uma tipagem mais específica para config
+  config?: Config;
 }
 
 export const TimeSlotBase = memo(

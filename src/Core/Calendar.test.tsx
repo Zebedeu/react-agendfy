@@ -4,9 +4,7 @@ import Calendar from './Calendar';
 import { ToastProvider } from './Components/Toast/Toast';
 import { EventProps } from '../types';
 
-// --- Mocks dos Componentes Internos ---
 
-// Mock do CalendarHeader com botões para simular interações
 jest.mock('./Components/CalendarHeader', () => {
   return ({ 
     onNavigateToday, 
@@ -31,13 +29,10 @@ jest.mock('./Components/CalendarHeader', () => {
   );
 });
 
-// Mocks para as demais views
 jest.mock('./Components/View/DayView/DayView', () => () => (
   <div data-testid="day-view">DayView</div>
 ));
 
-// Para o WeekView, o mock renderiza também os eventos e o currentDate em data-attributes,
-// além de um botão que simula a atualização de um evento.
 jest.mock('./Components/View/WeekView/WeekView', () => {
   return function MockWeekView({ events, currentDate, onEventUpdate }: { 
     events: any; 
@@ -67,9 +62,7 @@ jest.mock('./Components/View/ListView/ListView', () => () => (
   <div data-testid="list-view">ListView</div>
 ));
 
-// --- Mocks dos Utilitários ---
 
-// As funções de normalização e filtragem dos eventos são mockadas para facilitar os testes.
 jest.mock('../Utils/calendarHelpers', () => ({
   normalizeEvents: jest.fn((events) => events),
   filterEvents: jest.fn((events, filteredResources) => {
@@ -78,8 +71,6 @@ jest.mock('../Utils/calendarHelpers', () => ({
   }),
 }));
 
-// Para controlar a navegação, mockamos o getNewDate.
-// Neste exemplo, para "week" adicionamos ou subtraímos 7 dias.
 jest.mock('../Utils/calendarNavigation', () => ({
   getNewDate: (currentDate: Date, view: string, delta: number) => {
     const multiplier = view === 'week' ? 7 : view === 'month' ? 30 : 1;
@@ -87,7 +78,6 @@ jest.mock('../Utils/calendarNavigation', () => ({
   }
 }));
 
-// --- Testes do Componente Calendar ---
 
 describe('Calendar Component', () => {
   const events = [
@@ -129,10 +119,10 @@ describe('Calendar Component', () => {
       const weekViewAfter = screen.getByTestId('week-view');
       const newDate = weekViewAfter.getAttribute('data-current-date');
       expect(newDate).not.toEqual(previousDate);
-      // Verifica se a nova data é aproximadamente o "agora"
+    
       const now = new Date();
       const diff = Math.abs(new Date(newDate as string).getTime() - now.getTime());
-      expect(diff).toBeLessThan(1000); // diferença de menos de 1 segundo
+      expect(diff).toBeLessThan(1000);
     });
   });
 
@@ -144,23 +134,23 @@ describe('Calendar Component', () => {
     const weekView = screen.getByTestId('week-view');
     const initialDate = new Date(weekView.getAttribute('data-current-date') as string);
     
-    // Clica no botão "Back"
+  
     fireEvent.click(screen.getByTestId('btn-back'));
     await waitFor(() => {
       const weekViewAfterBack = screen.getByTestId('week-view');
       const backDate = new Date(weekViewAfterBack.getAttribute('data-current-date') as string);
-      // Para "week", o getNewDate subtrai 7 dias
+    
       const expectedBackDate = new Date(initialDate.getTime() - 7 * 86400000);
       expect(Math.abs(backDate.getTime() - expectedBackDate.getTime())).toBeLessThan(1000);
     });
 
-    // Clica no botão "Forward" duas vezes (avançando 14 dias a partir do estado atual)
+  
     fireEvent.click(screen.getByTestId('btn-forward'));
     fireEvent.click(screen.getByTestId('btn-forward'));
     await waitFor(() => {
       const weekViewAfterForward = screen.getByTestId('week-view');
       const forwardDate = new Date(weekViewAfterForward.getAttribute('data-current-date') as string);
-      // A partir do estado anterior (initialDate - 7 dias), dois cliques avançam 14 dias
+    
       const expectedForwardDate = new Date(initialDate.getTime() - 7 * 86400000 + 14 * 86400000);
       expect(Math.abs(forwardDate.getTime() - expectedForwardDate.getTime())).toBeLessThan(1000);
     });
@@ -174,22 +164,22 @@ describe('Calendar Component', () => {
       </ToastProvider>);    
 
     
-    // Verifica os eventos iniciais
+  
     let weekView = screen.getByTestId('week-view');
     let eventsData = JSON.parse(weekView.getAttribute('data-events') || '[]');
     expect(eventsData).toEqual(events);
 
-    // Clica no botão de update presente no WeekView mock
+  
     fireEvent.click(screen.getByTestId('btn-event-update'));
     await waitFor(() => {
       expect(onEventUpdateMock).toHaveBeenCalledWith({ id: 1, title: 'Updated Event', resourceId: 'r1' });
     });
 
-    // Verifica se o estado interno atualizou o evento com id 1
+  
     const updatedWeekView = screen.getByTestId('week-view');
     const updatedEventsData = JSON.parse(updatedWeekView.getAttribute('data-events') || '[]');
     const updatedEvent = updatedEventsData.find((e: EventProps) => e.id === '1');
-   // expect(updatedEvent.title).toBe('Updated Event');
+  
   });
 
   it('deve aplicar o filtro de recurso ao clicar no botão de filtro', async () => {
@@ -199,10 +189,10 @@ describe('Calendar Component', () => {
     </ToastProvider>);
     let weekView = screen.getByTestId('week-view');
     let eventsData = JSON.parse(weekView.getAttribute('data-events') || '[]');
-    // Inicialmente, todos os eventos devem ser exibidos
+  
     expect(eventsData).toEqual(events);
 
-    // Clica no botão de filtro para aplicar o filtro de recurso "r1"
+  
     fireEvent.click(screen.getByTestId('btn-resource-filter'));
     await waitFor(() => {
       const updatedWeekView = screen.getByTestId('week-view');

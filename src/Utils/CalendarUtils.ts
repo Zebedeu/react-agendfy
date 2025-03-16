@@ -20,9 +20,6 @@ export const updateEventsList = (
   return currentEvents;
 };
 
-/**
- * Retorna os eventos filtrados com base nos filtros de recursos e plugins.
- */
 export const getFilteredEventsList = (
   normalizedEvents: EventProps[],
   localFilteredResources: string[],
@@ -41,9 +38,7 @@ export const getFilteredEventsList = (
     : filteredByPlugin;
 };
 
-/**
- * Gera e dispara o download do arquivo iCal contendo os eventos filtrados.
- */
+
 export const exportCalendarEvents = (
   filteredEvents: EventProps[],
   localeConfig: any

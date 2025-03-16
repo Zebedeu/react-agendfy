@@ -1,11 +1,11 @@
-// businessHours.test.ts
-process.env.TZ = 'UTC'; // Força a execução dos testes em UTC
+
+process.env.TZ = 'UTC'; 
 
 import * as React from "react";
 import { render, screen } from "@testing-library/react";
 import { useBusinessHours, BusinessHoursConfig } from "./businessHours";
 
-// Componente de teste sem JSX, usando React.createElement
+
 function TestBusinessHours(props: { currentDate: Date; config?: BusinessHoursConfig; }) {
   const intervals = useBusinessHours(props.currentDate, props.config);
   return React.createElement("div", { "data-testid": "intervals" }, JSON.stringify(intervals));
@@ -18,7 +18,7 @@ describe("useBusinessHours hook", () => {
   };
 
   it("should return intervals for a given date", () => {
-    const currentDate = new Date("2023-01-03T00:00:00Z"); // Tuesday (day=2)
+    const currentDate = new Date("2023-01-03T00:00:00Z"); 
     const { container } = render(React.createElement(TestBusinessHours, { currentDate, config }));
     const intervalsText = container.querySelector("[data-testid='intervals']")?.textContent;
     const intervals = intervalsText ? JSON.parse(intervalsText) : [];
@@ -33,13 +33,13 @@ describe("useBusinessHours hook", () => {
 
   it("should return an empty array if config is undefined or disabled", () => {
     const currentDate = new Date("2023-01-03T00:00:00Z");
-    // Testando com config undefined
+    
     const { container: container1 } = render(
       React.createElement(TestBusinessHours, { currentDate, config: undefined })
     );
     expect(container1.querySelector("[data-testid='intervals']")?.textContent).toBe("[]");
 
-    // Testando com config disabled
+    
     const disabledConfig: BusinessHoursConfig = {
       enabled: false,
       intervals: [{ daysOfWeek: [1, 2, 3, 4, 5], startTime: "09:00", endTime: "17:00" }],

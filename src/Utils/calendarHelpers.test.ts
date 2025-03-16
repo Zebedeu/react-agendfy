@@ -1,4 +1,3 @@
-// calendarHelpers.test.js
 import { defaultResource, normalizeEvents, filterEvents } from './calendarHelpers';
 
 describe('calendarHelpers', () => {

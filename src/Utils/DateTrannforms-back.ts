@@ -1,4 +1,3 @@
-// dateUtils.test.js
 process.env.TZ = 'UTC'; // Força a execução dos testes em UTC
 
 import { TZDate } from "@date-fns/tz";

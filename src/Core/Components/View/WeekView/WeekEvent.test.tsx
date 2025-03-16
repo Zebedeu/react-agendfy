@@ -1,11 +1,10 @@
-// WeekEvent.test.tsx
+
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { WeekEvent } from './WeekEvent';
 import { TZDate } from '@date-fns/tz';
 import { addMinutes, addDays, subDays } from 'date-fns';
 
-// Mock the Resizable component from "re-resizable"
 jest.mock("re-resizable", () => {
   return {
     Resizable: ({ children, onResizeStop, ...props }: any) => {
@@ -70,7 +69,6 @@ jest.mock("re-resizable", () => {
   };
 });
 
-// Mock useDraggable from @dnd-kit/core
 jest.mock("@dnd-kit/core", () => ({
   useDraggable: jest.fn(() => ({
     attributes: {},
@@ -81,13 +79,12 @@ jest.mock("@dnd-kit/core", () => ({
   })),
 }));
 
-// Mock BaseEvent so we can verify its rendering
 jest.mock("../../BaseEvent", () => {
   return (props: any) => <div data-testid="base-event">{props.event.title}</div>;
 });
 
 describe("WeekEvent Component", () => {
-  // Dummy event and configuration
+
   const dummyEvent = {
     id: "1",
     title: "Test Event",
@@ -129,7 +126,7 @@ describe("WeekEvent Component", () => {
     const simulateBottomButton = screen.getByTestId("simulate-bottom");
     fireEvent.click(simulateBottomButton);
 
-    // For bottom resize, delta.height = 40; additionalMinutes = Math.round((40/40)*15) = 15 minutes.
+  
     const expectedNewEnd = addMinutes(new Date(dummyEvent.end), 15).toISOString();
     expect(dummyProps.onEventResize).toHaveBeenCalledWith({
       ...dummyEvent,
@@ -142,13 +139,13 @@ describe("WeekEvent Component", () => {
     const simulateBottomMultiDayButton = screen.getByTestId("simulate-bottom-multiday");
     fireEvent.click(simulateBottomMultiDayButton);
 
-    // For bottom resize multi-day simulation, delta.height = 2133.
+  
     const additionalMinutes = Math.round((2133 / 40) * dummyConfig.slotDuration);
     const originalEventEnd = new Date(dummyEvent.end);
     let newEndTime = addMinutes(originalEventEnd, additionalMinutes);
 
-    // maxEndTime for non-multi-day: setHours(startOfDay(dayDate), endHour)
-    // For dayDate = 2023-01-01T00:00:00Z and endHour = 24, maxEndTime is 2023-01-02T00:00:00Z.
+  
+  
     const dayDate = dummyProps.dayDate;
     const dayEndTime = new Date(dayDate);
     dayEndTime.setUTCHours(24, 0, 0, 0);
@@ -172,7 +169,7 @@ describe("WeekEvent Component", () => {
     const simulateRightButton = screen.getByTestId("simulate-right");
     fireEvent.click(simulateRightButton);
 
-    // For right resize, delta.width = 150, daysAdded = Math.round(150/100) = 2.
+  
     const expectedNewEnd = addDays(new Date(dummyEvent.end), 2).toISOString();
     expect(dummyProps.onEventResize).toHaveBeenCalledWith({
       ...dummyEvent,
@@ -185,7 +182,7 @@ describe("WeekEvent Component", () => {
     const simulateLeftButton = screen.getByTestId("simulate-left");
     fireEvent.click(simulateLeftButton);
 
-    // For left resize, delta.width = 150, daysRemoved = Math.round(150/100) = 2.
+  
     const expectedNewStart = subDays(new Date(dummyEvent.start), 2).toISOString();;
     expect(dummyProps.onEventResize).toHaveBeenCalledWith({
       ...dummyEvent,

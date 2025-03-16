@@ -20,7 +20,6 @@ export class NotificationService {
     const eventStart = new Date(event.start);
     const formattedTime = format(eventStart, "HH:mm");
 
-    // Notificação via navegador ou toast
     if ("Notification" in window && Notification.permission === "granted") {
       new Notification("Próximo evento", {
         body: `${event.title} começa às ${formattedTime}`,
@@ -33,7 +32,6 @@ export class NotificationService {
       });
     }
 
-    // Envio de e-mail, se o adapter estiver configurado
     if (this.emailAdapter) {
       const subject = `Alerta: ${event.title}`;
       const body = `O evento "${event.title}" começará às ${formattedTime}. Por favor, verifique sua agenda.`;

@@ -1,13 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import DayView from './DayView';
-import { TZDate } from '@date-fns/tz';
 
-// Instead of using a locally defined simulatedDragEndEvent,
-// we will use a global property. In tests, set it as:
-// (globalThis as any).simulatedDragEndEvent = { ... } 
-
-// --- Mock DndContext and useDroppable from @dnd-kit/core ---
 jest.mock('@dnd-kit/core', () => ({
   DndContext: ({ children, onDragEnd }: { children: React.ReactNode; onDragEnd: (e: any) => void }) => (
     <div data-testid="dnd-context">
@@ -23,7 +17,7 @@ jest.mock('@dnd-kit/core', () => ({
   useDroppable: jest.fn(() => ({ setNodeRef: jest.fn(), isOver: false })),
 }));
 
-// --- Mock the TimeSlot component ---
+
 jest.mock('./TimeSlot', () => ({
   TimeSlot: ({ index, slotEvents }: { index: number; slotEvents: any[] }) => (
     <div data-testid="time-slot" data-index={index}>
@@ -38,7 +32,7 @@ describe('DayView Component', () => {
     slotDuration: 30,
   };
 
-  // Dummy events: one normal event, one recurring event, one multi-day event.
+  
   const dummyEvents = [
     {
       id: '1',
@@ -62,15 +56,15 @@ describe('DayView Component', () => {
     },
   ];
 
-  // Base props for DayView:
+  
   const baseProps = {
     events: dummyEvents,
     onEventUpdate: jest.fn(),
     onEventClick: jest.fn(),
     onSlotClick: jest.fn(),
     currentDate: new Date('2023-01-01T00:00:00Z'),
-    slotMin: "8", // parsed to number 8
-    slotMax: "10", // parsed to number 10 => numberOfSlots = ((10-8)*60)/30 = 4 slots
+    slotMin: "8", 
+    slotMax: "10", 
     config: dummyConfig,
   };
 
@@ -79,7 +73,7 @@ describe('DayView Component', () => {
   });
 
   test('renders error message when numberOfSlots is invalid', () => {
-    // Use slotMin and slotMax that produce 0 slots (e.g., "10" and "10")
+    
     const props = { ...baseProps, slotMin: "10", slotMax: "10" };
     render(<DayView {...props} />);
     expect(screen.getByText(/de tempo inválido/i)).toBeInTheDocument();
@@ -92,11 +86,11 @@ describe('DayView Component', () => {
   });
 
   test('renders red line overlay if current date is today', () => {
-    // Set currentDate to today so that isToday is true
+    
     const today = new Date();
     const props = { ...baseProps, currentDate: today };
     render(<DayView {...props} />);
-    // The red line overlay is rendered as a div with inline style "borderTop: 2px dashed red"
+    
     const redLine = screen.getByText((content, element) => {
       return element?.style.borderTop === "2px dashed red";
     });
@@ -104,7 +98,7 @@ describe('DayView Component', () => {
   });
 
   test('drag end event with small delta.y (<1) triggers onEventClick', async () => {
-    // Use a dummy event with id '1'
+    
     const props = { ...baseProps };
     props.events = [
       {
@@ -119,7 +113,7 @@ describe('DayView Component', () => {
     props.onEventUpdate = jest.fn();
 
     render(<DayView {...props} />);
-    // Simulate drag end with delta.y < 1 (e.g., 0.5)
+    
     (globalThis as any).simulatedDragEndEvent = {
       active: { id: '1' },
       over: { id: '2023-01-01T08:30:00.000Z' },
@@ -146,7 +140,7 @@ describe('DayView Component', () => {
     props.onEventClick = jest.fn();
   
     render(<DayView {...props} />);
-    // Simulate drag end with delta.y = 20
+    
     (globalThis as any).simulatedDragEndEvent = {
       active: { id: '1' },
       over: { id: '2023-01-01T08:30:00.000Z' },
@@ -156,7 +150,7 @@ describe('DayView Component', () => {
     await waitFor(() => {
       expect(onEventUpdateMock).toHaveBeenCalled();
       const updatedEvent = onEventUpdateMock.mock.calls[0][0];
-      // Compare timestamps instead of raw strings:
+      
       expect(new Date(updatedEvent.start).getTime()).toBe(new Date("2023-01-01T08:30:00.000Z").getTime());
       expect(new Date(updatedEvent.end).getTime()).toBe(new Date("2023-01-01T09:30:00.000Z").getTime());
     });

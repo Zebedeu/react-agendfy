@@ -2,17 +2,15 @@ import { TZDate } from "@date-fns/tz";
 import { addDays, differenceInDays, parseISO } from "date-fns";
 import { RRule } from "rrule";
 
-// Função para expandir eventos recorrentes
 export const expandRecurringEvents = (events, startDate, endDate, timezone) => {
 
-  // Converte startDate e endDate para objetos Date se necessário
   const start = typeof startDate === "string" ? new TZDate(parseISO(startDate), timezone) : new TZDate(startDate, timezone);
   const end = typeof endDate === "string" ? new TZDate(parseISO(endDate), timezone) : new TZDate(endDate, timezone);
 
   let expandedEvents = [];
 
   events.forEach((event) => {
-    // Se o evento não possui recorrência, adiciona diretamente
+    // Se o evento não possui recorrência, adicionar diretamente
     if (!event.recurrence) {
       expandedEvents.push(event);
       return;
