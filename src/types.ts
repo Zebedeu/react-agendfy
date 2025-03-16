@@ -230,3 +230,18 @@ export interface CalendarHeaderProps {
   leftControls?: ReactNode | ReactNode;
   rightControls?: ReactNode | ReactNode;
 }
+
+
+// Defina a interface para um plugin de renderização de eventos
+export interface EventRenderingPlugin {
+  (props: {
+    event: EventProps;
+    config: any;
+    dayDate: Date;
+    onEventClick?: (event: EventProps) => void;
+    onEventResize?: (event: EventProps, newEnd: Date) => void;
+    positionStyle: React.CSSProperties;
+    endHour: number;
+    isDraggable?: boolean;
+  }): React.ReactNode;
+}

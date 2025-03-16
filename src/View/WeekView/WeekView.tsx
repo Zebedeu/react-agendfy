@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo, useRef } from "react";
-import { DndContext, pointerWithin } from "@dnd-kit/core";
 import {
   format,
   addMinutes,
@@ -14,13 +13,19 @@ import {
 } from "date-fns";
 import { rrulestr } from "rrule";
 import { ensureDate } from "../../Utils/DateTrannforms";
-import { EventProps, WeekProps } from "../../types";
+import { EventProps, WeekProps as BaseWeekViewProps, EventRenderingPlugin, Config } from "../../types";
 import { TZDate } from "@date-fns/tz";
 import { DayColumn } from "./Components/DayColumn";
 import { calculateRedLineOffset } from "../../Utils/calculateRedLineOffset";
 
-// Main WeekView component with performance optimizations
-const WeekView = ({
+interface WeekViewProps extends BaseWeekViewProps {
+  config: Config & { 
+    slotDuration?: number;
+    timeZone?: string;
+    eventRenderingPlugins?: EventRenderingPlugin; 
+  };
+}
+const WeekView: React.FC<WeekViewProps> = ({
   events,
   onEventUpdate,
   onEventClick,
@@ -30,12 +35,12 @@ const WeekView = ({
   slotMin = "0",
   slotMax = "24",
   config,
-}: WeekProps) => {
+  eventRenderingPlugins
+}) => {
   const startHour = parseInt(slotMin, 10);
   const endHour = parseInt(slotMax, 10);
   const slotDuration = config?.slotDuration || 30;
 
-  // Calculate number of slots (memoized)
   const numberOfSlots = useMemo(
     () => ((endHour - startHour) * 60) / slotDuration,
     [startHour, endHour, slotDuration]
@@ -48,19 +53,15 @@ const WeekView = ({
     );
   }
 
-  // Memoize the start of the current week
   const currentWeekStart = useMemo(
     () => startOfWeek(new TZDate(currentDate, config?.timeZone), { weekStartsOn: 0 }),
     [currentDate, config?.timeZone]
   );
 
-  // Array of day indices (0 to 6)
   const daysOfWeek = useMemo(() => Array.from({ length: 7 }, (_, i) => i), []);
 
-  // Generate time slot indices
   const timeSlots = useMemo(() => Array.from({ length: numberOfSlots }, (_, i) => i), [numberOfSlots]);
 
-  // Precompute timeslot labels
   const timeslotLabels = useMemo(() => {
     return timeSlots.map((index) => {
       const time = setMinutes(
@@ -74,13 +75,11 @@ const WeekView = ({
     });
   }, [timeSlots, currentDate, config?.timeZone, startHour, slotDuration]);
 
-  // Precompute red line offset
   const redLineOffset = useMemo(
     () => calculateRedLineOffset(currentDate, startHour, slotDuration, config?.timeZone),
     [currentDate, startHour, slotDuration, config?.timeZone]
   );
 
-  // Memoize all-day events mapping for the week
   const allDayEventsByDay = useMemo(() => {
     const mapping: { [key: number]: EventProps[] } = {};
     daysOfWeek.forEach((dayIndex) => {
@@ -95,51 +94,8 @@ const WeekView = ({
     return mapping;
   }, [daysOfWeek, currentWeekStart, events, config?.timeZone]);
 
-  // useRef to store the dragged event
-  const draggedEventRef = useRef<EventProps | null>(null);
 
-  // Handlers for drag and drop events
-  const handleDragStart = useCallback((event: any) => {
-    const { active } = event;
-    if (active?.id) {
-      draggedEventRef.current = events.find((e: EventProps) => e.id === active.id) || null;
-    }
-  }, [events]);
-
-  const handleDragEnd = useCallback((event: any) => {
-    const { active, over, delta } = event;
-    draggedEventRef.current = null;
-    if (!active?.id || !over?.id) return;
-
-    const baseTime = new TZDate(new Date(over.id), config?.timeZone);
-    if (!isValid(baseTime)) return;
-
-    const additionalMinutes = active.transform ? (active.transform.y / 40) * slotDuration : 0;
-    const newStartTime = addMinutes(baseTime, additionalMinutes);
-
-    const draggedEvent = events.find((ev: EventProps) => ev.id === active.id);
-    if (!draggedEvent) return;
-
-    const duration = differenceInMinutes(
-      ensureDate(draggedEvent.end, config?.timeZone),
-      ensureDate(draggedEvent.start, config?.timeZone)
-    );
-    const updatedEvent = {
-      ...draggedEvent,
-      start: newStartTime.toISOString(),
-      end: addMinutes(newStartTime, duration).toISOString(),
-    };
-
-    if (Math.abs(delta.y) < 1) {
-      onEventClick?.(updatedEvent);
-      return;
-    }
-    if (typeof onEventUpdate === "function") {
-      onEventUpdate(updatedEvent);
-    }
-  }, [events, config?.timeZone, slotDuration, onEventClick, onEventUpdate]);
-
-  // getEvents callback: filter events for a given slot time (with recurrence support)
+ 
   const getEvents = useCallback((slotTime: string) => {
     const slotDate = new TZDate(slotTime, config?.timeZone);
     const slotDateFormatted = format(slotDate, "yyyy-MM-dd HH:mm");
@@ -185,11 +141,7 @@ const WeekView = ({
   const isDraggable = useMemo(() => typeof onEventUpdate === "function", [onEventUpdate]);
 
   return (
-    <DndContext
-      onDragEnd={handleDragEnd}
-      onDragStart={handleDragStart}
-      collisionDetection={pointerWithin}
-    >
+  
       <div className="react-agenfy-weekview-container">
         {/* All-Day Area */}
         <div className="react-agenfy-weekview-all-day">
@@ -244,13 +196,13 @@ const WeekView = ({
                   redLineOffset={redLineOffset}
                   config={config}
                   isDraggable={isDraggable}
+                  eventRenderingPlugins={eventRenderingPlugins}
                 />
               </div>
             );
           })}
         </div>
       </div>
-    </DndContext>
   );
 };
 

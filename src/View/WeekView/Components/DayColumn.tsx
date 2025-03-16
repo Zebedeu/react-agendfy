@@ -27,6 +27,7 @@ export const DayColumn = memo(
     redLineOffset,
     config,
     isDraggable,
+    eventRenderingPlugins
   }: DayColumnProps) => {
     
     const isToday = isSameDay(dayDate, new TZDate(new Date(), config?.timeZone));
@@ -123,6 +124,7 @@ export const DayColumn = memo(
                 parsedSlotMax={parsedSlotMax}
                 onEventResize={onEventResize}
                 isDraggable={isDraggable}
+                eventRenderingPlugins={eventRenderingPlugins}
               />
             );
           })}

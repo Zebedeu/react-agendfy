@@ -1,12 +1,12 @@
 import React from "react";
 import { Resizable } from "re-resizable";
-import BaseEvent from "../../../Components/BaseEvent";
 import { addDays, addMinutes, differenceInMinutes, endOfDay, isAfter, setHours, startOfDay, subDays } from "date-fns";
 import { useDraggable } from "@dnd-kit/core";
 import { useEffect, useMemo, useState } from "react";
-import { BaseEventProps } from "../../../types";
 import {  TZDate } from '@date-fns/tz';
 import { ensureDate } from "../../../Utils/DateTrannforms";
+import BaseEvent from "../../../Components/BaseEvent";
+import { BaseEventProps } from "../../../types";
 
 export const WeekEvent = ({
   event,

@@ -118,40 +118,7 @@ const DayView: React.FC<DayViewProps> = ({
     config?.timeZone
   );
 
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over, delta } = event;
-    if (!over) return;
-    const updatedEvents = events.map((ev) => {
-      if (ev.id === active.id) {
-        const newStart = new TZDate(over.id, config?.timeZone);
-        if (!isValid(newStart)) return ev;
-        const duration = differenceInMinutes(
-          ensureDate(ev.end, config?.timeZone),
-          ensureDate(ev.start, config?.timeZone)
-        );
-        return {
-          ...ev,
-          start: newStart.toISOString(),
-          end: addMinutes(newStart, duration).toISOString(),
-        };
-      }
-      return ev;
-    });
-
-    const updatedEvent = updatedEvents.find((ev) => ev.id === active.id) as EventProps;
-
-    if (Math.abs(delta.y) < 1) {
-      onEventClick?.(updatedEvent);
-      return;
-    }
-
-    if (typeof onEventUpdate === "function") {
-      onEventUpdate(updatedEvent);
-    }
-  }, [events, onEventUpdate, onEventClick, config?.timeZone]);
-
   return (
-    <DndContext onDragEnd={handleDragEnd}>
       <div className="react-agenfy-dayview-container">
         {[...Array(numberOfSlots)].map((_, index) => {
           const minutes = index * (config?.slotDuration || 30);
@@ -190,7 +157,6 @@ const DayView: React.FC<DayViewProps> = ({
           />
         )}
       </div>
-    </DndContext>
   );
 };
 

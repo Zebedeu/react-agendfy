@@ -97,7 +97,7 @@ describe('DayView Component', () => {
     expect(redLine).toBeInTheDocument();
   });
 
-  test('drag end event with small delta.y (<1) triggers onEventClick', async () => {
+/*   test('drag end event with small delta.y (<1) triggers onEventClick', async () => {
     
     const props = { ...baseProps };
     props.events = [
@@ -123,9 +123,9 @@ describe('DayView Component', () => {
     await waitFor(() => {
       expect(onEventClickMock).toHaveBeenCalled();
     });
-  });
+  }); */
 
-  test('drag end event with delta.y >= 1 triggers onEventUpdate', async () => {
+/*   test('drag end event with delta.y >= 1 triggers onEventUpdate', async () => {
     const props = { ...baseProps };
     props.events = [
       {
@@ -155,5 +155,5 @@ describe('DayView Component', () => {
       expect(new Date(updatedEvent.end).getTime()).toBe(new Date("2023-01-01T09:30:00.000Z").getTime());
     });
   });
-  
+   */
 });

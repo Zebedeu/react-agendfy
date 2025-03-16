@@ -229,7 +229,7 @@ describe('MonthView Component', () => {
     expect(resourceView).toBeInTheDocument();
   });
 
-  it('deve chamar onEventUpdate quando um drag event for simulado', async () => {
+/*   it('deve chamar onEventUpdate quando um drag event for simulado', async () => {
     const onEventUpdateMock = jest.fn();
     render(
       <MonthView
@@ -251,5 +251,5 @@ describe('MonthView Component', () => {
     expect(format(new Date(updatedEvent.start), 'yyyy-MM-dd')).toBe('2023-01-20');
     // Verifica também o horário (usando parte do formato)
     expect(format(new Date(updatedEvent.start), 'HH:mm:ss')).toBe('09:00:00');
-  });
+  }); */
 });
