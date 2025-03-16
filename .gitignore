@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 src/example
-src/Plugins
+src/plugins
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
