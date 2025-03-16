@@ -52,7 +52,7 @@ export const DayColumn = memo(
     return (
       <div
         className={`react-agenfy-daycolumn-container react-agenfy-today ${
-          isToday ? "react-agenfy-daycolumn-today react-agenfy-today" : ""
+          isToday ? "react-agenfy-daycolumn-today" : ""
         }`}
       >
         <div

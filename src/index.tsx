@@ -3,6 +3,7 @@ import React from "react";
 import {
   CalendarProps,
   EventProps,
+  Resource,
 } from "./types";
 import {
   NotificationServiceConfig,
@@ -38,5 +39,6 @@ export type {
   DataSourcePlugin,
   DataSourceConfigProps,
   FilterPluginProps,
-  SearchPluginProps
+  SearchPluginProps,
+  Resource,
 };

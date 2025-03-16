@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  z-index: 20;
+  z-index: 200;
 }
 
 .react-agenfy-baseevent--preview {
@@ -17,6 +17,8 @@
 
 .react-agenfy-baseevent__time {
   font-size: var(--baseevent-time-font-size-medium);
+  padding: var(--baseevent-padding-large);
+
   opacity: 0.9;
 }
 
@@ -27,6 +29,8 @@
   }
   .react-agenfy-baseevent__time {
     font-size: var(--baseevent-time-font-size-small);
+    padding: var(--baseevent-padding-medium);
+
   }
 }
 
@@ -37,12 +41,13 @@
   }
   .react-agenfy-baseevent__time {
     font-size: var(--baseevent-time-font-size-medium);
+    
   }
 }
 
 @media (min-width: 1024px) {
   .react-agenfy-baseevent {
-    padding: var(--baseevent-padding-large);
+    padding: var(--baseevent-padding-min);
     border-radius: var(--baseevent-border-radius-large);
   }
   .react-agenfy-baseevent__time {

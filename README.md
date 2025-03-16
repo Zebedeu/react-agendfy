@@ -25,7 +25,7 @@
 8.  [Localization (i18n)](#localization-i18n)
 9.   [Calendar Export (ICS Format)](#calendar-export-ics-format)
 10.  [Plugin Support](#plugin-support)
-    * [Plugin Types](#plugin-types)
+     *  [Plugin Types](#plugin-types)
 11.  [Contributing](#contributing)
 12. [License](#license)
 

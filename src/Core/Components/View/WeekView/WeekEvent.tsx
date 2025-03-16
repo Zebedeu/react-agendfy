@@ -29,13 +29,16 @@ export const WeekEvent = ({
     return isMultiDay ? endOfDay(dayDate) : dayEndTime;
   }, [dayDate, endHour, isMultiDay]);
 
+
   const [size, setSize] = useState({
-    height: positionStyle?.height || "auto",
+    height: positionStyle?.height,
+    width: positionStyle?.width,
   });
 
   useEffect(() => {
     setSize({
-      height: positionStyle?.height || "auto",
+      width: positionStyle?.width,
+      height: positionStyle?.height,
     });
   }, [positionStyle?.width, positionStyle?.height, isMultiDay]);
 
@@ -80,6 +83,7 @@ export const WeekEvent = ({
     }
 
     setSize({
+      width: ref.style.width,
       height: ref.style.height,
     });
   };
@@ -99,14 +103,26 @@ export const WeekEvent = ({
     : undefined;
 
   return (
+
     <Resizable
       size={size}
       enable={{ top: true, right: false, bottom: true, left: false }}
       onResizeStop={handleResize}
-      className="absolute"
+      handleStyles={{
+        top: { cursor: 'ns-resize' },
+        bottom: { 
+          cursor: 'ns-resize', 
+          zIndex: 1000,
+         },
+      }}
+      
       style={{
         top: positionStyle?.top || "0",
+        bottom: positionStyle?.bottom || "0",
         left: positionStyle?.left || "0",
+        height: positionStyle?.width || "0",
+        width: positionStyle?.height || "0",
+        position: "absolute",
         zIndex: 20,
         maxWidth: "100%",
         ...style,
@@ -117,11 +133,14 @@ export const WeekEvent = ({
           : undefined
       }
     >
-      <div ref={setNodeRef} {...listeners} {...attributes}>
+      <div ref={setNodeRef}
+                style={{ width: "100%", height: "100%" }}
+
+      {...listeners} {...attributes}>
         <BaseEvent
           event={event}
           onEventClick={onEventClick}
-          positionStyle={{ top: "0", left: "0" }}
+          positionStyle={{ width: "100%",  height: "100%", top: "0", left: "0" }}
           config={config}
           isMultiDay={isMultiDay}
           isStart={isStart}

@@ -38,8 +38,8 @@ export const WeekTimeSlot = memo(
           ...event,
           positionStyle: {
             top: "0",
-            left: `${(i * 100) / total}%`,
-            width: `${100 / total}%`,
+            left: `${(i * 100) / total}%`,      // Cada evento desloca horizontalmente
+            width: `${100 / total}%`,           // Divide igualmente o espaço horizontal
             height: `${
               (differenceInMinutes(ensureDate(event.end), ensureDate(event.start)) /
                 config?.slotDuration!) *
@@ -49,7 +49,7 @@ export const WeekTimeSlot = memo(
         };
       });
     }, [slotEvents, config?.slotDuration, config?.timeZone]);
-
+    
     const backgroundColor = isOver ? "react-agenfy-bg-green-200" : "";
 
     return (

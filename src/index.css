@@ -4,9 +4,9 @@
 @import "./css/MonthView.css";
 @import "./css/WeekView.css";
 @import "./css/DayView.css";
+@import "./css/BaseEvent.css";
 @import "./css/ListView.css";
 @import "./css/Resource.css";
-@import "./css/BaseEvent.css";
 
 :root {
   /* Cores - Tema Suave e Moderno */
@@ -87,9 +87,10 @@
   /* Variáveis para o componente BaseEvent */
   --baseevent-padding-small: 0.25rem;
   --baseevent-border-radius-small: 0.25rem;
-  --baseevent-padding-medium: 0.5rem;
+  --baseevent-padding-medium: 0rem;
   --baseevent-border-radius-medium: 0.375rem;
   --baseevent-padding-large: 0.75rem;
+  --baseevent-padding-min: 0rem;
   --baseevent-border-radius-large: 0.5rem;
   --baseevent-time-font-size-small: 0.65rem;
   --baseevent-time-font-size-medium: 0.75rem;
