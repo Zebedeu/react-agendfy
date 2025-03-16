@@ -35,7 +35,18 @@
     "appointment",
     "scheduler",
     "react-component",
-    "ui"
+    "ui",
+    "drag and drop",
+    "recurring events",
+    "resource filtering",
+    "time zones",
+    "notifications",
+    "alerts",
+    "localization",
+    "i18n",
+    "ics format",
+    "plugin",
+    "export"
   ],
   "peerDependencies": {
     "react": "^18 || ^19",

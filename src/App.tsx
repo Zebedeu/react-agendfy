@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState, useEffect, useCallback, FC } from 'react';
 import { format } from 'date-fns';
-import Calendar from './Core/Calendar';
-import { ToastProvider } from './Core/Components/Toast/Toast';
+import Calendar from './View/Calendar';
+import { ToastProvider } from './Components/Toast/Toast';
 import { EmailAdapter } from './types/notification';
 import EventTitleFilterPlugin from './Plugins/Filter/EventTitleFilterPlugin';
 import SchedulingAvailabilityView from './Plugins/A/b';

@@ -1,4 +1,4 @@
-import { NotificationService, ToastProps } from "../Core/Notify/NotificationService";
+import { NotificationService, ToastProps } from "../View/Core/Notify/NotificationService";
 import { Config, EventProps } from "../types";
 
 export interface EmailAdapter {
