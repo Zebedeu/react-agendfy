@@ -5,11 +5,6 @@ import { ToastProvider } from './Components/Toast/Toast';
 import { EmailAdapter } from './types/notification';
 import EventTitleFilterPlugin from './Plugins/Filter/EventTitleFilterPlugin';
 import SchedulingAvailabilityView from './Plugins/A/b';
-import CustomWeekEventRenderer from './Plugins/render/CustomWeekEventRenderer';
-import DragAndDropWeekEventPlugin from './Plugins/dnd/DragAndDropWeekEventPlugin';
-import WeekViewDragAndDropInteraction from './Plugins/dnd/WeekViewDragAndDropInteraction';
-import DayViewDragAndDropInteraction from './Plugins/dnd/DayViewDragAndDropInteraction';
-import MonthViewDragAndDropInteraction from './Plugins/dnd/MonthViewDragAndDropInteraction';
 
 export class ExampleEmailAdapter implements EmailAdapter {
   async sendEmail(subject: string, body: string, recipient?: string): Promise<void> {
@@ -345,24 +340,6 @@ const config = useMemo(()=> {
             key: 'scheduling-availability-view',
           },
 
-          
-          {
-            type: "interaction",
-            component: WeekViewDragAndDropInteraction,
-            viewName: "week", // Especifica que este plugin se aplica à visualização de semana
-          },
-          {
-            type: "interaction",
-            component: DayViewDragAndDropInteraction,
-            viewName: "day", // Especifica que este plugin se aplica à visualização de semana
-          },
-          {
-            type: "interaction",
-            component: MonthViewDragAndDropInteraction,
-            viewName: "month", // Especifica que este plugin se aplica à visualização de semana
-          },
-          
-          
         ]}       
 
       />
