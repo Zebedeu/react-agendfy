@@ -28,9 +28,6 @@
   import useCalendarNavigation from "../hooks/useCalendarNavigation";
   import usePluginManagement from "../hooks/usePluginManagement";
   import useDataSourceEvents from "../hooks/useDataSourceEvents";
-import WeekViewDragAndDropInteraction from "../Plugins/dnd/WeekViewDragAndDropInteraction";
-import DayViewDragAndDropInteraction from "../Plugins/dnd/DayViewDragAndDropInteraction";
-import MonthViewDragAndDropInteraction from "../Plugins/dnd/MonthViewDragAndDropInteraction";
 
   const MonthViewMemo = memo(MonthView);
   const WeekViewMemo = memo(WeekView);
@@ -298,6 +295,7 @@ import MonthViewDragAndDropInteraction from "../Plugins/dnd/MonthViewDragAndDrop
       [searchPlugins, normalizedEvents, handleSearchFromPlugin, localeConfig]
     );
 
+  
     const renderViewComponent = () => {
       const CustomViewComponent = allCustomViews[currentView];
       if (CustomViewComponent) {
@@ -317,116 +315,99 @@ import MonthViewDragAndDropInteraction from "../Plugins/dnd/MonthViewDragAndDrop
           />
         );
       }
-      switch (localeConfig.defaultView) {
-        case "week":
-          const weekView = (
-            <WeekViewMemo
-              events={filteredEvents}
-              slotMin={localeConfig.slotMin}
-              slotMax={localeConfig.slotMax}
-              onEventUpdate={handleEventUpdateInternal}
-              onEventResize={handleEventResizeInternal}
-              onEventClick={onEventClick}
-              onDayClick={onDayClick}
-              onSlotClick={onSlotClick}
-              currentDate={currentDate}
-              config={localeConfig}
-              eventRenderingPlugins={eventRenderingPlugins}
-            />
-          );
-          const weekViewInteractionPlugin = plugins.find(
-            (plugin) => plugin.type === "interaction" && plugin.component === WeekViewDragAndDropInteraction && (plugin.viewName === "week" || !plugin.viewName)
-          );
-          if (weekViewInteractionPlugin && weekViewInteractionPlugin.component) {
-            const InteractionComponent = weekViewInteractionPlugin.component;
+    
+      const viewComponent = () => {
+        switch (localeConfig.defaultView) {
+          case "week":
             return (
+              <WeekViewMemo
+                events={filteredEvents}
+                slotMin={localeConfig.slotMin}
+                slotMax={localeConfig.slotMax}
+                onEventUpdate={handleEventUpdateInternal}
+                onEventResize={handleEventResizeInternal}
+                onEventClick={onEventClick}
+                onDayClick={onDayClick}
+                onSlotClick={onSlotClick}
+                currentDate={currentDate}
+                config={localeConfig}
+                eventRenderingPlugins={eventRenderingPlugins}
+              />
+            );
+          case "month":
+            return (
+              <MonthViewMemo
+                events={filteredEvents}
+                onDayClick={onDayClick}
+                currentDate={currentDate}
+                onEventUpdate={handleEventUpdateInternal}
+                onEventResize={handleEventResizeInternal}
+                showResourceView={true}
+                config={localeConfig}
+                onEventClick={onEventClick}
+                eventRenderingPlugins={eventRenderingPlugins}
+              />
+            );
+          case "day":
+            return (
+              <DayViewMemo
+                events={filteredEvents}
+                currentDate={currentDate}
+                onEventUpdate={handleEventUpdateInternal}
+                onSlotClick={onSlotClick}
+                config={localeConfig}
+                onEventClick={onEventClick}
+                eventRenderingPlugins={eventRenderingPlugins}
+              />
+            );
+          case "list":
+            return (
+              <ListViewMemo
+                events={filteredEvents}
+                onEventUpdate={handleEventUpdateInternal}
+                onEventClick={onEventClick}
+                currentDate={currentDate}
+                config={localeConfig}
+                eventRenderingPlugins={eventRenderingPlugins}
+              />
+            );
+          default:
+            return <div>Unsupported view: {localeConfig.defaultView}</div>;
+        }
+      };
+    
+      let renderedView = viewComponent();
+    
+      // Envolve o componente da view com plugins de interação
+      plugins
+        .filter(
+          (plugin) =>
+            plugin.type === "interaction" &&
+            (plugin.viewName === localeConfig.defaultView || !plugin.viewName)
+        )
+        .forEach((interactionPlugin) => {
+          if (interactionPlugin.component) {
+            const InteractionComponent = interactionPlugin.component as React.FC<{
+              children: React.ReactNode;
+              events: EventProps;
+              onEventUpdate?: (event: EventProps) => void;
+              onEventClick?: (event: EventProps) => void;
+              config: typeof localeConfig;
+            }>;
+            renderedView = (
               <InteractionComponent
                 events={filteredEvents}
                 onEventUpdate={handleEventUpdateInternal}
                 onEventClick={onEventClick}
                 config={localeConfig}
               >
-                {weekView}
+                {renderedView}
               </InteractionComponent>
             );
           }
-          return weekView;
-
-        case "month":
-          const month =  (
-            <MonthViewMemo
-              events={filteredEvents}
-              onDayClick={onDayClick}
-              currentDate={currentDate}
-              onEventUpdate={handleEventUpdateInternal}
-              onEventResize={handleEventResizeInternal}
-              showResourceView={true}
-              config={localeConfig}
-              onEventClick={onEventClick}
-              eventRenderingPlugins={eventRenderingPlugins}
-            />
-          );
-          const monthViewInteractionPlugin = plugins.find(
-            (plugin) => plugin.type === "interaction" && plugin.component === MonthViewDragAndDropInteraction && (plugin.viewName === "month" || !plugin.viewName)
-          );
-          if (monthViewInteractionPlugin && monthViewInteractionPlugin.component) {
-            const InteractionComponent = monthViewInteractionPlugin.component;
-            return (
-              <InteractionComponent
-                events={filteredEvents}
-                onEventUpdate={handleEventUpdateInternal}
-                onEventClick={onEventClick}
-                config={localeConfig}
-              >
-                {month}
-              </InteractionComponent>
-            );
-          }
-          return month;
-        case "day":
-          const dayView =  (
-            <DayViewMemo
-              events={filteredEvents}
-              currentDate={currentDate}
-              onEventUpdate={handleEventUpdateInternal}
-              onSlotClick={onSlotClick}
-              config={localeConfig}
-              onEventClick={onEventClick}
-              eventRenderingPlugins={eventRenderingPlugins}
-            />
-          );
-          const dayViewDragAndDropInteractionPlugin = plugins.find(
-            (plugin) => plugin.type === "interaction" && plugin.component === DayViewDragAndDropInteraction && (plugin.viewName === "day" || !plugin.viewName)
-          );
-          if (dayViewDragAndDropInteractionPlugin && dayViewDragAndDropInteractionPlugin.component) {
-            const InteractionComponent = dayViewDragAndDropInteractionPlugin.component;
-            return (
-              <InteractionComponent
-                events={filteredEvents}
-                onEventUpdate={handleEventUpdateInternal}
-                onEventClick={onEventClick}
-                config={localeConfig}
-              >
-                {dayView}
-              </InteractionComponent>
-            );
-          }
-          return dayView;
-
-        case "list":
-          return (
-            <ListViewMemo
-              events={filteredEvents}
-              onEventUpdate={handleEventUpdateInternal}
-              onEventClick={onEventClick}
-              currentDate={currentDate}
-              config={localeConfig}
-              eventRenderingPlugins={eventRenderingPlugins}
-            />
-          );
-        default:
-          return <div>Unsupported view: {localeConfig.defaultView}</div>;
-      }
+        });
+    
+      return renderedView;
     };
 
 

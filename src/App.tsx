@@ -326,7 +326,6 @@ const config = useMemo(()=> {
           { location: 'right',type:'header', component: MyRightHeaderPlugin, props: { className: 'search-input' }, key: 'right-plugin' },
           { location: 'view', type:'header', viewName: 'custom view', component: MyCustomViewComponent, key: 'custom-view-key' },
           { location: 'view', type:'header', viewName: 'notas', component: MyCustomView, key: 'custom-nota-key' },
-          { location: 'left', type:'filter', viewName: 'Filter', component: EventTitleFilterPlugin, key: 'custom-filter-key' },
      
         ]}       
 
