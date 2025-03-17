@@ -3,8 +3,6 @@ import { format } from 'date-fns';
 import Calendar from './View/Calendar';
 import { ToastProvider } from './Components/Toast/Toast';
 import { EmailAdapter } from './types/notification';
-import EventTitleFilterPlugin from './Plugins/Filter/EventTitleFilterPlugin';
-import SchedulingAvailabilityView from './Plugins/A/b';
 
 export class ExampleEmailAdapter implements EmailAdapter {
   async sendEmail(subject: string, body: string, recipient?: string): Promise<void> {
@@ -329,17 +327,7 @@ const config = useMemo(()=> {
           { location: 'view', type:'header', viewName: 'custom view', component: MyCustomViewComponent, key: 'custom-view-key' },
           { location: 'view', type:'header', viewName: 'notas', component: MyCustomView, key: 'custom-nota-key' },
           { location: 'left', type:'filter', viewName: 'Filter', component: EventTitleFilterPlugin, key: 'custom-filter-key' },
-          {
-            location: 'view',
-            type: 'header',
-            viewName: 'schedulingAvailability',
-            component: SchedulingAvailabilityView,
-            props: {
-              // Você pode passar props adicionais se necessário
-            },
-            key: 'scheduling-availability-view',
-          },
-
+     
         ]}       
 
       />
