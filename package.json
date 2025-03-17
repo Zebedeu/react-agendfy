@@ -1,5 +1,5 @@
 {
-  "name": "react-agendfy",
+  "name": "@react-agendfy/core",
   "private": false,
   "version": "1.0.8",
   "type": "module",
