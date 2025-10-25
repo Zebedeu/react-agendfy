@@ -23,3 +23,8 @@ src/plugins
 *.njsproj
 *.sln
 *.sw?
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+.yarn/cache/
+.pnp.*
