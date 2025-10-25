@@ -2493,6 +2493,7 @@ __metadata:
     eslint-plugin-react: "npm:^7.37.5"
     eslint-plugin-react-hooks: "npm:^7.0.1"
     eslint-plugin-react-refresh: "npm:^0.4.24"
+    vite: "npm:^6.1.0"
   languageName: unknown
   linkType: soft
 
