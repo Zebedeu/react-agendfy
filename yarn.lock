@@ -2692,6 +2692,11 @@ __metadata:
 "@react-agendfy/plugin-theme@workspace:packages/plugins/theme":
   version: 0.0.0-use.local
   resolution: "@react-agendfy/plugin-theme@workspace:packages/plugins/theme"
+  dependencies:
+    "@vitejs/plugin-react": "npm:^4.0.0"
+    typescript: "npm:^5.0.0"
+    vite: "npm:^4.0.0"
+    vite-plugin-dts: "npm:^3.0.0"
   peerDependencies:
     "@react-agendfy/core": "workspace:*"
   languageName: unknown
