@@ -31,5 +31,5 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Build all packages
-        run: yarn workspaces foreach --all -v run build
+      - name: Build all workspaces
+        run: yarn workspaces foreach --all ---topological -v run build
