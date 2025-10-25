@@ -10,14 +10,13 @@ import {
   EmailAdapter,
 } from "./types/notification";
 import {
-  DataSourcePlugin,
   DataSourceConfigProps,
 } from "./types/dataSource";
 import {
   FilterPluginProps,
   SearchPluginProps,
 } from "./types/search";
-import { CalendarPlugin } from "./types/plugns";
+import { CalendarPlugin, DataSourcePlugin, EventLike, ExportPlugin, ThemePlugin } from "./types/plugins";
 import { ToastProvider } from "./Components/Toast/Toast";
 import Calendar from "./View/Calendar";
 import { ensureDate } from "./Utils/DateTrannforms";
@@ -35,6 +34,7 @@ export {ensureDate}
 export type {
   CalendarProps,
   EventProps,
+  EventLike,
   NotificationServiceConfig,
   EmailAdapter,
   CalendarPlugin,
@@ -42,5 +42,7 @@ export type {
   DataSourceConfigProps,
   FilterPluginProps,
   SearchPluginProps,
+  ThemePlugin,
+  ExportPlugin,
   Resource,
 };

@@ -1,10 +1,9 @@
 import React, { useMemo } from 'react';
-import type { ViewPlugin, EventLike } from '@react-agendfy/core';
 
 interface TimelineProps {
-  events: EventLike[];
+  events: any[];
   currentDate: Date;
-  onEventClick?: (event: EventLike) => void;
+  onEventClick?: (event: any) => void;
 }
 
 const TimelineView: React.FC<TimelineProps> = ({ events, currentDate, onEventClick }) => {
@@ -20,7 +19,7 @@ const TimelineView: React.FC<TimelineProps> = ({ events, currentDate, onEventCli
       if (!acc[date]) acc[date] = [];
       acc[date].push(event);
       return acc;
-    }, {} as Record<string, EventLike[]>);
+    }, {} as Record<string, any[]>);
   }, [sortedEvents]);
 
   return (
@@ -61,7 +60,7 @@ const TimelineView: React.FC<TimelineProps> = ({ events, currentDate, onEventCli
   );
 };
 
-const timelineViewPlugin: ViewPlugin = {
+const timelineViewPlugin: any = {
   key: 'timeline-view',
   type: 'view',
   viewName: 'timeline',
