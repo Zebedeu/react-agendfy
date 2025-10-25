@@ -1,0 +1,21 @@
+{
+  "name": "@react-agendfy/plugin-google-calendar",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "src/index.ts", 
+  "module": "src/index.ts",
+  "types": "src/index.d.ts",
+  "scripts": {
+    "build": "vite build --config vite.config.ts",
+    "dev": "vite",
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "@react-agendfy/core": "workspace:*",
+    "react": "^18 || ^19"
+  },
+  "devDependencies": {
+    "vite": "^6.1.0",
+    "vite-plugin-dts": "^4.5.0"
+  }
+}

@@ -1,0 +1,246 @@
+.react-agenfy-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--padding-1rem);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-bg-white);
+}
+
+.react-agenfy-date-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-0_5rem);
+}
+
+.react-agenfy-btn {
+  padding: var(--padding-0_5rem);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: var(--color-text-gray-800);
+  transition: background-color var(--transition-duration) var(--transition-timing);
+}
+
+.react-agenfy-btn:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.react-agenfy-calendar-header-date {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-gray-800);
+}
+
+.react-agenfy-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-1rem);
+}
+
+.react-agenfy-view-buttons {
+  display: flex;
+  gap: var(--gap-0_5rem);
+}
+
+.react-agenfy-view-btn {
+  padding: var(--padding-0_5rem);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: var(--color-text-gray-800);
+  transition: background-color var(--transition-duration) var(--transition-timing);
+}
+
+.react-agenfy-view-btn:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.react-agenfy-view-btn-active {
+  background-color: var(--color-bg-view-btn-active);
+  color: var(--color-text-white);
+}
+
+.react-agenfy-download-btn {
+  padding: var(--padding-0_5rem) var(--padding-1rem);
+  border-radius: var(--radius-sm);
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background-color var(--transition-duration) var(--transition-timing);
+}
+
+.react-agenfy-download-btn:hover {
+  background-color: var(--btn-hover-bg);
+}
+
+.react-agenfy-filter-container {
+  position: relative;
+}
+
+.react-agenfy-filter-btn {
+  padding: var(--padding-0_5rem);
+  background-color: var(--color-bg-filter-btn);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  transition: background-color var(--transition-duration) var(--transition-timing);
+}
+
+.react-agenfy-filter-btn:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.react-agenfy-filter-dropdown {
+  position: absolute;
+  right: 0;
+  margin-top: var(--margin-top-0_5rem);
+  width: var(--width-filter-dropdown);
+  background-color: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--box-shadow-md);
+  z-index: 50;
+  padding: var(--padding-0_5rem);
+}
+
+.react-agenfy-filter-option {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-0_5rem);
+  padding: var(--padding-0_25rem) 0;
+}
+
+.react-agenfy-checkbox {
+  height: 1rem;
+  width: 1rem;
+  accent-color: var(--color-accent-checkbox);
+}
+
+.react-agenfy-resource-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-gray-800);
+}
+
+.react-agenfy-clear-btn {
+  margin-top: var(--margin-top-0_5rem);
+  font-size: var(--font-size-xs);
+  color: var(--color-clear-btn);
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: text-decoration var(--transition-duration) var(--transition-timing);
+}
+
+.react-agenfy-clear-btn:hover {
+  text-decoration: underline;
+}
+
+.react-agenfy-export-container {
+  position: relative;
+}
+
+.react-agenfy-export-dropdown {
+  position: absolute;
+  right: 0;
+  margin-top: var(--margin-top-0_5rem);
+  width: max-content;
+  background-color: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--box-shadow-md);
+  z-index: 50;
+  padding: var(--padding-0_5rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.react-agenfy-export-option {
+  padding: var(--padding-0_5rem);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-gray-800);
+}
+
+.react-agenfy-export-option:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.react-agenfy-search-input {
+  padding: var(--padding-0_5rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-white);
+  color: var(--color-text-gray-800);
+  transition: border-color var(--transition-duration) var(--transition-timing);
+}
+
+.react-agenfy-search-input:focus {
+  outline: none;
+  border-color: var(--color-text-blue-600);
+}
+
+@media (max-width: 640px) {
+  .react-agenfy-calendar-header {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-1rem);
+  }
+  
+  .react-agenfy-date-nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .react-agenfy-calendar-header-date {
+    font-size: var(--font-size-lg);
+    text-align: center;
+    width: 100%;
+  }
+  
+  .react-agenfy-header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: var(--padding-0_5rem);
+    justify-content: center;
+  }
+  
+  .react-agenfy-view-buttons {
+    flex-wrap: wrap;
+    gap: var(--gap-0_25rem);
+    justify-content: center;
+    width: 100%;
+  }
+
+  .react-agenfy-view-btn {
+    flex-grow: 1;
+    min-width: unset;
+  }
+
+  .react-agenfy-filter-container,
+  .react-agenfy-export-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .react-agenfy-filter-dropdown {
+    width: 100%;
+    right: auto;
+    left: 0;
+  }
+
+  .react-agenfy-export-dropdown {
+    width: 100%;
+    right: auto;
+    left: 0;
+    align-items: center;
+  }
+}

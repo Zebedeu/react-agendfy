@@ -1,0 +1,44 @@
+.react-agenfy-dayview-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid var(--color-border);
+}
+
+@media (max-width: 640px) {
+  .react-agenfy-dayview-container {
+    border-width: 1px;
+  }
+}
+
+.react-agenfy-timeslot-container {
+  position: relative;
+  border-bottom: 1px solid var(--color-border);
+  height: 2.5rem;
+  cursor: pointer;
+}
+
+.react-agenfy-timeslot-label {
+  position: absolute;
+  left: 0.5rem; /* Aproximadamente left-2 */
+  top: 0.5rem;  /* Aproximadamente top-2 */
+  font-size: 0.875rem; /* Equivalente a text-sm */
+  z-index: 30; color: var(--color-text-gray-500);
+}
+
+.react-agenfy-timeslot-events {
+  position: absolute;
+  inset: 0;
+  padding-left: 3rem; /* Aproximadamente pl-12 */
+  background-color: var(--color-bg-gray-50);
+}
+
+@media (max-width: 640px) {
+  .react-agenfy-timeslot-container {
+    height: 2rem;
+  }
+  .react-agenfy-timeslot-label {
+    font-size: 0.75rem;
+  }
+}

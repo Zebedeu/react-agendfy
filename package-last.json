@@ -1,0 +1,67 @@
+{
+  "name": "react-agendfy",
+  "version": "1.2.3",
+  "private": false,
+  "type": "module",
+  "description": "⚠️ Deprecated: use @react-agendfy/core instead.",
+  "author": "Márcio Zebedeu",
+  "license": "MIT",
+
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
+  "types": "dist/types/index.d.ts",
+  "unpkg": "dist/index.umd.js",
+
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "prepublishOnly": "rm -rf ./dist && yarn build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "jest",
+    "prepare": "husky"
+  },
+
+  "files": [
+    "dist",
+    "postinstall.js"
+  ],
+
+  "publishConfig": {
+    "access": "public"
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zebedeu/react-agendfy.git"
+  },
+
+  "keywords": [
+    "react",
+    "calendar",
+    "event",
+    "scheduling",
+    "agenda",
+    "appointment",
+    "deprecated",
+    "moved",
+    "@react-agendfy/core"
+  ],
+
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+
+  "dependencies": {
+    "@react-agendfy/core": "^1.1.0"
+  },
+
+  "sideEffects": false,
+
+  "bugs": {
+    "url": "https://github.com/Zebedeu/react-agendfy/issues"
+  },
+
+  "homepage": "https://github.com/Zebedeu/react-agendfy#readme"
+}

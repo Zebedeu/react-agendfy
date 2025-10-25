@@ -1,0 +1,55 @@
+
+.react-agenfy-baseevent {
+  position: absolute;
+  color: #ffffff;
+  border-radius: var(--baseevent-border-radius-medium);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 200;
+}
+
+.react-agenfy-baseevent--preview {
+  opacity: 0.5;
+}
+
+.react-agenfy-baseevent__time {
+  font-size: var(--baseevent-time-font-size-medium);
+  padding: var(--baseevent-padding-large);
+
+  opacity: 0.9;
+}
+
+@media (max-width: 640px) {
+  .react-agenfy-baseevent {
+    padding: var(--baseevent-padding-small);
+    border-radius: var(--baseevent-border-radius-small);
+  }
+  .react-agenfy-baseevent__time {
+    font-size: var(--baseevent-time-font-size-small);
+    padding: var(--baseevent-padding-medium);
+
+  }
+}
+
+@media (min-width: 768px) {
+  .react-agenfy-baseevent {
+    padding: var(--baseevent-padding-medium);
+    border-radius: var(--baseevent-border-radius-medium);
+  }
+  .react-agenfy-baseevent__time {
+    font-size: var(--baseevent-time-font-size-medium);
+    
+  }
+}
+
+@media (min-width: 1024px) {
+  .react-agenfy-baseevent {
+    padding: var(--baseevent-padding-min);
+    border-radius: var(--baseevent-border-radius-large);
+  }
+  .react-agenfy-baseevent__time {
+    font-size: var(--baseevent-time-font-size-large);
+  }
+}

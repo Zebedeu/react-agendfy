@@ -1,0 +1,19 @@
+{
+  "name": "@react-agendfy/plugin-timeline",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src"
+  },
+  "peerDependencies": {
+    "@react-agendfy/core": "workspace:*",
+    "react": "^18.0.0"
+  },
+  "dependencies": {
+    "date-fns": "^2.30.0"
+  }
+}

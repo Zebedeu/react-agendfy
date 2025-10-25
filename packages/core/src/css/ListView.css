@@ -1,0 +1,129 @@
+.react-agenfy-listview-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.react-agenfy-listview-empty {
+  padding: var(--padding-p8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.react-agenfy-listview-empty-text {
+  text-align: center;
+  color: var(--color-text-gray-500);
+  font-size: var(--font-size-lg);
+}
+
+.react-agenfy-listview-day-container {
+  border-bottom: 1px solid var(--color-border);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.react-agenfy-listview-day-header-wrapper {
+  margin-bottom: var(--margin-mb-3);
+  position: relative;
+  background: transparent;
+  z-index: 1;
+  padding-bottom: 0.5rem;
+  flex-shrink: 0;
+}
+
+.react-agenfy-listview-day-header {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-gray-800);
+  margin: 0;
+  padding: 0;
+}
+
+.react-agenfy-listview-day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: static;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .react-agenfy-listview-empty {
+    padding: 1.5rem;
+  }
+  .react-agenfy-listview-day-container {
+    padding: var(--padding-p3);
+  }
+  .react-agenfy-listview-day-header {
+    font-size: var(--font-size-lg);
+  }
+}
+
+.react-agenfy-listevent-container {
+  padding: var(--padding-p3);
+  margin: 0;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--box-shadow-md);
+  transition: transform var(--transition-duration) var(--transition-timing);
+  position: static !important;
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  min-height: 60px;
+}
+
+.react-agenfy-listevent-container:hover {
+  transform: scale(1.02);
+  z-index: 2;
+}
+
+.react-agenfy-listevent-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: 0.25rem;
+}
+
+.react-agenfy-listevent-title {
+  font-weight: bold;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.react-agenfy-listevent-time {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-white);
+  white-space: nowrap;
+}
+
+.react-agenfy-listevent-resource {
+  margin-left: var(--padding-p3);
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .react-agenfy-listevent-container {
+    padding: var(--padding-p3);
+    min-height: 50px;
+  }
+  .react-agenfy-listevent-title {
+    font-size: 0.75rem;
+  }
+  .react-agenfy-listevent-time {
+    font-size: 0.65rem;
+  }
+}

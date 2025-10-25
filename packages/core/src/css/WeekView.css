@@ -1,0 +1,159 @@
+
+.react-agenfy-weekview-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.react-agenfy-weekview-all-day {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.react-agenfy-weekview-all-day-label {
+  width: 4rem;
+  background-color: var(--color-bg-gray-50);
+  border-right: 1px solid var(--color-border);
+}
+
+.react-agenfy-weekview-all-day-text {
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-gray-500);
+}
+
+.react-agenfy-weekview-all-day-column {
+  flex: 1;
+  border-right: 1px solid var(--color-border-gray-300);
+  padding: var(--padding-0_125rem);
+  background-color: var(--color-bg-white);
+  color: var(--color-text-gray-800);
+}
+
+.react-agenfy-weekview-all-day-event {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-white);
+  padding: var(--padding-0_125rem);
+  margin-bottom: var(--margin-0_25rem);
+  border-radius: var(--radius-sm);
+}
+
+.react-agenfy-weekview-timeslot-grid {
+  display: flex;
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--color-bg-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.react-agenfy-weekview-timeslot-label {
+  width: 4rem;
+  background-color: var(--color-bg-gray-50);
+  border-right: 1px solid var(--color-border);
+}
+
+.react-agenfy-weekview-timeslot-label-top {
+  height: 3rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.react-agenfy-weekview-timeslot {
+  height: var(--dayview-timeslot-height);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: var(--padding-0_5rem);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-gray-500);
+}
+
+.react-agenfy-weekview-day-column {
+  flex: 1;
+  position: relative;
+}
+
+.react-agenfy-border-right {
+  border-right: 1px solid var(--color-border-gray-300);
+}
+
+.react-agenfy-weekview-error {
+  padding: var(--padding-1rem);
+  color: #b91c1c;
+}
+
+.react-agenfy-weektimeslot {
+  position: relative;
+  border-bottom: 1px solid var(--color-border);
+  height: var(--dayview-timeslot-height);
+  transition: background-color 200ms var(--transition-timing), border-color 200ms var(--transition-timing);
+}
+
+.react-agenfy-bg-green-200 {
+  background-color: var(--color-bg-green-200);
+}
+
+.react-agenfy-daycolumn-container {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+.react-agenfy-daycolumn-today {
+  background-color: var(--color-bg-blue-50);
+}
+
+.react-agenfy-daycolumn-header {
+  height: 3rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: transparent;
+  transition: background-color var(--transition-duration) var(--transition-timing);
+}
+
+.react-agenfy-daycolumn-header:hover {
+  background-color: var(--color-bg-gray-50);
+}
+
+.react-agenfy-daycolumn-header-today {
+  background-color: var(--color-bg-blue-50);
+}
+
+.react-agenfy-daycolumn-header-text {
+  text-align: center;
+}
+
+.react-agenfy-daycolumn-weekday {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-gray-800);
+}
+
+.react-agenfy-daycolumn-date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-gray-700);
+}
+
+.react-agenfy-daycolumn-slot-container {
+  position: relative;
+}
+
+@media (max-width: 640px) {
+  .react-agenfy-daycolumn-header {
+    height: 2.5rem;
+    padding: 0 0.5rem;
+  }
+  .react-agenfy-daycolumn-weekday {
+    font-size: var(--font-size-xs);
+  }
+  .react-agenfy-daycolumn-date {
+    font-size: 0.65rem;
+  }
+}

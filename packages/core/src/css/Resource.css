@@ -1,0 +1,93 @@
+
+.react-agenfy-resource-display-container {
+  display: flex;
+  align-items: center;
+  margin-top: var(--margin-mt-0_125);
+  font-size: var(--font-size-xs);
+}
+
+.react-agenfy-resource-display-hidden-text {
+  font-size: var(--font-size-xs);
+}
+
+.react-agenfy-resourceicon {
+  display: inline-flex;
+  align-items: center;
+  margin-right: var(--margin-mr-0_25);
+  font-size: var(--font-size-xs);
+}
+
+.react-agenfy-resourceview-container {
+  margin-top: var(--margin-mt-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.react-agenfy-resourceview-header {
+  padding: var(--padding-p3);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-bg-gray-50);
+}
+
+.react-agenfy-resourceview-header-title {
+  font-weight: 500;
+  color: var(--color-text-gray-700);
+  font-size: var(--font-size-base);
+}
+
+.react-agenfy-resourceview-content {
+  padding: var(--padding-p3);
+}
+
+.react-agenfy-resourceview-item {
+  margin-bottom: var(--margin-mb-0_75);
+}
+
+.react-agenfy-resourceview-item:last-child {
+  margin-bottom: 0;
+}
+
+.react-agenfy-resourceview-item-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--margin-mb-0_25);
+}
+
+.react-agenfy-resourceview-item-name {
+  font-weight: 500;
+}
+
+.react-agenfy-resourceview-item-type {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-gray-500);
+  margin-left: var(--margin-ml-0_5);
+}
+
+.react-agenfy-resourceview-item-events {
+  padding-left: var(--padding-p1_5);
+}
+.react-agenfy-resourceview-event {
+  font-size: var(--font-size-sm);
+  padding: var(--padding-p0_25) 0;
+  border-bottom: 1px solid var(--color-bg-gray-100);
+}
+
+.react-agenfy-resourceview-event:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 640px) {
+  .react-agenfy-resourceview-container {
+    margin-top: 0.75rem;
+    border-width: 1px;
+  }
+  .react-agenfy-resourceview-header,
+  .react-agenfy-resourceview-content {
+    padding: 0.5rem;
+  }
+  .react-agenfy-resourceview-event {
+    font-size: var(--font-size-xs);
+  }
+}
