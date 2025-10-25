@@ -1,5 +1,5 @@
 {
-  "name": "@react-agendfy/standard",
+  "name": "react-agendfy",
   "private": true,
   "workspaces": [
     "packages/*",
