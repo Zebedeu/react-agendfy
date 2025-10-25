@@ -2478,25 +2478,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-agendfy/standard@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@react-agendfy/standard@workspace:."
-  dependencies:
-    "@babel/core": "npm:^7.28.5"
-    "@babel/preset-env": "npm:^7.28.5"
-    "@babel/preset-react": "npm:^7.28.5"
-    "@babel/preset-typescript": "npm:^7.28.5"
-    "@testing-library/dom": "npm:^10.4.1"
-    babel-jest: "npm:^30.2.0"
-    eslint: "npm:^9.38.0"
-    eslint-plugin-jsx-a11y: "npm:^6.10.2"
-    eslint-plugin-react: "npm:^7.37.5"
-    eslint-plugin-react-hooks: "npm:^7.0.1"
-    eslint-plugin-react-refresh: "npm:^0.4.24"
-    vite: "npm:^6.1.0"
-  languageName: unknown
-  linkType: soft
-
 "@rolldown/pluginutils@npm:1.0.0-beta.27":
   version: 1.0.0-beta.27
   resolution: "@rolldown/pluginutils@npm:1.0.0-beta.27"
@@ -7470,6 +7451,25 @@ __metadata:
   checksum: 10c0/964c37b02b03ba9103fd67e4a486cf8cb57856eb92508677d8e2a350ec2b2a978014ed7dd4e2531c90ba89eedb0982b613590311471bfd66b14fdec709a09f17
   languageName: node
   linkType: hard
+
+"react-agendfy@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "react-agendfy@workspace:."
+  dependencies:
+    "@babel/core": "npm:^7.28.5"
+    "@babel/preset-env": "npm:^7.28.5"
+    "@babel/preset-react": "npm:^7.28.5"
+    "@babel/preset-typescript": "npm:^7.28.5"
+    "@testing-library/dom": "npm:^10.4.1"
+    babel-jest: "npm:^30.2.0"
+    eslint: "npm:^9.38.0"
+    eslint-plugin-jsx-a11y: "npm:^6.10.2"
+    eslint-plugin-react: "npm:^7.37.5"
+    eslint-plugin-react-hooks: "npm:^7.0.1"
+    eslint-plugin-react-refresh: "npm:^0.4.24"
+    vite: "npm:^6.1.0"
+  languageName: unknown
+  linkType: soft
 
 "react-dom@npm:^18.2.0":
   version: 18.3.1
