@@ -1,0 +1,73 @@
+/* TimelineView.css */
+.ag-timeline-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.ag-timeline-empty {
+  padding: var(--padding-1rem);
+  text-align: center;
+  color: var(--color-text-gray-700);
+}
+
+.ag-timeline-resource-row {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--color-border-gray-300);
+}
+
+.ag-timeline-resource-header {
+  font-weight: 700;
+  padding: var(--padding-0_5rem);
+  background-color: var(--color-bg-gray-50);
+  border-bottom: 1px solid var(--color-border-gray-300);
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-0_5rem);
+}
+
+.ag-resource-toggle {
+  font-size: var(--font-size-sm);
+}
+
+.ag-timeline-events-lane {
+  position: relative;
+  min-height: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-0_5rem);
+  padding: var(--padding-0_5rem);
+}
+
+.ag-timeline-event {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--baseevent-padding-small);
+  border-radius: var(--baseevent-border-radius-small);
+  font-size: var(--baseevent-time-font-size-medium);
+  color: var(--color-text-white);
+  background-color: var(--color-bg-blue-50);
+  border-left: 4px solid var(--color-bg-view-btn-active);
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: background-color var(--transition-duration) var(--transition-timing);
+}
+
+.ag-timeline-event:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.ag-event-title {
+  font-weight: 500;
+}
+
+.ag-event-time {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-gray-500);
+}

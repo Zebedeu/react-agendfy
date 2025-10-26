@@ -46,6 +46,7 @@ const defaultConfig = {
   weekView: "Week",
   dayView: "Day",
   listView: "List",
+  schedule: "Schedule",
   all_day: "All Day",
   clear_filter: "Clear Filters",
   filter_resources: "Filter Resources",
@@ -270,7 +271,7 @@ const Calendar: FC<CalendarProps> = ({
       { name: "week", label: localeConfig.weekView },
       { name: "day", label: localeConfig.dayView },
       { name: "list", label: localeConfig.listView },
-      { name: "agenda", label: "Agenda" },
+      { name: "schedule", label: localeConfig.schedule }
     ];
     const customViews = customViewPlugins.map((plugin: ViewPlugin) => ({
       name: plugin.viewName,
@@ -431,7 +432,7 @@ const Calendar: FC<CalendarProps> = ({
             config={localeConfig}
           />
         );
-      case "agenda":
+      case "schedule":
         return (
           <AgendaView
             events={filteredEvents}

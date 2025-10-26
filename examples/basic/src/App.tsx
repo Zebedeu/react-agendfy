@@ -11,9 +11,13 @@ import React, {
 import { format } from "date-fns";
 import { Calendar } from "@react-agendfy/core";
 import ErrorBoundary from "./components/ErrorBoundary";
-import timelineViewPlugin from '@react-agendfy/plugin-theme';
-import reportsExportPlugin from '@react-agendfy/plugin-export-reports';
 
+// Plugins
+import exportPdfPlugin from "@react-agendfy/plugin-export-pdf";
+import reportsExportPlugin from "@react-agendfy/plugin-export-reports";
+import darkThemePlugin from "@react-agendfy/plugin-theme";
+import timelineViewPlugin from "@react-agendfy/plugin-timeline";
+import googleCalendarPlugin from "@react-agendfy/plugin-google-calendar";
 
 // Exemplo de adaptador de email
 class ExampleEmailAdapter {
@@ -218,7 +222,6 @@ function App() {
       <ErrorBoundary>
         <Suspense fallback={<div>Carregando calendário...</div>}>
           <Calendar
-          theme="dark"
             ref={calendarRef}
             events={events}
             config={defaultConfig}
@@ -232,6 +235,7 @@ function App() {
             onResourceFilterChange={handleResourceFilterChange}
             emailAdapter={new ExampleEmailAdapter()}
             emailConfig={{ defaultRecipient: "user@example.com" }}
+            theme="dark"
             plugins={[
               { location: "left", type: "filter", component: MyLeftHeaderPlugin },
               {
@@ -244,10 +248,12 @@ function App() {
                 viewName: "custom view",
                 component: MyCustomView,
               },
+              exportPdfPlugin,
               reportsExportPlugin,
-              timelineViewPlugin
-             ]}
-
+              darkThemePlugin,
+              timelineViewPlugin,
+              googleCalendarPlugin,
+            ]}
           />
         </Suspense>
       </ErrorBoundary>

@@ -16,18 +16,19 @@ import {
   FilterPluginProps,
   SearchPluginProps,
 } from "./types/search";
-import { CalendarPlugin, DataSourcePlugin, EventLike, ExportPlugin, ThemePlugin } from "./types/plugins";
+import { CalendarPlugin, DataSourcePlugin, EventLike, ExportPlugin, ThemePlugin, ViewPlugin } from "./types/plugins";
 import { ToastProvider } from "./Components/Toast/Toast";
 import Calendar from "./View/Calendar";
 import { ensureDate } from "./Utils/DateTrannforms";
 
-const WrappedCalendar: React.FC<CalendarProps> = (props) => {
+const WrappedCalendar = React.forwardRef<HTMLDivElement, CalendarProps>((props, ref) => {
   return (
     <ToastProvider>
-      <Calendar {...props} />
+      <Calendar {...props} ref={ref} />
     </ToastProvider>
   );
-};
+});
+WrappedCalendar.displayName = 'WrappedCalendar';
 
 export { WrappedCalendar as Calendar };
 export {ensureDate}
@@ -45,4 +46,5 @@ export type {
   ThemePlugin,
   ExportPlugin,
   Resource,
+  ViewPlugin,
 };

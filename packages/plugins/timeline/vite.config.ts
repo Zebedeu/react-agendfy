@@ -1,34 +1,36 @@
+// packages/plugins/timeline/vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
-import { resolve } from 'path';
+import path from 'path';
 
 export default defineConfig({
   plugins: [
-    react(),
-    dts({ 
+    react(), // Lida com a transformação JSX
+    dts({ // Gera os arquivos de declaração de tipos (.d.ts)
       insertTypesEntry: true,
-      skipDiagnostics: false,
-      rollupTypes: true
-    })
+    }),
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.tsx'),
-      name: 'PluginTimeline',
-      formats: ['es', 'cjs'],
-      fileName: (format) => `index.${format === 'es' ? 'esm.js' : 'js'}`,
+      entry: path.resolve(__dirname, 'src/index.tsx'),
+      name: 'ReactAgendfyTimeline',
+      formats: ['es', 'umd'],
+      fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom', '@react-agendfy/core'],
+      // Certifique-se de externalizar dependências que não devem ser empacotadas
+      // no seu pacote
+      external: ['react', 'react-dom', 'react/jsx-runtime', '@react-agendfy/core'],
       output: {
+        // Forneça variáveis globais para usar na compilação UMD
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
-          '@react-agendfy/core': 'ReactAgendfy'
-        }
-      }
+          'react/jsx-runtime': 'jsxRuntime',
+          '@react-agendfy/core': 'ReactAgendfyCore',
+        },
+      },
     },
-    sourcemap: true
-  }
+  },
 });

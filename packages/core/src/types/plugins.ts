@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { Config, EventProps } from '../types';
 
 /** Evento básico esperado pelos plugins (alinha com EventProps) */
-export interface EventLike extends EventProps {
+export interface EventLike extends EventProps { // EventProps já contém resourceId e resourceIds
   [k: string]: any;
 }
 

@@ -1,6 +1,8 @@
 .react-agenfy-listview-container {
   width: 100%;
   overflow: hidden;
+    background-color: var(--color-bg-gray-50);
+
 }
 
 .react-agenfy-listview-empty {
