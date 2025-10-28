@@ -1,148 +1,146 @@
-import React, { useRef, useEffect, useState } from "react";
-import { useDroppable } from "@dnd-kit/core";
+// CalendarDay.tsx (Atualizado)
+import React, { useRef, useEffect, useState, memo } from "react";
+import { useDroppable, } from "@dnd-kit/core";
 import {
-  differenceInDays,
-  endOfDay,
   format,
   isSameDay,
   isWithinInterval,
   startOfDay,
+  endOfDay,
+  addMilliseconds,
+  isSameMonth, // ← ADICIONE para ajuste de inclusivo
 } from "date-fns";
-import { EventItem } from "./EventItem";
 import { TZDate } from "@date-fns/tz";
 import { ensureDate } from "../../../Utils/DateTrannforms";
-import { CalendarDayProps, Resource } from "../../../types/types";
+import { CalendarDayProps } from "../../../types/types";
+import { EventItem } from "./EventItem";
 
-export const CalendarDay: React.FC<CalendarDayProps> = ({
+const MAX_VISIBLE = 3;
+
+const CalendarDayMemo: React.FC<CalendarDayProps> = ({
   day,
   events = [],
   onDayClick,
   onEventClick,
-  onEventResize,
+  onEventResize, // Passe se necessário
   config,
   onMouseDown,
   onMouseMove,
   isSelected,
+  monthDate, // Para outros meses
 }) => {
-  const dayRef = useRef<HTMLDivElement>(null);
-  const [dayWidth, setDayWidth] = useState(0);
-
-  const droppableId = day ? day.toISOString() : "disabled";
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
   const { setNodeRef, isOver } = useDroppable({
-    id: droppableId,
+    id: day?.toISOString() || "empty",
     disabled: !day,
   });
 
   useEffect(() => {
-    if (dayRef.current) setDayWidth(dayRef.current.offsetWidth);
-  }, [dayRef.current]);
+    if (ref.current) setWidth(ref.current.offsetWidth);
+  }, [day]); // ← Re-calcula se day muda
 
   if (!day) {
     return <div className="react-agenfy-calendar-day-empty" />;
   }
 
-  const dayEvents = events.filter((event) => {
+  // CORREÇÃO: Filtro ajustado para end INCLUSIVO
+  // Adiciona 1ms ao end para incluir eventos que terminam exatamente à meia-noite
+  const dayEvents = events.filter((e) => {
     try {
-      const eventStart = ensureDate(event.start, config?.timeZone);
-      const eventEnd = ensureDate(event.end, config?.timeZone);
+      const eventStart = ensureDate(e.start, config?.timeZone);
+      const eventEnd = addMilliseconds(ensureDate(e.end, config?.timeZone), 1); // ← Ajuste chave!
       return isWithinInterval(day, {
         start: startOfDay(eventStart),
-        end: endOfDay(eventEnd),
+        end: endOfDay(eventEnd), // Agora captura o dia completo
       });
     } catch (error) {
-      console.error("Erro ao verificar evento para o dia:", error, event);
+      console.error("Erro ao filtrar evento:", error, e);
       return false;
     }
   });
 
-  const sortedEvents = [...dayEvents].sort((a, b) => {
-    const timeA = ensureDate(a.start, config?.timeZone);
-    const timeB = ensureDate(b.start, config?.timeZone);
-    if (timeA < timeB) return -1;
-    if (timeA > timeB) return 1;
+  const sorted = [...dayEvents].sort((a, b) => {
+    const timeA = ensureDate(a.start, config?.timeZone).getTime();
+    const timeB = ensureDate(b.start, config?.timeZone).getTime();
+    if (timeA !== timeB) return timeA - timeB;
 
-    const durationA = differenceInDays(
-      ensureDate(a.end, config?.timeZone),
-      ensureDate(a.start, config?.timeZone)
-    );
-    const durationB = differenceInDays(
-      ensureDate(b.end, config?.timeZone),
-      ensureDate(b.start, config?.timeZone)
-    );
-    return durationA - durationB;
+    // Ordena por duração (mais longos primeiro, como FullCalendar)
+    const durA = ensureDate(a.end, config?.timeZone).getTime() - timeA;
+    const durB = ensureDate(b.end, config?.timeZone).getTime() - timeB;
+    return durB - durA; // Inverte para longos primeiro
   });
 
-  const MAX_VISIBLE_EVENTS = 3;
-  const visibleEvents = sortedEvents.slice(0, MAX_VISIBLE_EVENTS);
-  const hiddenEventsCount = Math.max(0, sortedEvents.length - MAX_VISIBLE_EVENTS);
+  const visible = sorted.slice(0, MAX_VISIBLE);
+  const hidden = Math.max(0, sorted.length - MAX_VISIBLE);
   const isToday = isSameDay(day, new TZDate(new Date(), config?.timeZone));
+  const isOtherMonth = monthDate && !isSameMonth(day, monthDate); // ← Adicione import isSameMonth
 
-  const dayClasses = [
+  const classes = [
     "react-agenfy-calendar-day",
     isToday && "react-agenfy-calendar-day-today",
     isOver && "react-agenfy-calendar-day-droppable-over",
-    isSelected && "react-agenfy-calendar-day-selected"
+    isSelected && "react-agenfy-calendar-day-selected",
+    isOtherMonth && "react-agenfy-calendar-day-other-month",
   ].filter(Boolean).join(" ");
 
   return (
     <div
-      ref={(node) => { setNodeRef(node); dayRef.current = node; }}
+      ref={(el) => {
+        ref.current = el;
+        setNodeRef(el);
+      }}
+      className={classes}
+      onClick={(e) => { e.stopPropagation(); onDayClick?.(day); }}
       onMouseDown={() => onMouseDown?.(day)}
       onMouseMove={() => onMouseMove?.(day)}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onDayClick?.(day); } }}
-      onClick={(e) => { e.stopPropagation(); onDayClick?.(day); }}
-      className={dayClasses}
       role="button"
       tabIndex={0}
       aria-label={format(day, "d MMMM yyyy")}
     >
       <div className="react-agenfy-calendar-day-header">
-        <span className={`react-agenfy-day-number ${isToday ? "react-agenfy-day-number-today" : ""}`}>
+        <span className={`react-agenfy-day-number ${isToday ? "react-agenfy-day-number-today" : ""} ${isOtherMonth ? "react-agenfy-day-number-other-month" : ""}`}>
           {format(day, "d")}
         </span>
-        {hiddenEventsCount > 0 && (
+        {hidden > 0 && (
           <span
-            role="button"
-            aria-label={`More ${hiddenEventsCount} events`}
             className="react-agenfy-hidden-events"
             onClick={(e) => {
               e.stopPropagation();
-              const eventsInfo = sortedEvents
-                .slice(MAX_VISIBLE_EVENTS)
-                .map((ev) => {
-                  const resourcesInfo =
-                    ev.resources && ev.resources.length > 0
-                      ? ` [${ev.resources.map((r: Resource) => r.name).join(", ")}]`
-                      : "";
-                  return `${ev.title} (${format(ensureDate(ev.start, config?.timeZone), "HH:mm")})${resourcesInfo}`;
-                })
-                .join("\n");
-              alert(`More ${hiddenEventsCount} events:\n${eventsInfo}`);
+              const list = sorted.slice(MAX_VISIBLE).map((ev) =>
+                `${ev.title} (${format(ensureDate(ev.start, config?.timeZone), "HH:mm")} - ${format(ensureDate(ev.end, config?.timeZone), "HH:mm")})`
+              ).join("\n");
+              alert(`+${hidden} eventos:\n${list}`);
             }}
+            role="button"
+            aria-label={`+${hidden} eventos ocultos`}
           >
-            +{hiddenEventsCount}
+            +{hidden}
           </span>
         )}
       </div>
       <div className="react-agenfy-day-events">
-        {visibleEvents.map((event) => {
-          const eventStart = ensureDate(event.start, config?.timeZone);
-          const eventEnd = ensureDate(event.end, config?.timeZone);
+        {visible.map((event) => {
+          const s = ensureDate(event.start, config?.timeZone);
+          const e = ensureDate(event.end, config?.timeZone);
 
-          const isEventStart = isSameDay(eventStart, day);
-          const isEventEnd = isSameDay(eventEnd, day);
+          // CORREÇÃO: isEnd ajustado para incluir se termina no INÍCIO do dia (ex: 00:00)
+          const isEventStart = isSameDay(s, day);
+          const isEventEnd = isSameDay(e, day) || (e.getHours() === 0 && e.getMinutes() === 0 && e.getSeconds() === 0 && isSameDay(addMilliseconds(e, 1), day));
 
           return (
             <EventItem
               key={`${event.id}-${day.toISOString()}`}
               event={event}
-              isMultiDay={event.isMultiDay}
               isStart={isEventStart}
               isEnd={isEventEnd}
-              onEventResize={onEventResize}
+              isMultiDay={event.isMultiDay || !isSameDay(s, e)} // ← Calcula dinamicamente se necessário
               onEventClick={onEventClick}
-              dayWidth={dayWidth}
+              onEventResize={onEventResize}
               config={config}
+              dayWidth={width}
+              isOtherMonth={isOtherMonth}
             />
           );
         })}
@@ -150,3 +148,5 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
     </div>
   );
 };
+
+export const CalendarDay = memo(CalendarDayMemo);

@@ -82,17 +82,11 @@
 }
 
 .react-agenfy-event-item-multiday-start {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
   margin-right: calc(-1 * var(--padding-0_5rem) - 1px);
   padding-right: calc(var(--padding-0_5rem) + 1px);
 }
-
 .react-agenfy-event-item-multiday-end {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  margin-left: calc(-1 * var(--padding-0_5rem) - 1px);
-  padding-left: calc(var(--padding-0_5rem) + 1px);
+  
 }
 
 .react-agenfy-event-item-multiday-middle {
@@ -234,7 +228,38 @@
 .react-agendfy-event-item-multiday-end:hover {
   filter: brightness(0.95);
 }
+.react-agendfy-event-item {
+  pointer-events: auto;
+  z-index: 2;
+  position: relative;
+}
 
+/* Evita que os eventos filhos deixem o clique “vazar” para o container */
+.react-agendfy-event-item * {
+  pointer-events: auto;
+}
+
+/* O quadrado do dia deve ficar atrás dos eventos */
+.react-agendfy-day-cell {
+  position: relative;
+  z-index: 1;
+}
+
+/* css para meses nao nao atual */
+/* Adicione no MonthView.css ou global */
+.react-agenfy-calendar-day-other-month {
+  background-color: var(--color-bg-gray-50);
+  opacity: 0.6;
+}
+
+.react-agenfy-day-number-other-month {
+  color: var(--color-text-gray-500);
+}
+
+/* Opcional: Dim eventos em meses outros (passe prop isOtherMonth para EventItem) */
+.react-agenfy-event-item-other-month {
+  opacity: 0.4;
+}
 @media (max-width: 640px) {
   .react-agenfy-event-item {
     padding: 2px 4px;

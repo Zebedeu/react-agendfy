@@ -1,275 +1,138 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import {
-  format,
-  isValid,
-  addDays,
-  getDay,
-  startOfMonth,
-  endOfMonth,
-  eachDayOfInterval,
-  startOfWeek,
-} from "date-fns";
-import { isSameDay } from "date-fns";
-import {
-  DndContext,
-  DragOverlay,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import { ensureDate, expandRecurringEvents } from "../../Utils/DateTrannforms";
-import ResourceView from "../../Components/Resource/ResourceView";
-import { EventProps, MonthViewProps } from "../../types/types";
-import { CalendarDay } from "./Components/CalendarDay";
-import { TZDate } from "@date-fns/tz";
-import { getLocale } from "../../Utils/locate";
-import { EventItem } from "./Components/EventItem";
+// MonthView.tsx
+import React, { useMemo, useCallback, useState } from 'react';
+import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { endOfWeek, isSameMonth, format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, addDays, getDay, isSameDay } from 'date-fns';
+import { TZDate } from '@date-fns/tz';
+import { ensureDate, expandRecurringEvents } from '../../Utils/DateTrannforms';
+import { getLocale } from '../../Utils/locate';
+import ResourceView from '../../Components/Resource/ResourceView';
+import { MonthViewProps, EventProps } from '../../types/types';
+import { EventItem } from './Components/EventItem';
+import { CalendarDay } from './Components/CalendarDay';
+import { normalizeEvents } from '../../Utils/calendarHelpers';
 
-const MonthView = ({
+const MonthView: React.FC<MonthViewProps> = ({
   events = [],
   resources = [],
-  currentDate = new TZDate(new Date(), config?.timeZone),
+  currentDate = new Date(),
   onEventUpdate,
-  onEventResize,
   onDayClick,
   onEventClick,
-  config,
   onDateRangeSelect,
+  config,
   showResourceView = false,
-}: MonthViewProps) => {
+  onEventResize
+}) => {
   const [activeEvent, setActiveEvent] = useState<EventProps | null>(null);
+  const [selecting, setSelecting] = useState(false);
+  const [selStart, setSelStart] = useState<Date | null>(null);
+  const [selEnd, setSelEnd] = useState<Date | null>(null);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 5,
-      },
-    })
-  );
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+const monthStart = useMemo(() => startOfMonth(new TZDate(currentDate, config?.timeZone)), [currentDate, config?.timeZone]);
+  const tz = config?.timeZone;
+  const locale = getLocale(config?.lang);
 
-  const [isSelecting, setIsSelecting] = useState(false);
-  const [selectionStart, setSelectionStart] = useState<Date | null>(null);
-  const [selectionEnd, setSelectionEnd] = useState<Date | null>(null);
+  const { weeks, expandedEvents } = useMemo(() => {
+  const viewStart = startOfWeek(monthStart);
+  const monthEnd = endOfMonth(monthStart);
+  const viewEnd = endOfWeek(monthEnd);
 
-  const handleDragStart = useCallback((event) => setActiveEvent(event.active.data.current.event), []);
+  // Normalização e expansão de eventos para cobrir toda a view (inclui spans para prev/next)
+  const normalized = normalizeEvents(events); // Sua função existente
+  const expanded = expandRecurringEvents(normalized, viewStart, viewEnd, config?.timeZone || 'UTC');
 
-  const handleDragEnd = useCallback(
-    ({ active, over }) => {
-      setActiveEvent(null);
+  // Gera todas as datas reais da view (sem nulls)
+  const allDays = eachDayOfInterval({ start: viewStart, end: viewEnd });
+  const weeks: Date[][] = [];
+  for (let i = 0; i < allDays.length; i += 7) {
+    weeks.push(allDays.slice(i, i + 7));
+  }
 
-      if (active && over && onEventUpdate) {
-        const originalEvent = active.data.current.event as EventProps;
-        const targetDateStr = over.id as string; // ID do CalendarDay (ex: '2023-01-20T00:00:00.000Z')
+  return { weeks, expandedEvents: expanded };
+}, [events, resources, currentDate, config?.timeZone, normalizeEvents]);
 
-        const newStartDate = new Date(targetDateStr);
-        const originalStartDate = ensureDate(originalEvent.start, config?.timeZone);
+  const handleDragStart = (e: any) => setActiveEvent(e.active.data.current.event);
+  const handleDragEnd = (e: any) => {
+    setActiveEvent(null);
+    const { active, over } = e;
+    if (!over || !onEventUpdate) return;
 
-        if (isSameDay(newStartDate, originalStartDate)) {
-          return;
-        }
+    const event = active.data.current.event as EventProps;
+    const targetDate = new Date(over.id);
+    const origStart = ensureDate(event.start, tz);
 
-        newStartDate.setHours(originalStartDate.getHours());
-        newStartDate.setMinutes(originalStartDate.getMinutes());
+    if (isSameDay(targetDate, origStart)) return;
 
-        const duration = ensureDate(
-          originalEvent.end,
-          config?.timeZone
-        ).getTime() - originalStartDate.getTime();
-        const newEndDate = new Date(newStartDate.getTime() + duration);
+    const hours = origStart.getHours(), mins = origStart.getMinutes();
+    targetDate.setHours(hours, mins);
 
-        onEventUpdate({
-          ...originalEvent,
-          start: newStartDate.toISOString(),
-          end: newEndDate.toISOString(),
-        });
-      }
-    },
-    [onEventUpdate, config?.timeZone]
-  );
+    const duration = ensureDate(event.end, tz).getTime() - origStart.getTime();
+    const newEnd = new Date(targetDate.getTime() + duration);
 
-  const normalizeEvents = useCallback(
-    (eventsArray: EventProps[]) => {
-      return (eventsArray || [])
-        .map((event: EventProps) => {
-          let normalizedEvent: EventProps = { ...event };
-
-          try {
-            if (typeof event.start === "string") {
-              normalizedEvent.start = event.start
-                ? event.start : new Date().toISOString();
-            }
-
-            const startDate = ensureDate(normalizedEvent.start, config?.timeZone || 'UTC');
-            const endDate = ensureDate(normalizedEvent.end, config?.timeZone || 'UTC');
-
-            if (!isValid(startDate) || !isValid(endDate)) {
-              console.error("Data inválida no evento:", event);
-              return null;
-            }
-
-            if (
-              !normalizedEvent.resources &&
-              event.resourceIds &&
-              Array.isArray(event.resourceIds) &&
-              resources.length > 0
-            ) {
-              normalizedEvent.resources = event.resourceIds
-                .map((id) => resources.find((r) => r.id === id))
-                .filter(Boolean);
-            }
-
-            return normalizedEvent;
-          } catch (error) {
-            console.error("Erro ao normalizar evento:", error, event);
-            return null;
-          }
-        })
-        .filter(Boolean);
-    },
-    [resources, config?.timeZone]
-  );
-
-  const expandedEvents: EventProps[] = useMemo(() => {
-    try {
-      const monthStart = startOfMonth(new TZDate(currentDate, config?.timeZone));
-      const monthEnd = endOfMonth(new TZDate(currentDate, config?.timeZone));
-
-      const viewStart = addDays(monthStart, -7);
-      const viewEnd = addDays(monthEnd, 7);
-
-      const normalizedEvents = normalizeEvents(events);
-
-      if (normalizedEvents.length > 0) {
-        return expandRecurringEvents(normalizedEvents, viewStart, viewEnd, config?.timeZone);
-      }
-      return [];
-    } catch (error) {
-      console.error("Erro ao expandir eventos:", error);
-      return [];
-    }
-  }, [events, resources, currentDate, normalizeEvents, config?.timeZone]);
-
-  const generateMonthGrid = useCallback(() => {
-    const monthStart = startOfMonth(new TZDate(currentDate, config?.timeZone));
-    const monthEnd = endOfMonth(new TZDate(currentDate, config?.timeZone));
-    const startWeekday = getDay(monthStart);
-
-    const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
-    const totalCells = Math.ceil((days.length + startWeekday) / 7) * 7;
-    const grid = Array(totalCells).fill(null);
-
-    days.forEach((day, index) => {
-      grid[index + startWeekday] = day;
+    onEventUpdate({
+      ...event,
+      start: targetDate.toISOString(),
+      end: newEnd.toISOString(),
     });
-
-    return grid.reduce((weeks, day, index) => {
-      const weekIndex = Math.floor(index / 7);
-      weeks[weekIndex] = weeks[weekIndex] || [];
-      weeks[weekIndex].push(day);
-      return weeks;
-    }, []);
-  }, [currentDate, config?.timeZone]);
-
-  const weeks = generateMonthGrid();
-
-  const handleMouseDown = (day: Date) => {
-    if (!day) return;
-    setIsSelecting(true);
-    setSelectionStart(day);
-    setSelectionEnd(day);
   };
 
-  const handleMouseMove = (day: Date) => {
-    if (isSelecting && day) {
-      setSelectionEnd(day);
-    }
-  };
-
+  const handleMouseDown = (d: Date) => { setSelecting(true); setSelStart(d); setSelEnd(d); };
+  const handleMouseMove = (d: Date) => { if (selecting) setSelEnd(d); };
   const handleMouseUp = () => {
-    if (isSelecting && selectionStart && selectionEnd && onDateRangeSelect) {
-      const start = selectionStart < selectionEnd ? selectionStart : selectionEnd;
-      const end = selectionStart > selectionEnd ? selectionStart : selectionEnd;
-      onDateRangeSelect({
-        start: start.toISOString(),
-        end: end.toISOString(),
-        isMultiDay: !isSameDay(start, end),
-      });
+    if (selecting && selStart && selEnd && onDateRangeSelect) {
+      const [start, end] = selStart < selEnd ? [selStart, selEnd] : [selEnd, selStart];
+      onDateRangeSelect({ start: start.toISOString(), end: end.toISOString(), isMultiDay: !isSameDay(start, end) });
     }
-    setIsSelecting(false);
-    setSelectionStart(null);
-    setSelectionEnd(null);
+    setSelecting(false); setSelStart(null); setSelEnd(null);
   };
 
-  const isDaySelected = (day: Date) => {
-    if (!isSelecting || !selectionStart || !selectionEnd || !day) {
-      return false;
-    }
-    const start = selectionStart < selectionEnd ? selectionStart : selectionEnd;
-    const end = selectionStart > selectionEnd ? selectionStart : selectionEnd;
-    return day >= start && day <= end;
-  };
+  const isSelected = (d: Date) => selecting && selStart && selEnd && d >= (selStart < selEnd ? selStart : selEnd) && d <= (selStart > selEnd ? selStart : selEnd);
 
   return (
-    <DndContext
-      sensors={sensors}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
-      <>
-        {showResourceView && resources.length > 0 && (
-          <ResourceView
-            resources={resources}
-            events={expandedEvents}
-            currentDate={currentDate}
-          />
-        )}
+    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      {showResourceView && resources.length > 0 && (
+        <ResourceView resources={resources} events={expandedEvents} currentDate={currentDate} />
+      )}
 
-        <div className="react-agenfy-monthview-container" onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
-          <div className="react-agenfy-monthview-header">
-            {eachDayOfInterval({
-              start: startOfWeek(new TZDate(currentDate, config?.timeZone)),
-              end: addDays(
-                startOfWeek(new TZDate(currentDate, config?.timeZone)),
-                6
-              ),
-            }).map((day) => (
-              <div
-                key={format(day, "EEEEEE", { locale: getLocale(config?.lang) })}
-                className="react-agenfy-monthview-day-label"
-              >
-                {format(day, "EEEEEE", { locale: getLocale(config?.lang) })}
-              </div>
-            ))}
-          </div>
-          <div className="react-agenfy-monthview-grid-container">
-            {weeks.map((week: Date[], weekIndex: number) => (
-              <div key={weekIndex} className="react-agenfy-monthview-week-row">
-                {week.map((day: Date, dayIndex: number) => (
-                  <CalendarDay
-                    key={
-                      day
-                        ? format(day, "yyyy-MM-dd")
-                        : `empty-${weekIndex}-${dayIndex}`
-                    }
-                    day={day}
-                    events={expandedEvents}
-                    onDayClick={onDayClick}
-                    onEventResize={onEventResize}
-                    onEventClick={onEventClick}
-                    config={config}
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    isSelected={isDaySelected(day)}
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
+      <div className="react-agenfy-monthview-container" onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
+        <div className="react-agenfy-monthview-header">
+          {eachDayOfInterval({
+            start: startOfWeek(new TZDate(currentDate, tz)),
+            end: addDays(startOfWeek(new TZDate(currentDate, tz)), 6),
+          }).map(d => (
+            <div key={d.toISOString()} className="react-agenfy-monthview-day-label">
+              {format(d, 'EEEEEE', { locale })}
+            </div>
+          ))}
         </div>
-        <DragOverlay>
-          {activeEvent ? <EventItem event={activeEvent} isDragging /> : null}
-        </DragOverlay>
-      </>
+
+        <div className="react-agenfy-monthview-grid-container">
+          {weeks.map((week, i) => (
+            <div key={i} className="react-agenfy-monthview-week-row">
+              {week.map((day, j) => (
+                <CalendarDay
+                  key={day ? format(day, 'yyyy-MM-dd') : `empty-${i}-${j}`}
+                  day={day}
+                  events={expandedEvents}
+                  onDayClick={onDayClick}
+                  onEventClick={onEventClick}
+                  config={config}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  isSelected={isSelected(day)}
+                  monthDate={monthStart}
+                  onEventResize={onEventResize}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <DragOverlay>
+        {activeEvent && <EventItem event={activeEvent} isPreview isStart isEnd={false} config={config} dayWidth={150} />}
+      </DragOverlay>
     </DndContext>
   );
 };
