@@ -1,6 +1,6 @@
 import React from 'react';
 import { ResourceIcon } from "./ResourceIcon";
-import { Resource } from '../../types';
+import { Resource } from '../../types/types';
 
 const defaultResource: Resource = {
   id: "default",

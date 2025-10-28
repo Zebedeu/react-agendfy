@@ -1,6 +1,6 @@
 import { TZDate } from '@date-fns/tz';
 import { format } from 'date-fns';
-import { Config, EventProps } from '../types';
+import { Config, EventProps } from '../types/types';
 import { getLocale } from './locate';
 
 export const generateICalContent = (events: EventProps[], config: Config) => {

@@ -3,7 +3,7 @@ import { format, parseISO, differenceInMinutes, startOfDay, endOfDay } from "dat
 import { useDraggable } from "@dnd-kit/core";
 import generateTooltipContent from "../Utils/generateTooltipContent";
 import ResourceDisplay from "./Resource/ResourceDisplay";
-import { BaseEventProps } from "../types";
+import { BaseEventProps } from "../types/types";
 import { TZDate } from "@date-fns/tz";
 
 const BaseEvent = ({

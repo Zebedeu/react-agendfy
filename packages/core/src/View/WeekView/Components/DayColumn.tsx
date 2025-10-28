@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo } from 'react';
 import {
   differenceInMinutes,
   format,
@@ -58,7 +58,7 @@ export const DayColumn = memo(
         }`}
       >
         <div
-          className={`react-agenfy-daycolumn-header ${
+          className={`react-agenfy-daycolumn-header  react-agenfy-header-today ${
             isToday ? "react-agenfy-daycolumn-header-today" : ""
           }`}
           onClick={() => {

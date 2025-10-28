@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from "@testing-library/react";
 import ListView from "./ListView";
-import { Config, EventProps } from "../../types";
+import { Config, EventProps } from "../../types/types";
 
 beforeAll(() => {
   global.ResizeObserver = class ResizeObserver {

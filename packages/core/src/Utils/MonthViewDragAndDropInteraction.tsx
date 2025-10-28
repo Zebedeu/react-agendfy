@@ -9,7 +9,7 @@ import {
   parseISO,
 } from "date-fns";
 import { TZDate } from "@date-fns/tz";
-import { EventProps } from "../types";
+import { EventProps } from "../types/types";
 import { ensureDate } from "./DateTrannforms";
 interface MonthViewDragAndDropInteractionProps {
   children: React.ReactNode;

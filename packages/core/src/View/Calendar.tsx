@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import CalendarHeader from "../Components/CalendarHeader";
 import { getLocale } from "../Utils/locate";
-import { CalendarProps, EventProps } from "../types";
+import { CalendarProps, EventProps } from "../types/types";
 import { normalizeEvents } from "../Utils/calendarHelpers";
 import { useToast } from "../Components/Toast/Toast";
 import { useEventReminder } from "../hooks/useEventReminder";

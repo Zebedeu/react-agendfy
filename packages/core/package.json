@@ -1,18 +1,43 @@
 {
   "name": "@react-agendfy/core",
-  "version": "1.1.10",
+  "version": "1.1.17",
+  "description": "Core library for React Agendfy — a flexible calendar and scheduling system for React applications.",
+  "license": "MIT",
+  "author": "Márcio Zebedeu <marciozebedeu@gmail.com>",
+  "homepage": "https://github.com/react-agendfy/react-agendfy#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/react-agendfy/react-agendfy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/react-agendfy/react-agendfy/issues"
+  },
   "type": "module",
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
   "unpkg": "dist/index.umd.js",
-  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+   "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js"
+    },
+    "./core.css": "./dist/index.css"
+  },
+   "sideEffects": [
+    "./dist/index.css"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build --config vite.config.ts",
     "preview": "vite preview",
     "lint": "eslint .",
-    "test": "jest"
+    "test": "jest",
+    "prepublishOnly": "yarn build"
   },
   "peerDependencies": {
     "react": "^18 || ^19",
@@ -44,5 +69,19 @@
     "typescript": "^5.7.3",
     "vite": "^6.1.0",
     "vite-plugin-dts": "^4.5.0"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "react",
+    "calendar",
+    "scheduler",
+    "agendfy",
+    "events",
+    "timeline",
+    "drag-and-drop",
+    "core",
+    "date-fns"
+  ]
 }

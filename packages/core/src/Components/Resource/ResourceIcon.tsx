@@ -1,5 +1,5 @@
 import React from 'react';
-import { Resource } from '../../types';
+import { Resource } from '../../types/types';
 
 export const ResourceIcon = ({ resource }: {resource: Resource} ) => {
   const getIcon = (type: string) => {

@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 import { addMinutes, differenceInMinutes, isValid } from "date-fns";
 import { TZDate } from "@date-fns/tz";
-import { EventProps } from "../types";
+import { EventProps } from "../types/types";
 import { ensureDate } from "../Utils/DateTrannforms";
 
 export const useEventInteractions = ({ 

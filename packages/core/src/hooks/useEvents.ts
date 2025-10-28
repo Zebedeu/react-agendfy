@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { format, addDays, setHours, setMinutes, startOfDay, endOfDay, addMinutes, differenceInMinutes } from "date-fns";
 import { rrulestr } from "rrule";
 import { TZDate } from "@date-fns/tz";
-import { EventProps } from "../types";
+import { EventProps } from "../types/types";
 import { ensureDate } from "../Utils/DateTrannforms";
 
 export const useEvents = ({ events, daysOfWeek, currentWeekStart, timeZone }) => {

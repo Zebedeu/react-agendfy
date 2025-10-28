@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useMemo } from "react";
 import { useDroppable } from "@dnd-kit/core";
-import { EventProps, TimeSlotProps as BaseTimeSlotProps, TimeSlotProps } from "./../types";
+import { EventProps, TimeSlotProps as BaseTimeSlotProps, TimeSlotProps } from "../types/types";
 import { TZDate } from "@date-fns/tz";
 import { format } from "date-fns";
 import { getSlotTime } from "../Utils/slotTime";

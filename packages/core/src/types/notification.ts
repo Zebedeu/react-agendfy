@@ -1,5 +1,5 @@
 import { NotificationService, ToastProps } from "../Notify/NotificationService";
-import { Config, EventProps } from "../types";
+import { Config, EventProps } from "./types";
 
 export interface EmailAdapter {
     sendEmail(subject: string, body: string, recipient?: string): Promise<void>;

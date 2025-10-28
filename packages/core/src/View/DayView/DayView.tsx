@@ -11,7 +11,7 @@ import {
   isSameDay,
 } from "date-fns";
 import { ensureDate } from "../../Utils/DateTrannforms";
-import { DayViewProps, EventProps } from "../../types";
+import { DayViewProps, EventProps } from "../../types/types";
 import { TZDate } from "@date-fns/tz";
 import { TimeSlot } from "./Components/TimeSlot";
 import { calculateRedLineOffset } from "../../Utils/calculateRedLineOffset";

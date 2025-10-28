@@ -54,12 +54,12 @@ export const WeekEvent = ({
       if (isAfter(newEndTime, maxEndTime)) {
         const overflowMinutes = differenceInMinutes(newEndTime, maxEndTime);
         const nextDayStartTime = startOfDay(addDays(dayDate, 1));
-        newEndTime = addMinutes(nextDayStartTime, overflowMinutes);
-        onEventResize({ ...event, end: newEndTime, isMultiDay: true });
+        const finalEndTime = addMinutes(nextDayStartTime, overflowMinutes);
+        onEventResize({ ...event, end: finalEndTime.toISOString(), isMultiDay: true });
         return;
       }
 
-      if (isAfter(newEndTime, eventStart)) {
+      if (!isAfter(eventStart, newEndTime)) {
         onEventResize({ ...event, end: newEndTime.toISOString() });
       }
     }
@@ -67,23 +67,19 @@ export const WeekEvent = ({
     if (direction === "right") {
       const daysAdded = Math.round(delta.width / dayWidth);
       if (daysAdded > 0) {
-        const newEnd = addDays(eventEnd, daysAdded);
-        onEventResize({ ...event, end: newEnd.toISOString() });
+        const newEnd = addDays(eventEnd, daysAdded - 1);
+        onEventResize({ ...event, end: newEnd.toISOString(), isMultiDay: true });
       }
     }
 
     if (direction === "left") {
        const daysRemoved = Math.round(delta.width / dayWidth);
       if (daysRemoved > 0) {
-        const newStart = subDays(eventStart, daysRemoved); +
+        const newStart = subDays(eventStart, daysRemoved);
         onEventResize({ ...event, start: newStart.toISOString() });
       }
     }
 
-    setSize({
-      width: ref.style.width,
-      height: ref.style.height,
-    });
   };
 
   const enableResizing = isDraggable && onEventResize;
@@ -103,7 +99,7 @@ export const WeekEvent = ({
   return (
     <Resizable
       size={size}
-      enable={{ top: true, right: false, bottom: true, left: false }}
+      enable={{ top: false, right: true, bottom: true, left: false }}
       onResizeStop={handleResize}
       handleStyles={{
         top: { cursor: 'ns-resize' },
@@ -116,8 +112,8 @@ export const WeekEvent = ({
         top: positionStyle?.top || "0",
         bottom: positionStyle?.bottom || "0",
         left: positionStyle?.left || "0",
-        height: positionStyle?.width || "0",
-        width: positionStyle?.height || "0",
+        height: positionStyle?.height || "0",
+        width: positionStyle?.width || "0",
         position: "absolute",
         zIndex: 20,
         maxWidth: "100%",
@@ -132,19 +128,32 @@ export const WeekEvent = ({
       <div ref={setNodeRef}
                 style={{ width: "100%", height: "100%" }}
       {...listeners} {...attributes}>
-        <BaseEvent
-          event={event}
-          onEventClick={onEventClick}
-          positionStyle={{ width: "100%",  height: "100%", top: "0", left: "0" }}
-          config={config}
-          isMultiDay={isMultiDay}
-          isStart={isStart}
-          isEnd={isEnd}
-          dayDate={dayDate}
-          isDraggable={isDraggable}
-          customClassName=""
-          parsedSlotMax={endHour}
-        />
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            onEventClick?.(event);
+          }}
+          onMouseDown={(e) => {
+            e.stopPropagation();
+          }}
+          onMouseMove={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <BaseEvent
+            event={event}
+            onEventClick={onEventClick}
+            positionStyle={{ width: "100%",  height: "100%", top: "0", left: "0" }}
+            config={config}
+            isMultiDay={isMultiDay}
+            isStart={isStart}
+            isEnd={isEnd}
+            dayDate={dayDate}
+            isDraggable={isDraggable}
+            customClassName=""
+            parsedSlotMax={endHour}
+          />
+        </div>
       </div>
     </Resizable>
   );

@@ -1,7 +1,7 @@
 import { format, startOfDay, endOfDay, addMinutes, differenceInMinutes, setHours, setMinutes, startOfWeek, addDays } from "date-fns";
 import { rrulestr } from "rrule";
 import { TZDate } from "@date-fns/tz";
-import { EventProps } from "../types";
+import { EventProps } from "../types/types";
 import { ensureDate } from "./DateTrannforms";
 
 

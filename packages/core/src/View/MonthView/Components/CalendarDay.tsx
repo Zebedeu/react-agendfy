@@ -11,7 +11,7 @@ import {
 import { EventItem } from "./EventItem";
 import { TZDate } from "@date-fns/tz";
 import { ensureDate } from "../../../Utils/DateTrannforms";
-import { CalendarDayProps, Resource } from "../../../types";
+import { CalendarDayProps, Resource } from "../../../types/types";
 
 export const CalendarDay: React.FC<CalendarDayProps> = ({
   day,

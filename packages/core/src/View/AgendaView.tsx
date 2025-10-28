@@ -1,6 +1,6 @@
 import React from 'react';
 import { format, addDays, isWithinInterval, startOfDay, endOfDay, parseISO } from 'date-fns';
-import { EventProps, ListViewProps } from '../types';
+import { EventProps, ListViewProps } from '../types/types';
 import { TZDate } from '@date-fns/tz';
 import { getLocale } from '../Utils/locate';
 

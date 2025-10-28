@@ -1,5 +1,5 @@
 
-import { EventProps } from "../types";
+import { EventProps } from "../types/types";
 import { EmailAdapter } from "../types/notification";
 import { NotificationService, ToastProps } from "./NotificationService";
 import { format } from "date-fns";

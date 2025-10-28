@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDroppable } from "@dnd-kit/core";
-import { EventProps, TimeSlotProps } from "../../../types";
+import { EventProps, TimeSlotProps } from "../../../types/types";
 import { getSlotTime } from "../../../Utils/slotTime";
 import { format, isSameDay } from "date-fns";
 import { ensureDate } from "../../../Utils/DateTrannforms";

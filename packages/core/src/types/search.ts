@@ -1,4 +1,4 @@
-import { Config, EventProps } from "../types";
+import { Config, EventProps } from "./types";
 
 export interface FilterPluginProps {
     events: EventProps;

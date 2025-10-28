@@ -4,7 +4,7 @@ import {
   CalendarProps,
   EventProps,
   Resource,
-} from "./types";
+} from "./types/types";
 import {
   NotificationServiceConfig,
   EmailAdapter,

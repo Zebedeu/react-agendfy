@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { DndContext, pointerWithin, closestCenter } from "@dnd-kit/core";
+import { DndContext, pointerWithin } from "@dnd-kit/core";
 import {
   format,
   addMinutes,
@@ -13,13 +13,13 @@ import {
   isSameDay,
   startOfWeek,
 } from "date-fns";
+import { rrulestr } from "rrule";
 import { ensureDate } from "../../Utils/DateTrannforms";
 import { EventProps, WeekProps } from "../../types";
 import { TZDate } from "@date-fns/tz";
 import { DayColumn } from "./Components/DayColumn";
 import { calculateRedLineOffset } from "../../Utils/calculateRedLineOffset";
 import { useMediaQuery } from '../../hooks/useMediaQuery';
-import { getEventsForSlot } from '../../Utils/weekViewHelpers';
 
 const WeekView = ({
   events,
@@ -28,7 +28,7 @@ const WeekView = ({
   onEventResize,
   onSlotClick,
   currentDate,
-  onDateRangeSelect, 
+  onDateRangeSelect,
   slotMin = "0",
   slotMax = "24",
   config,
@@ -39,23 +39,18 @@ const WeekView = ({
   const [selectionStart, setSelectionStart] = useState<Date | null>(null);
   const [selectionEnd, setSelectionEnd] = useState<Date | null>(null);
 
-  const parseTime = (timeStr: string | undefined) => {
-    if (!timeStr) return 0;
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    return hours + (minutes / 60);
-  };
-  const startHour = parseTime(slotMin);
-  const endHour = parseTime(slotMax);
+  const startHour = parseInt(slotMin, 10);
+  const endHour = parseInt(slotMax, 10);
   const slotDuration = config?.slotDuration || 30;
 
   const numberOfSlots = useMemo(
-    () => Math.floor(((endHour - startHour) * 60) / slotDuration),
+    () => ((endHour - startHour) * 60) / slotDuration,
     [startHour, endHour, slotDuration]
   );
   if (isNaN(numberOfSlots) || numberOfSlots <= 0) {
     return (
       <div className="react-agenfy-weekview-error">
-        {config?.slotDuration} invalid time slot. Make sure the end time is greater than the start time and that they are valid hours.
+        {config?.slotDuration} de tempo inválido. Certifique-se de que a hora final seja maior que a hora inicial e que sejam horas válidas.
       </div>
     );
   }
@@ -66,6 +61,8 @@ const WeekView = ({
   );
 
   const daysOfWeek = useMemo(() => {
+    // Em telas móveis, mostre apenas o dia atual.
+    // O 'currentDate.getDay()' garante que o dia correto da semana seja usado.
     return isMobile ? [currentDate.getDay()] : Array.from({ length: 7 }, (_, i) => i);
   }, [isMobile, currentDate]);
 
@@ -76,7 +73,7 @@ const WeekView = ({
       const time = setMinutes(
         setHours(
           startOfDay(new TZDate(currentDate, config?.timeZone)),
-          Math.floor(startHour) + Math.floor(((index * slotDuration) + (startHour % 1 * 60)) / 60)
+          startHour + Math.floor((index * slotDuration) / 60)
         ),
         (index * slotDuration) % 60
       );
@@ -89,26 +86,18 @@ const WeekView = ({
     [currentDate, startHour, slotDuration, config?.timeZone]
   );
 
-  const { allDayEventsByDay, timeGridEvents } = useMemo(() => {
+  const allDayEventsByDay = useMemo(() => {
     const mapping: { [key: number]: EventProps[] } = {};
-    const gridEvents: EventProps[] = [];
-
-    events.forEach((event: EventProps) => {
-      if (event.isAllDay || event.isMultiDay) {
-        daysOfWeek.forEach((dayIndex) => {
-          const dayDate = addDays(currentWeekStart, dayIndex);
-          const eventStart = ensureDate(event.start, config?.timeZone);
-          const eventEnd = ensureDate(event.end, config?.timeZone);
-          if (dayDate >= startOfDay(eventStart) && dayDate <= endOfDay(eventEnd)) {
-            if (!mapping[dayIndex]) mapping[dayIndex] = [];
-            mapping[dayIndex].push(event);
-          }
-        });
-      } else {
-        gridEvents.push(event);
-      }
+    daysOfWeek.forEach((dayIndex) => {
+      const dayDate = addDays(currentWeekStart, dayIndex);
+      mapping[dayIndex] = events.filter((event: EventProps) => {
+        if (!event.isMultiDay && !event.isAllDay) return false;
+        const eventStart = ensureDate(event.start, config?.timeZone);
+        const eventEnd = ensureDate(event.end, config?.timeZone);
+        return dayDate >= startOfDay(eventStart) && dayDate <= endOfDay(eventEnd);
+      });
     });
-    return { allDayEventsByDay: mapping, timeGridEvents: gridEvents };
+    return mapping;
   }, [daysOfWeek, currentWeekStart, events, config?.timeZone]);
 
   const draggedEventRef = useRef<EventProps | null>(null);
@@ -190,10 +179,47 @@ const WeekView = ({
     return slotTime >= start && slotTime <= end;
   }, [events, config?.timeZone, slotDuration, onEventClick, onEventUpdate]);
 
-  const getEvents = useCallback(
-    (slotTime: string) => getEventsForSlot(slotTime, timeGridEvents, config),
-    [timeGridEvents, config]
-  );
+  const getEvents = useCallback((slotTime: string) => {
+    const slotDate = new TZDate(slotTime, config?.timeZone);
+    const slotDateFormatted = format(slotDate, "yyyy-MM-dd HH:mm");
+    return events.reduce((acc: EventProps[], event: EventProps) => {
+      if (event.recurrence) {
+        try {
+          const rule = rrulestr(event.recurrence);
+          const occurrences = rule.between(startOfDay(slotDate), endOfDay(slotDate), true);
+          occurrences.forEach((occurrence) => {
+            const occurrenceStart = setMinutes(
+              setHours(new TZDate(occurrence, config?.timeZone), new TZDate(ensureDate(event.start), config?.timeZone).getHours()),
+              new TZDate(ensureDate(event.start), config?.timeZone).getMinutes()
+            );
+            const occurrenceEnd = addMinutes(
+              occurrenceStart,
+              differenceInMinutes(
+                new TZDate(ensureDate(event.end), config?.timeZone),
+                new TZDate(ensureDate(event.start), config?.timeZone)
+              )
+            );
+            if (format(occurrenceStart, "yyyy-MM-dd HH:mm") === slotDateFormatted) {
+              acc.push({
+                ...event,
+                start: occurrenceStart.toISOString(),
+                end: occurrenceEnd.toISOString(),
+                recurring: true,
+              });
+            }
+          });
+        } catch (error) {
+          console.error("Error parsing recurrence rule:", error);
+        }
+        return acc;
+      }
+      if (event.isMultiDay || event.isAllDay) return acc;
+      if (format(new TZDate(ensureDate(event.start), config?.timeZone), "yyyy-MM-dd HH:mm") === slotDateFormatted) {
+        acc.push(event);
+      }
+      return acc;
+    }, []);
+  }, [events, config?.timeZone]);
 
   const isDraggable = useMemo(() => typeof onEventUpdate === "function", [onEventUpdate]);
 
@@ -201,7 +227,7 @@ const WeekView = ({
     <DndContext
       onDragEnd={handleDragEnd}
       onDragStart={handleDragStart}
-      collisionDetection={closestCenter}
+      collisionDetection={pointerWithin}
     >
       <div className="react-agenfy-weekview-container">
         <div className="react-agenfy-weekview-all-day">

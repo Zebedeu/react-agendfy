@@ -11,7 +11,7 @@ import {
 } from "date-fns";
 import { TZDate } from "@date-fns/tz";
 import { ListEvent } from "./Components/ListEvent";
-import { EventProps, ListViewProps } from "../../types";
+import { EventProps, ListViewProps } from "../../types/types";
 import { getLocale } from "../../Utils/locate";
 
 interface RowProps extends RowComponentProps<{

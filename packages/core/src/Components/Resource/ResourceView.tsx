@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import React from 'react';
 import { ensureDate } from '../../Utils/DateTrannforms';
 import { ResourceIcon } from './ResourceIcon';
-import { EventProps, Resource } from '../../types';
+import { EventProps, Resource } from '../../types/types';
 
 const ResourceView = ({ resources, events, currentDate }: any) => {
   return (

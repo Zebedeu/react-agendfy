@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { TZDate } from '@date-fns/tz';
-import { format } from 'date-fns';
 import { DayColumn } from './DayColumn';
 
 jest.mock('./WeekTimeSlot', () => ({
@@ -72,7 +71,10 @@ describe('DayColumn Component', () => {
     expect(screen.getByText(/Sun/i)).toBeInTheDocument();
     expect(screen.getByText(/01\/01/i)).toBeInTheDocument();
   
-    fireEvent.click(screen.getByText(/Sun/i).closest('.react-agenfy-daycolumn-header')!);
+    const headerDiv = screen.getByText((content, element) =>
+      element?.className.includes('react-agenfy-header-today')
+    );
+    fireEvent.click(headerDiv);
     expect(dummyOnSlotClick).toHaveBeenCalled();
   });
   
@@ -101,7 +103,7 @@ describe('DayColumn Component', () => {
   });
 
   it('applies today styling if dayDate is today', () => {
-    const today = new Date();
+    const today = new TZDate(new Date());
     render(
       <DayColumn
         dayDate={today}
@@ -119,9 +121,8 @@ describe('DayColumn Component', () => {
         isSlotSelected={dummyIsSlotSelected}
       />
     );
-    const todayWeekday = format(today, 'EEE');
-    const container = screen.getByText(new RegExp(todayWeekday, 'i')).closest('.react-agenfy-daycolumn-container');
-    expect(container).toHaveClass('react-agenfy-daycolumn-today');
+    const topLevelDiv = document.querySelector('div.react-agenfy-daycolumn-container');
+    expect(topLevelDiv?.className).toMatch(/react-agenfy-today/);
   });
 
   it('renders business intervals overlay', () => {

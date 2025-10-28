@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { endOfWeek, format, startOfWeek } from "date-fns";
 import { getLocale } from "../Utils/locate";
-import { CalendarHeaderProps, Resource } from "../types";
+import { CalendarHeaderProps, Resource } from "../types/types";
 
 
 const CalendarHeader: React.FC<CalendarHeaderProps> = ({

@@ -1,4 +1,4 @@
-import { EventProps, Config } from "../types";
+import { EventProps, Config } from "../types/types";
 import { filterEvents } from "../Utils/calendarHelpers";
 
 

@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { EmailAdapter, NotificationServiceConfig } from "../types/notification";
-import { EventProps } from "../types";
+import { EventProps } from "../types/types";
 
 export interface ToastProps {
   title: string;

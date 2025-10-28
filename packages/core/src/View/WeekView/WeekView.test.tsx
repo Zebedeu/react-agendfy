@@ -4,14 +4,15 @@ import WeekView from './WeekView';
 import { format, startOfWeek } from 'date-fns';
 import { TZDate } from '@date-fns/tz';
 
+// Mock para window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation(query => ({
-    matches: false,
+    matches: false, // Por padrão, simula uma tela não-móvel para este teste
     media: query,
     onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
+    addListener: jest.fn(), // Deprecated
+    removeListener: jest.fn(), // Deprecated
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
@@ -68,13 +69,13 @@ const dummyProps = {
   onSlotClick: jest.fn(),
   onDateRangeSelect: jest.fn(),
   currentDate: new Date(),
-  slotMin: "00:00",
-  slotMax: "24:00",
+  slotMin: "0",
+  slotMax: "24",
   config: dummyConfig,
 };
 
 describe("WeekView Component", () => {
-  test("displays error message when number of slots is invalid", () => {
+  test("exibe mensagem de erro quando número de slots é inválido", () => {
     const invalidProps = {
       ...dummyProps,
       slotMin: "24",
@@ -82,17 +83,17 @@ describe("WeekView Component", () => {
     };
     render(<WeekView {...invalidProps} />);
     expect(
-      screen.getByText(/invalid time slot/i)
+      screen.getByText(/de tempo inválido/i)
     ).toBeInTheDocument();
   });
 
-  test("renders All-Day area and time labels", () => {
+  test("renderiza área All-Day e os rótulos de horário", () => {
     render(<WeekView {...dummyProps} />);
     expect(screen.getByText(dummyConfig.all_day)).toBeInTheDocument();
     expect(screen.getByText("00:00")).toBeInTheDocument();
   });
 
-  test("renders 7 day columns", () => {
+  test("renderiza 7 colunas de dias", () => {
     render(<WeekView {...dummyProps} />);
   
     const dayColumns = screen.getAllByTestId("day-column");
@@ -102,7 +103,7 @@ describe("WeekView Component", () => {
     expect(dayColumns[0]).toHaveTextContent(format(currentWeekStart, "yyyy-MM-dd"));
   });
 
-  test("should process and render events correctly (except all-day or multi-day)", () => {
+  test("deve processar e renderizar eventos corretamente (exceto all-day ou multi-day)", () => {
     render(<WeekView {...dummyProps} />);
 
     const dayColumns = screen.getAllByTestId("day-column");

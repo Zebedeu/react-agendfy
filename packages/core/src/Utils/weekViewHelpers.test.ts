@@ -8,7 +8,7 @@ import {
   generateTimeSlots,
   getEventsForSlot,
 } from "./weekViewHelpers";
-import { EventProps } from "../types";
+import { EventProps } from "../types/types";
 
 describe("weekViewHelpers", () => {
   test("calculateNumberOfSlots returns the correct number", () => {

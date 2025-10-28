@@ -1,5 +1,5 @@
 import { differenceInMinutes, format } from "date-fns";
-import { EventProps } from "../types";
+import { EventProps } from "../types/types";
 import { ensureDate } from "../Utils/DateTrannforms";
 
 export function computePositionedEvents(

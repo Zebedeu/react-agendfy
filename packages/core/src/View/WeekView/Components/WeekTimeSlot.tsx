@@ -6,8 +6,8 @@ import { getSlotTime } from "../../../Utils/slotTime";
 import { computePositionedEvents } from "../../../Utils/positionedEventsHelper";
 import { renderEventComponent } from "./renderEventComponent";
 
-export interface WeekTimeSlotProps extends TimeSlotProps {
-  eventRenderingPlugins?: any[];
+export interface WeekTimeSlotProps extends TimeSlotProps { // pass plugin(s) separately
+  eventRenderingPlugins?: any[]; // pass plugin(s) separately
   onSelectionMouseDown?: (date: Date) => void;
   onSelectionMouseMove?: (date: Date) => void;
   isSelected?: boolean;

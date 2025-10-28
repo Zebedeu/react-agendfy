@@ -16,7 +16,7 @@ import { TZDate } from '@date-fns/tz';
 import { ensureDate } from '../../Utils/DateTrannforms';
 import { getEventsForSlot } from '../../Utils/weekViewHelpers';
 import { calculateRedLineOffset } from '../../Utils/calculateRedLineOffset';
-import { EventProps, WeekProps } from '../../types';
+import { EventProps, WeekProps } from '../../types/types';
 
 const parseTime = (timeStr: string | undefined) => {
   if (!timeStr) return 0;

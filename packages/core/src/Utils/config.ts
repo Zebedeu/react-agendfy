@@ -1,4 +1,4 @@
-import { CalendarConfig, LocaleConfig } from "../types";
+import { CalendarConfig, LocaleConfig } from "../types/types";
 
   export const getLocaleConfig = (lang: string): LocaleConfig => {
     if (lang === 'pt') {

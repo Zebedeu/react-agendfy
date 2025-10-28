@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { EventProps } from "../types";
+import { EventProps } from "../types/types";
 import { getNewDate } from "../Utils/calendarNavigation";
 
 const useDataSourceEvents = (dataSourcePlugins: any, localeConfig: any, currentDate: Date) => {

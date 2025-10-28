@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ListEvent } from './ListEvent';
-import { Config, EventProps } from '../../../types';
+import { Config, EventProps } from '../../../types/types';
 
 jest.mock('../../../Utils/generateTooltipContent.ts', () => (event) => `Tooltip for ${event.title}`);
 

@@ -19,7 +19,7 @@ import {
 } from "@dnd-kit/core";
 import { ensureDate, expandRecurringEvents } from "../../Utils/DateTrannforms";
 import ResourceView from "../../Components/Resource/ResourceView";
-import { EventProps, MonthViewProps } from "../../types";
+import { EventProps, MonthViewProps } from "../../types/types";
 import { CalendarDay } from "./Components/CalendarDay";
 import { TZDate } from "@date-fns/tz";
 import { getLocale } from "../../Utils/locate";

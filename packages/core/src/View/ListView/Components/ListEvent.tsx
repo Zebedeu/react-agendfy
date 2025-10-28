@@ -3,7 +3,7 @@ import { TZDate } from "@date-fns/tz";
 import { format, parseISO } from "date-fns";
 import generateTooltipContent from "../../../Utils/generateTooltipContent";
 import ResourceDisplay from "../../../Components/Resource/ResourceDisplay";
-import { ListEventProps } from "../../../types";
+import { ListEventProps } from "../../../types/types";
 
 
 export const ListEvent = ({ event, onEventClick, currentDate, config }: ListEventProps) => {

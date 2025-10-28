@@ -1,5 +1,5 @@
 import { Resizable } from "re-resizable";
-import { BaseEventProps } from "../../../types";
+import { BaseEventProps } from "../../../types/types";
 import BaseEvent from "../../../Components/BaseEvent";
 import { memo } from "react";
 

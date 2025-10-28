@@ -5,7 +5,7 @@ import { addDays, addHours, format, differenceInDays, isSameDay } from "date-fns
 import { TZDate } from "@date-fns/tz";
 import { ensureDate } from "../../../Utils/DateTrannforms";
 import ResourceDisplay from "../../../Components/Resource/ResourceDisplay";
-import { BaseEventProps } from '../../../types';
+import { BaseEventProps } from '../../../types/types';
 
 const DEFAULT_MAX_WIDTH = 160;
 
@@ -19,47 +19,53 @@ const EventItemComponent: FC<BaseEventProps & { dayWidth: number }> = ({
   config,
   dayWidth,
 }) => {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: event.id,
-    data: { event },
-  });
-
+  // Estado de resize
   const [isResizing, setIsResizing] = useState(false);
 
-  const style = !isResizing && transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`
-      }
-    : {
-      position: "relative",
-    };
+  // ✅ Define se o evento pode ser arrastado (apenas start e end se multi-day)
+  const draggableEnabled = (event.isMultiDay && (isStart || isEnd)) || !event.isMultiDay;
+
+  // Hook de drag do DnD Kit
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: `${event.id}-${isStart ? 'start' : isEnd ? 'end' : 'middle'}`,
+    data: { event, isStart, isEnd },
+    disabled: !draggableEnabled || isResizing,
+  });
 
   const [dimensions, setDimensions] = useState({
-    width: event.width || (event.isMultiDay ? "100%" : "100%"),
+    width: event.width || "100%",
     height: event.height || 40,
   });
+
+  // 🔥 Transformação visual durante o drag
+  const style = !isResizing && transform
+    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
+    : { position: "relative" };
 
   const containerStyle = {
     backgroundColor: event.color || "#3490dc",
     zIndex: isDragging ? 1000 : "auto",
-      width: dimensions.width,
-    height: dimensions.height /2,
+    width: dimensions.width,
+    height: dimensions.height / 2,
+    cursor: draggableEnabled ? "grab" : "default",
+    opacity: isDragging ? 0.5 : 1,
     ...style,
   };
 
-  const baseClass = "react-agenfy-event-item";
-  const draggingClass = isDragging ? "react-agenfy-event-item-dragging" : "";
-  const previewClass = isPreview ? "react-agenfy-event-item-preview" : "";
-
-  const multiDayStartClass = event.isMultiDay && isStart ? "react-agenfy-event-item-multiday-start" : "";
-  const multiDayEndClass = event.isMultiDay && isEnd ? "react-agenfy-event-item-multiday-end" : "";
-  const multiDayMiddleClass = event.isMultiDay && !isStart && !isEnd ? "react-agenfy-event-item-multiday-middle" : "";
-
-  const combinedClass = [baseClass, draggingClass, previewClass, multiDayStartClass, multiDayEndClass, multiDayMiddleClass]
+  const combinedClass = [
+    "react-agenfy-event-item",
+    isDragging && "react-agenfy-event-item-dragging",
+    isPreview && "react-agenfy-event-item-preview",
+    event.isMultiDay && isStart && "react-agenfy-event-item-multiday-start",
+    event.isMultiDay && isEnd && "react-agenfy-event-item-multiday-end",
+    event.isMultiDay && !isStart && !isEnd && "react-agenfy-event-item-multiday-middle",
+  ]
     .filter(Boolean)
     .join(" ");
 
-
+  /**
+   * 📏 Handler de resize (início e fim)
+   */
   const handleResizeEvent = (
     e: MouseEvent | TouchEvent,
     direction: ResizeDirection,
@@ -67,131 +73,97 @@ const EventItemComponent: FC<BaseEventProps & { dayWidth: number }> = ({
     delta: NumberSize
   ) => {
     setIsResizing(false);
-    const newWidth = ref.style.width;
-    const newHeight = ref.style.height;
+    const effectiveDayWidth = dayWidth > 0 ? dayWidth : DEFAULT_MAX_WIDTH;
 
-    setDimensions({
-      width: newWidth,
-      height: newHeight,
-    });
+    let daysAdded = Math.round(delta.width / effectiveDayWidth);
+    if (direction === "left") daysAdded = -daysAdded;
 
-    if (onEventResize && (direction === "right" || direction === "left")) {
-      const effectiveDayWidth = dayWidth > 0 ? dayWidth : DEFAULT_MAX_WIDTH;
-      let daysAdded = Math.round(delta.width / effectiveDayWidth);
+    const eventStart = ensureDate(event.start, config?.timeZone);
+    const eventEnd = ensureDate(event.end, config?.timeZone);
 
-      if (direction === "left") {
-        daysAdded = -daysAdded;
-      }
+    let newStart = eventStart;
+    let newEnd = eventEnd;
 
-      const eventStart = ensureDate(event.start, config?.timeZone);
-      const eventEnd = ensureDate(event.end, config?.timeZone);
+    if (direction === "right") newEnd = addDays(eventEnd, daysAdded);
+    else if (direction === "left") newStart = addDays(eventStart, daysAdded);
 
-      let newStart = eventStart;
-      let newEnd = eventEnd;
-
-      if (direction === "right") {
-        newEnd = addDays(eventEnd, daysAdded);
-      } else if (direction === "left") {
-        newStart = addDays(eventStart, daysAdded);
-      }
-
-      newStart.setHours(
-        eventStart.getHours(),
-        eventStart.getMinutes(),
-        eventStart.getSeconds()
-      );
-
-      newEnd.setHours(
-        eventEnd.getHours(),
-        eventEnd.getMinutes(),
-        eventEnd.getSeconds()
-      );
-
-      if (newStart >= newEnd) {
-        if (direction === "right") {
-          newEnd = addHours(newStart, 1);
-        } else {
-          newStart = addHours(newEnd, -1);
-        }
-      }
-
-      const tzNewStart = new TZDate(newStart, config?.timeZone);
-      const tzNewEnd = new TZDate(newEnd, config?.timeZone);
-
-      onEventResize({
-        ...event,
-        start: tzNewStart.toISOString(),
-        end: tzNewEnd.toISOString(),
-        isMultiDay: !isSameDay(tzNewStart, tzNewEnd),
-      });
+    // Garante coerência
+    if (newStart >= newEnd) {
+      if (direction === "right") newEnd = addHours(newStart, 1);
+      else newStart = addHours(newEnd, -1);
     }
+
+    onEventResize?.({
+      ...event,
+      start: new TZDate(newStart, config?.timeZone).toISOString(),
+      end: new TZDate(newEnd, config?.timeZone).toISOString(),
+      isMultiDay: !isSameDay(newStart, newEnd),
+    });
   };
 
+  /**
+   * 🧭 Define handles de resize (somente extremidades)
+   */
   const resizeHandles = useMemo(() => {
     if (event.isMultiDay) {
       const handles: ResizeDirection[] = [];
-      if (isStart) {
-        handles.push("left");
-      }
-      if (isEnd) {
-        handles.push("right");
-      }
+      if (isStart) handles.push("left");
+      if (isEnd) handles.push("right");
       return handles;
     }
     return ["right"];
   }, [event.isMultiDay, isStart, isEnd]);
 
+  /**
+   * 🧩 Aplicação de drag completo no bloco
+   */
   return (
-    <Resizable
-      size={{ width: dimensions.width, height: dimensions.height }}
-      onResizeStart={() => setIsResizing(true)}
-      onResizeStop={handleResizeEvent}
-      minWidth={50}
-      maxHeight={50}
-      handleStyles={{
-        right: {
-          width: "8px",
-          right: "0px",
-          cursor: "e-resize",
-        },
-        left: {
-          width: "8px",
-          left: "0px",
-          cursor: "w-resize",
-        },
-      }}
-      enable={{
-        right: resizeHandles.includes("right"),
-        left: resizeHandles.includes("left"),
+    <div
+      onClick={(e) => {
+        e.stopPropagation();
+        onEventClick?.(event);
       }}
     >
-      <div
-        ref={setNodeRef}
-        {...(!isResizing ? listeners : {})}
-        {...(!isResizing ? attributes : {})}
-        style={containerStyle}
-        className={combinedClass}
-        title={event.title}
-        onClick={(e) => {
-          e.stopPropagation();
-          onEventClick?.(event);
+      <Resizable
+        size={{ width: dimensions.width, height: dimensions.height }}
+        onResizeStart={() => setIsResizing(true)}
+        onResizeStop={handleResizeEvent}
+        minWidth={50}
+        maxHeight={50}
+        handleStyles={{
+          right: { width: "8px", right: "0px", cursor: "e-resize" },
+          left: { width: "8px", left: "0px", cursor: "w-resize" },
+        }}
+        enable={{
+          right: resizeHandles.includes("right"),
+          left: resizeHandles.includes("left"),
         }}
       >
-        {!(event.isMultiDay && !isStart) && (
-          <>
-            <div className="react-agenfy-event-item-content">
-              <span>{event.title}</span>
-              <span>{format(ensureDate(event.start, config?.timeZone), "HH:mm")}</span>
-            </div>
-            {event.resources && event.resources.length > 0 && (
-              <div className="react-agenfy-event-item-resources">
-                <ResourceDisplay resources={event.resources} maxVisible={2} />
+        <div
+          ref={setNodeRef}
+          {...(!isResizing && draggableEnabled ? listeners : {})}
+          {...(!isResizing && draggableEnabled ? attributes : {})}
+          style={containerStyle}
+          className={combinedClass}
+          title={event.title}
+        >
+          {/* Só mostra conteúdo no início do evento (ou evento único) */}
+          {(isStart || !event.isMultiDay) && (
+            <>
+              <div className="react-agenfy-event-item-content">
+                <span>{event.title}</span>
+                <span>{format(ensureDate(event.start, config?.timeZone), "HH:mm")}</span>
               </div>
-            )}
-          </>
-        )}
-      </div>
-    </Resizable>
+              {event.resources?.length > 0 && (
+                <div className="react-agenfy-event-item-resources">
+                  <ResourceDisplay resources={event.resources} maxVisible={2} />
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </Resizable>
+    </div>
   );
 };
 

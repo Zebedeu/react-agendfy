@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react';
-import { Config, EventProps } from '../types';
+import { Config, EventProps } from './types';
 
 export interface DataSourcePlugin {
   type: 'dataSource';
