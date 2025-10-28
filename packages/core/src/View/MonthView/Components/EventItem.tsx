@@ -7,7 +7,7 @@ import { TZDate } from '@date-fns/tz';
 import { ensureDate } from '../../../Utils/DateTrannforms';
 import ResourceDisplay from '../../../Components/Resource/ResourceDisplay';
 import { BaseEventProps } from '../../../types/types';
-import './EventItem.css'; // vamos extrair CSS
+import './EventItem.css';
 
 interface EventItemProps extends BaseEventProps {
   dayWidth: number;
