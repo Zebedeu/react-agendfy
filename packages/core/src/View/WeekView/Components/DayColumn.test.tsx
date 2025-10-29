@@ -9,6 +9,12 @@ jest.mock('./WeekTimeSlot', () => ({
   ),
 }));
 
+jest.mock('./WeekEvent', () => ({
+  WeekEvent: ({ event }: any) => (
+    <div data-testid="week-event">{event.title}</div>
+  ),
+}));
+
 
 jest.mock('../../../Utils/businessHours', () => ({
   useBusinessHours: jest.fn(() => {
@@ -39,7 +45,7 @@ describe('DayColumn Component', () => {
       end: '2023-01-01T12:30:00Z',
     },
   ];
-  const dummyGetEvents = jest.fn(() => []);
+  const dummyGetEventsForDay = jest.fn(() => dummyEvents);
   const dummyOnEventClick = jest.fn();
   const dummyOnSlotClick = jest.fn();
   const dummyOnEventResize = jest.fn();
@@ -58,7 +64,7 @@ describe('DayColumn Component', () => {
         parsedSlotMin={dummyParsedSlotMin}
         onEventClick={dummyOnEventClick}
         onSlotClick={dummyOnSlotClick}
-        getEvents={dummyGetEvents}
+        getEventsForDay={dummyGetEventsForDay}
         parsedSlotMax={dummyParsedSlotMax}
         onEventResize={dummyOnEventResize}
         redLineOffset={dummyRedLineOffset}
@@ -88,7 +94,7 @@ describe('DayColumn Component', () => {
         parsedSlotMin={dummyParsedSlotMin}
         onEventClick={dummyOnEventClick}
         onSlotClick={dummyOnSlotClick}
-        getEvents={dummyGetEvents}
+        getEventsForDay={dummyGetEventsForDay}
         parsedSlotMax={dummyParsedSlotMax}
         onEventResize={dummyOnEventResize}
         redLineOffset={dummyRedLineOffset}
@@ -100,6 +106,9 @@ describe('DayColumn Component', () => {
     
     const timeSlotElements = screen.getAllByTestId('week-time-slot');
     expect(timeSlotElements.length).toBe(dummyTimeSlots.length);
+
+    const eventElements = screen.getAllByTestId('week-event');
+    expect(eventElements.length).toBe(dummyEvents.length);
   });
 
   it('applies today styling if dayDate is today', () => {
@@ -112,7 +121,7 @@ describe('DayColumn Component', () => {
         parsedSlotMin={dummyParsedSlotMin}
         onEventClick={dummyOnEventClick}
         onSlotClick={dummyOnSlotClick}
-        getEvents={dummyGetEvents}
+        getEventsForDay={dummyGetEventsForDay}
         parsedSlotMax={dummyParsedSlotMax}
         onEventResize={dummyOnEventResize}
         redLineOffset={dummyRedLineOffset}
@@ -134,7 +143,7 @@ describe('DayColumn Component', () => {
         parsedSlotMin={dummyParsedSlotMin}
         onEventClick={dummyOnEventClick}
         onSlotClick={dummyOnSlotClick}
-        getEvents={dummyGetEvents}
+        getEventsForDay={dummyGetEventsForDay}
         parsedSlotMax={dummyParsedSlotMax}
         onEventResize={dummyOnEventResize}
         redLineOffset={dummyRedLineOffset}

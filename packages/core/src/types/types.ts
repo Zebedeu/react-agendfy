@@ -160,8 +160,8 @@ export interface TimeSlotProps {
 }
 export interface DayColumnProps {
   dayDate: any;
-  events: EventProps;
-  getEvents: (slotTime: string) => any;
+  events: EventProps[];
+  getEventsForDay: (dayDate: Date) => EventProps[];
   timeSlots: number[];
   onEventUpdate?: (event: EventProps) => void;
   onEventClick?: (event: EventProps) => void;

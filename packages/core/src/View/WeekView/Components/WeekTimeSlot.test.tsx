@@ -18,13 +18,7 @@ jest.mock('@dnd-kit/core', () => ({
   })),
 }));
 
-jest.mock('./WeekEvent', () => ({
-  WeekEvent: ({ event, positionStyle }: any) => (
-    <div data-testid="week-event">
-      {event.title} - {positionStyle.height}
-    </div>
-  ),
-}));
+jest.mock('./WeekEvent', () => ({ WeekEvent: () => null }));
 
 const dummyConfig = {
   timeZone: "UTC",
@@ -81,31 +75,6 @@ describe('WeekTimeSlot Component', () => {
     expect(onSlotClickMock).toHaveBeenCalled();
     const callbackArg = onSlotClickMock.mock.calls[0][0];
     expect(callbackArg).toBeInstanceOf(TZDate);
-  });
-
-  test('renders a WeekEvent for each event in slotEvents with correct height', () => {
-    const dummyEvent = {
-      id: "1",
-      title: "Test Event",
-      start: "2023-01-01T00:00:00Z",
-      end: "2023-01-01T00:30:00Z",
-    };
-    render(
-      <WeekTimeSlot
-        index={0}
-        dayDate={dummyDayDate}
-        slotEvents={[dummyEvent]}
-        onEventClick={jest.fn()}
-        onSlotClick={jest.fn()}
-        onEventResize={jest.fn()}
-        parsedSlotMax="24"
-        slotMin={dummySlotMin}
-        config={dummyConfig}
-        isDraggable={true}
-      />
-    );
-    const weekEvent = screen.getByTestId('week-event');
-    expect(weekEvent).toHaveTextContent("Test Event - 80px");
   });
 
   test('applies the droppable background color when isOver is true', () => {
