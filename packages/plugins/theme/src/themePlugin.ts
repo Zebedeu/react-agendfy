@@ -9,12 +9,15 @@ const darkThemePlugin: ThemePlugin = {
     '--color-bg-white': '#0f172a',
     '--color-bg-gray-50': '#1e293b',
     '--color-bg-gray-100': '#334155',
+    '--color-bg-accent-50': '#1e293b',
     '--color-border': '#334155',
     '--color-text-gray-800': '#f1f5f9',
     '--color-text-gray-700': '#e2e8f0',
     '--color-text-gray-500': '#94a3b8',
+    '--color-text-accent-600': '#a5b4fc',
     '--btn-bg': '#1e293b',
-    '--btn-hover-bg': '#334155'
+    '--btn-hover-bg': '#334155',
+    '--color-bg-view-today-500': '#60a5fa',
   },
   activate() {
     Object.entries(this.cssVariables).forEach(([k, v]) => {

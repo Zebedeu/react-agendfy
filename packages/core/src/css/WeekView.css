@@ -105,7 +105,7 @@
 }
 
 .react-agenfy-daycolumn-today {
-  background-color: var(--color-bg-blue-50);
+  background-color: var(--color-bg-accent-50);
 }
 
 .react-agenfy-daycolumn-header {
@@ -124,7 +124,7 @@
 }
 
 .react-agenfy-daycolumn-header-today {
-  background-color: var(--color-bg-blue-50);
+  background-color: var(--color-bg-accent-800);
 }
 
 .react-agenfy-daycolumn-header-text {
@@ -137,9 +137,19 @@
   color: var(--color-text-gray-800);
 }
 
+.react-agenfy-daycolumn-header-today .react-agenfy-daycolumn-weekday {
+  color: var(--color-text-accent-600);
+  font-weight: 700;
+}
+
 .react-agenfy-daycolumn-date {
   font-size: var(--font-size-xs);
   color: var(--color-text-gray-700);
+  
+}
+
+.react-agenfy-daycolumn-header-today .react-agenfy-daycolumn-date {
+  color: var(--color-text-accent-600);
 }
 
 .react-agenfy-daycolumn-slot-container {

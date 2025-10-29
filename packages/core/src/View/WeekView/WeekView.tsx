@@ -185,14 +185,12 @@ const WeekView = ({
           const eventStart = new TZDate(ensureDate(event.start), config?.timeZone);
           const eventEnd = new TZDate(ensureDate(event.end), config?.timeZone);
 
-          // Ajusta o DTSTART da regra para o fuso horário local do sistema, pois rrule trabalha com datas locais.
           const localStart = new Date(eventStart.getFullYear(), eventStart.getMonth(), eventStart.getDate(), eventStart.getHours(), eventStart.getMinutes(), eventStart.getSeconds());
           const ruleOptions = rrulestr(event.recurrence, { forceset: true }).options;
           ruleOptions.dtstart = localStart;
 
           const rule = new RRule(ruleOptions);
 
-          // Gera ocorrências no fuso horário local e as converte de volta para o fuso do calendário.
           const occurrences = rule.between(startOfDay(slotDate), endOfDay(slotDate), true).map(d => new TZDate(d, config?.timeZone));
 
           occurrences.forEach((occurrence) => {

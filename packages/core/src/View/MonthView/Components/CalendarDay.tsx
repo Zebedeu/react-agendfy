@@ -8,7 +8,7 @@ import {
   startOfDay,
   endOfDay,
   addMilliseconds,
-  isSameMonth, // ← ADICIONE para ajuste de inclusivo
+  isSameMonth,
 } from "date-fns";
 import { TZDate } from "@date-fns/tz";
 import { ensureDate } from "../../../Utils/DateTrannforms";
@@ -24,7 +24,7 @@ const CalendarDayMemo: React.FC<CalendarDayProps> = ({
   onEventClick,
   onEventResize, // Passe se necessário
   config,
-  onMouseDown,
+  onMouseDown, 
   onMouseMove,
   isSelected,
   monthDate, // Para outros meses
@@ -38,14 +38,12 @@ const CalendarDayMemo: React.FC<CalendarDayProps> = ({
 
   useEffect(() => {
     if (ref.current) setWidth(ref.current.offsetWidth);
-  }, [day]); // ← Re-calcula se day muda
+  }, [day]);
 
   if (!day) {
     return <div className="react-agenfy-calendar-day-empty" />;
   }
 
-  // CORREÇÃO: Filtro ajustado para end INCLUSIVO
-  // Adiciona 1ms ao end para incluir eventos que terminam exatamente à meia-noite
   const dayEvents = events.filter((e) => {
     try {
       const eventStart = ensureDate(e.start, config?.timeZone);
@@ -53,7 +51,7 @@ const CalendarDayMemo: React.FC<CalendarDayProps> = ({
       return isWithinInterval(day, {
         start: startOfDay(eventStart),
         end: endOfDay(eventEnd), // Agora captura o dia completo
-      });
+      }); 
     } catch (error) {
       console.error("Erro ao filtrar evento:", error, e);
       return false;
@@ -65,15 +63,14 @@ const CalendarDayMemo: React.FC<CalendarDayProps> = ({
     const timeB = ensureDate(b.start, config?.timeZone).getTime();
     if (timeA !== timeB) return timeA - timeB;
 
-    // Ordena por duração (mais longos primeiro, como FullCalendar)
     const durA = ensureDate(a.end, config?.timeZone).getTime() - timeA;
     const durB = ensureDate(b.end, config?.timeZone).getTime() - timeB;
-    return durB - durA; // Inverte para longos primeiro
+    return durB - durA;
   });
 
   const visible = sorted.slice(0, MAX_VISIBLE);
   const hidden = Math.max(0, sorted.length - MAX_VISIBLE);
-  const isToday = isSameDay(day, new TZDate(new Date(), config?.timeZone));
+  const isToday = isSameDay(day, new TZDate(new Date(), config?.timeZone)); 
   const isOtherMonth = monthDate && !isSameMonth(day, monthDate); // ← Adicione import isSameMonth
 
   const classes = [
@@ -125,14 +122,13 @@ const CalendarDayMemo: React.FC<CalendarDayProps> = ({
           const s = ensureDate(event.start, config?.timeZone);
           const e = ensureDate(event.end, config?.timeZone);
 
-          // CORREÇÃO: isEnd ajustado para incluir se termina no INÍCIO do dia (ex: 00:00)
           const isEventStart = isSameDay(s, day);
           const isEventEnd = isSameDay(e, day) || (e.getHours() === 0 && e.getMinutes() === 0 && e.getSeconds() === 0 && isSameDay(addMilliseconds(e, 1), day));
 
           return (
             <EventItem
               key={`${event.id}-${day.toISOString()}`}
-              event={event}
+              event={event} 
               isStart={isEventStart}
               isEnd={isEventEnd}
               isMultiDay={event.isMultiDay || !isSameDay(s, e)} // ← Calcula dinamicamente se necessário

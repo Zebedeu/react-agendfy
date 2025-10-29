@@ -152,12 +152,9 @@ if (justUpdatedEvent.current) return;
   const handleSaveEvent = useCallback((eventData: any) => {
     if (!newEventData) return;
 
-    // Verifica se o evento já existe (pela presença do ID) para decidir se atualiza ou cria um novo.
     if (eventData.id) {
-      // Atualiza um evento existente
       setEvents(prevEvents => prevEvents.map(ev => ev.id === eventData.id ? eventData : ev));
     } else {
-      // Cria um novo evento com um novo ID
       const newEventWithId = {
         ...eventData,
         id: v6(),

@@ -120,9 +120,7 @@ export interface EventProps {
   end: Date | string;
   allDay?: boolean;
   color?: string;
-  /** Um único ID de recurso (para casos simples) */
   resourceId?: string | number;
-  /** Uma lista de IDs de recursos para associar o evento a múltiplos recursos */
   resourceIds?: (string | number)[];
   [key: string]: any;
 }
@@ -130,7 +128,6 @@ export interface EventProps {
 export interface Resource {
   id: string | number;
   title: string;
-  /** Permite aninhar recursos para criar uma hierarquia */
   children?: Resource[];
   [key: string]: any;
 }
