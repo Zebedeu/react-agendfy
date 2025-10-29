@@ -108,8 +108,8 @@ const App: FC = () => {
     setNewEventData({
       id: event.id,
       title: event.title,
-      start: new Date(event.start).toISOString(),
-      end:  new Date(event.end).toISOString(),
+      start: event.start,
+      end:  event.end,
       isAllDay: event.isAllDay ? true :  false,
     isMultiDay: event.isMultiDay ? true : false,
     color: event.color ,

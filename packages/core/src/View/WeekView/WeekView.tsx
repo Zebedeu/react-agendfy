@@ -122,16 +122,18 @@ const WeekView = ({
       ensureDate(draggedEvent.end, config?.timeZone),
       ensureDate(draggedEvent.start, config?.timeZone)
     );
+
+    if (Math.abs(delta.y) < 1) {
+      onEventClick?.(draggedEvent);
+      return;
+    }
+
     const updatedEvent = {
       ...draggedEvent,
       start: newStartTime.toISOString(),
       end: addMinutes(newStartTime, duration).toISOString(),
     };
 
-    if (Math.abs(delta.y) < 1) {
-      onEventClick?.(updatedEvent);
-      return;
-    }
     if (typeof onEventUpdate === "function") {
       onEventUpdate(updatedEvent);
     }
