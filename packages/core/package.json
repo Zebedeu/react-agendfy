@@ -1,6 +1,6 @@
 {
   "name": "@react-agendfy/core",
-  "version": "1.1.18",
+  "version": "1.1.20",
   "description": "Core library for React Agendfy — a flexible calendar and scheduling system for React applications.",
   "license": "MIT",
   "author": "Márcio Zebedeu <marciozebedeu@gmail.com>",
