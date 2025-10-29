@@ -50,27 +50,34 @@
   text-overflow: ellipsis;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition-duration) var(--transition-timing);
+  transition: all var(--transition-duration) var(--transition-timing);
   max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .react-agenfy-event-item-dragging {
   box-shadow: var(--shadow-lg);
   opacity: 0.7;
+  cursor: grabbing;
 }
 
 .react-agenfy-event-item-preview {
   opacity: 0.5;
 }
 
-.react-agenfy-event-item-content {
+.react-agenfy-event-item-resources {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.25rem;
 }
 
-.react-agenfy-event-item-resources {
-  margin-top: var(--margin-0_25rem);
+.react-agenfy-resource-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  opacity: 0.8;
 }
 .react-agenfy-calendar-day {
   min-height: 120px;
@@ -170,7 +177,6 @@
   background-color: var(--color-bg-gray-50);
 }
 
-/* Evento multiday — base */
 .react-agendfy-event-item-multiday {
   position: relative;
   display: flex;
@@ -179,7 +185,6 @@
   overflow: hidden;
 }
 
-/* 🔹 Ponto de arrasto do início (esquerda) */
 .react-agendfy-event-item-multiday-start::before {
   content: "";
   position: absolute;
@@ -198,7 +203,6 @@
   background: rgba(0, 0, 0, 0.3);
 }
 
-/* 🔹 Ponto de arrasto do fim (direita) */
 .react-agendfy-event-item-multiday-end::after {
   content: "";
   position: absolute;
@@ -217,7 +221,6 @@
   background: rgba(0, 0, 0, 0.3);
 }
 
-/* 🔸 Durante o arrasto */
 .react-agendfy-event-item.dragging {
   opacity: 0.8;
   border: 1px dashed #666;
@@ -234,19 +237,15 @@
   position: relative;
 }
 
-/* Evita que os eventos filhos deixem o clique “vazar” para o container */
 .react-agendfy-event-item * {
   pointer-events: auto;
 }
 
-/* O quadrado do dia deve ficar atrás dos eventos */
 .react-agendfy-day-cell {
   position: relative;
   z-index: 1;
 }
 
-/* css para meses nao nao atual */
-/* Adicione no MonthView.css ou global */
 .react-agenfy-calendar-day-other-month {
   background-color: var(--color-bg-gray-50);
   opacity: 0.6;
@@ -256,7 +255,6 @@
   color: var(--color-text-gray-500);
 }
 
-/* Opcional: Dim eventos em meses outros (passe prop isOtherMonth para EventItem) */
 .react-agenfy-event-item-other-month {
   opacity: 0.4;
 }

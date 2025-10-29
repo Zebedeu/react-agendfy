@@ -28,7 +28,7 @@ export const TimeSlot: React.FC<TimeSlotProps> = ({
   }, [onSlotClick, slotTime, config?.timeZone]);
 
   const positionedEvents: EventProps[] = useMemo(() => {
-    return computePositionedEvents(slotEvents, config, true, { marginLeft: "60px" });
+    return computePositionedEvents(slotEvents, config, true, { marginLeft: "0px" });
   }, [slotEvents, config]);
 
   return (

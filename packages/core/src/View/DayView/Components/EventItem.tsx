@@ -5,7 +5,7 @@ import { memo } from "react";
 
 export const EventItemComponent: React.FC<BaseEventProps> = (props) => {
   return (
-    <Resizable>
+    <Resizable enable={{ bottom: true }} handleStyles={{ bottom: { height: '4px', background: 'transparent' } }}>
       <BaseEvent {...props} />
     </Resizable>
   );

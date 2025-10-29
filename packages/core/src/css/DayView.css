@@ -6,11 +6,6 @@
   border: 1px solid var(--color-border);
 }
 
-@media (max-width: 640px) {
-  .react-agenfy-dayview-container {
-    border-width: 1px;
-  }
-}
 
 .react-agenfy-timeslot-container {
   position: relative;
@@ -42,3 +37,11 @@
     font-size: 0.75rem;
   }
 }
+
+@media (max-width: 640px) {
+  .react-agenfy-dayview-container {
+    border-width: 1px;
+  }
+}
+
+

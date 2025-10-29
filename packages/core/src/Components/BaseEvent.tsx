@@ -67,7 +67,9 @@ const BaseEvent = ({
 
   const eventStyle = {
     ...positionStyle,
+    width: "100%",
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    position: "absolute",
     top: computedTop,
     height: computedHeight,
     opacity: isDragging ? 0.8 : 1,
