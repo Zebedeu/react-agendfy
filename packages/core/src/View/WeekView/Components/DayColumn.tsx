@@ -6,10 +6,11 @@ import {
   setHours,
   setMinutes,
   startOfDay,
+  addMinutes,
 } from "date-fns";
 import { WeekTimeSlot } from "./WeekTimeSlot";
 import { useBusinessHours } from "../../../Utils/businessHours";
-import { DayColumnProps, EventProps } from "../../../types";
+import { DayColumnProps, EventProps } from "../../../types/types";
 import { TZDate } from "@date-fns/tz";
 import { getLocale } from "../../../Utils/locate";
 
@@ -38,10 +39,10 @@ export const DayColumn = memo(
     const eventsMapping = useMemo(() => {
       const mapping: Record<string, EventProps[]> = {};
       timeSlots.forEach((index) => {
-        const slotDate = setMinutes(
-          setHours(dayStart, parsedSlotMin + Math.floor((index * config?.slotDuration!) / 60)),
-          (index * config?.slotDuration!) % 60
-        );
+        const minutes = index * (config?.slotDuration || 30);
+        const hour = parsedSlotMin + Math.floor(minutes / 60);
+        const minute = minutes % 60;
+        const slotDate = setMinutes(setHours(dayStart, hour), minute);
         const slotKey = slotDate.toISOString();
         let slotEvents = getEvents(slotKey) || [];
         mapping[slotKey] = slotEvents;
@@ -50,6 +51,34 @@ export const DayColumn = memo(
     }, [dayStart, parsedSlotMin, timeSlots, getEvents, config?.slotDuration]);
 
     const businessIntervals = useBusinessHours(dayDate, config?.businessHours);
+
+    const startHour = parsedSlotMin;
+    const endHour = parsedSlotMax;
+    const slotDuration = config?.slotDuration || 30;
+    const slotHeight = 40;
+    const pixelsPerMinute = slotHeight / slotDuration;
+    const totalMinutes = (endHour - startHour) * 60;
+
+    const hourLines = useMemo(() => {
+      const lines: { top: number }[] = [];
+      for (let minutes = 60; minutes < totalMinutes; minutes += 60) {
+        const top = minutes * pixelsPerMinute;
+        lines.push({ top });
+      }
+      return lines;
+    }, [totalMinutes, pixelsPerMinute]);
+
+    const quarterLines = useMemo(() => {
+      const lines: { top: number }[] = [];
+      const startTime = setHours(dayStart, startHour);
+      for (let minutes = 15; minutes < totalMinutes; minutes += 15) {
+        const time = addMinutes(startTime, minutes);
+        if (time.getMinutes() === 0) continue;
+        const top = minutes * pixelsPerMinute;
+        lines.push({ top });
+      }
+      return lines;
+    }, [dayStart, startHour, totalMinutes, pixelsPerMinute]);
 
     return (
       <div
@@ -102,14 +131,41 @@ export const DayColumn = memo(
             );
           })}
 
+          {hourLines.map((line, idx) => (
+            <div
+              key={`hour-line-${idx}`}
+              style={{
+                position: "absolute",
+                top: `${line.top}px`,
+                left: 0,
+                right: 0,
+                borderTop: "1px solid var(--color-border)",
+                pointerEvents: "none",
+                zIndex: 1,
+              }}
+            />
+          ))}
+
+          {quarterLines.map((line, idx) => (
+            <div
+              key={`quarter-line-${idx}`}
+              style={{
+                position: "absolute",
+                top: `${line.top}px`,
+                left: 0,
+                right: 0,
+                borderTop: "1px dashed var(--color-border-gray-300)",
+                pointerEvents: "none",
+                zIndex: 1,
+              }}
+            />
+          ))}
+
           {timeSlots.map((index) => {
-            const slotTime = setMinutes(
-              setHours(
-                dayStart,
-                parsedSlotMin + Math.floor((index * config?.slotDuration!) / 60)
-              ),
-              (index * config?.slotDuration!) % 60
-            ).toISOString();
+            const minutes = index * (config?.slotDuration || 30);
+            const hour = parsedSlotMin + Math.floor(minutes / 60);
+            const minute = minutes % 60;
+            const slotTime = setMinutes(setHours(dayStart, hour), minute).toISOString();
             return (
               <WeekTimeSlot
                 key={`${format(dayDate, "yyyy-MM-dd")}-${index}`}

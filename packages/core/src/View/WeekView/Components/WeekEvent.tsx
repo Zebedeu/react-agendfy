@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import {  TZDate } from '@date-fns/tz';
 import { ensureDate } from "../../../Utils/DateTrannforms";
 import BaseEvent from "../../../Components/BaseEvent";
-import { BaseEventProps } from "../../../types";
+import { BaseEventProps } from "../../../types/types";
 
 export const WeekEvent = ({
   event,
@@ -28,7 +28,6 @@ export const WeekEvent = ({
     return isMultiDay ? endOfDay(dayDate) : dayEndTime;
   }, [dayDate, endHour, isMultiDay]);
 
-
   const [size, setSize] = useState({
     height: positionStyle?.height,
     width: positionStyle?.width,
@@ -41,7 +40,7 @@ export const WeekEvent = ({
     });
   }, [positionStyle?.width, positionStyle?.height, isMultiDay]);
 
-  const handleResize = (e, direction, ref, delta) => {
+  const handleResize = (e: any, direction: any, ref: any, delta: any) => {
     if (!isDraggable || !onEventResize) return;
 
     const eventStart = ensureDate(event.start);

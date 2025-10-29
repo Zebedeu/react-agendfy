@@ -1,8 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import { renderEventComponent, CalendarPlugin } from "./renderEventComponent";
-import { EventProps } from "../../../types";
-
+import { EventProps } from "../../../types/types";
 
 const dummyEvent: EventProps = {
   id: "1",

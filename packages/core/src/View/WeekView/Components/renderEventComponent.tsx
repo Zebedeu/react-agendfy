@@ -1,5 +1,5 @@
 import React, { ReactElement, ComponentType } from 'react';
-import { EventProps } from "../../../types";
+import { EventProps } from "../../../types/types";
 
 export interface CalendarPlugin {
   type: string;

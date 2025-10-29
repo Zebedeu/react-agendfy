@@ -1,4 +1,3 @@
-
 .react-agenfy-weekview-container {
   display: flex;
   flex-direction: column;
@@ -58,18 +57,20 @@
 }
 
 .react-agenfy-weekview-timeslot-label-top {
-  height: 3rem;
+  height: 1rem;
   border-bottom: 1px solid var(--color-border);
 }
 
 .react-agenfy-weekview-timeslot {
   height: var(--dayview-timeslot-height);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: flex-end;
   padding-right: var(--padding-0_5rem);
+  padding-bottom: 0;
   font-size: var(--font-size-xs);
   color: var(--color-text-gray-500);
+  line-height: 1;
 }
 
 .react-agenfy-weekview-day-column {
@@ -88,7 +89,7 @@
 
 .react-agenfy-weektimeslot {
   position: relative;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 0;
   height: var(--dayview-timeslot-height);
   transition: background-color 200ms var(--transition-timing), border-color 200ms var(--transition-timing);
 }

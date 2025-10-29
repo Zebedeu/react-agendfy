@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, FC } from "react";
 import { format, roundToNearestHours } from "date-fns";
+import {TZDate} from '@date-fns/tz'
 import { Calendar } from "@react-agendfy/core";
 import darkThemePlugin from "@react-agendfy/plugin-theme";
 import EventFormModal from "./components/EventFormModal";
@@ -103,20 +104,39 @@ const App: FC = () => {
   }, [events]);
 
   const handleEventClick = useCallback((event: any) => {
-    alert(`Clicked event: ${event.title}`);
+   if (justUpdatedEvent.current) return;
+    setNewEventData({
+      id: event.id,
+      title: event.title,
+      start: new Date(event.start).toISOString(),
+      end:  new Date(event.end).toISOString(),
+      isAllDay: event.isAllDay ? true :  false,
+    isMultiDay: event.isMultiDay ? true : false,
+    color: event.color ,
+    });
+   setIsModalOpen(true);
+
+
   }, []);
 
   const handleDayClick = useCallback((dayDate: Date) => {
-    alert(`Clicked day: ${format(dayDate, 'dd/MM/yyyy')}. You can add an event for this day.`);
+if (justUpdatedEvent.current) return;
+    setNewEventData({
+      start: dayDate.toISOString(),
+      end: new Date(dayDate.getTime() + 60 * 60 * 1000).toISOString(),
+    }); 
+   setIsModalOpen(true);
+
   }, []);
 
   const handleSlotClick = useCallback((slotTime: Date) => {
-    if (justUpdatedEvent.current) return;
+    console.log(slotTime)
+     if (justUpdatedEvent.current) return;
     setNewEventData({
       start: slotTime.toISOString(),
       end: new Date(slotTime.getTime() + 60 * 60 * 1000).toISOString(),
-    });
-   // setIsModalOpen(true);
+    }); 
+   setIsModalOpen(true);
   }, []);
 
   const onDateRangeSelect = useCallback((selection: any) => {
@@ -126,23 +146,26 @@ const App: FC = () => {
       isAllDay: false,
       isMultiDay: selection.isMultiDay,
     });
-    setIsModalOpen(true);
+   setIsModalOpen(true);
   }, []);
 
-  const handleCreateEvent = useCallback(({ title, start, end, color, isAllDay, isMultiDay }) => {
+  const handleSaveEvent = useCallback((eventData: any) => {
     if (!newEventData) return;
-    const finalNewEvent = {
-      id: v6(),
-      title,
-      start,
-      end,
-      color,
-      isAllDay,
-      isMultiDay,
-    };
-    setEvents(prev => [...prev, finalNewEvent]);
+
+    // Verifica se o evento já existe (pela presença do ID) para decidir se atualiza ou cria um novo.
+    if (eventData.id) {
+      // Atualiza um evento existente
+      setEvents(prevEvents => prevEvents.map(ev => ev.id === eventData.id ? eventData : ev));
+    } else {
+      // Cria um novo evento com um novo ID
+      const newEventWithId = {
+        ...eventData,
+        id: v6(),
+      };
+      setEvents(prevEvents => [...prevEvents, newEventWithId]);
+    }
     setIsModalOpen(false);
-  }, [newEventData]);
+  }, [newEventData, events]);
 
   const handleResourceFilterChange = useCallback((selected: string[]) => {
     setFilteredResources(selected);
@@ -187,8 +210,9 @@ const App: FC = () => {
       <EventFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleCreateEvent}
+        onSubmit={handleSaveEvent}
         eventData={newEventData}
+        config={defaultConfig}
       />
     </ErrorBoundary>
   );

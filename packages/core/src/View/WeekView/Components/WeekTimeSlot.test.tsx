@@ -8,7 +8,6 @@ jest.mock('@date-fns/tz', () => {
   return {
     ...originalModule,
     TZDate: originalModule.TZDate,
-
   };
 });
 

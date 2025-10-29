@@ -1,13 +1,13 @@
 import React, { memo, useCallback, useMemo } from 'react';
-import { EventProps, TimeSlotProps } from "../../../types";
+import { EventProps, TimeSlotProps } from "../../../types/types";
 import { WeekEvent } from "./WeekEvent";
 import { useDroppable } from "@dnd-kit/core";
 import { getSlotTime } from "../../../Utils/slotTime";
 import { computePositionedEvents } from "../../../Utils/positionedEventsHelper";
 import { renderEventComponent } from "./renderEventComponent";
 
-export interface WeekTimeSlotProps extends TimeSlotProps { // pass plugin(s) separately
-  eventRenderingPlugins?: any[]; // pass plugin(s) separately
+export interface WeekTimeSlotProps extends TimeSlotProps {
+  eventRenderingPlugins?: any[];
   onSelectionMouseDown?: (date: Date) => void;
   onSelectionMouseMove?: (date: Date) => void;
   isSelected?: boolean;
@@ -30,7 +30,13 @@ export const WeekTimeSlot = memo(
     onSelectionMouseMove,
     isSelected,
   }: WeekTimeSlotProps) => {
-    const slotTime = getSlotTime(dayDate, slotMin, config?.slotDuration!, index, config?.timeZone);
+    const slotTime = useMemo(() => {
+      const minutes = index * (config?.slotDuration || 30);
+      const hour = slotMin + Math.floor(minutes / 60);
+      const minute = minutes % 60;
+      return new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), hour, minute);
+    }, [index, dayDate, slotMin, config?.slotDuration]);
+
     const { setNodeRef, isOver } = useDroppable({ id: slotTime.toISOString() });
 
     const handleClickSlot = useCallback(() => {
@@ -54,7 +60,7 @@ export const WeekTimeSlot = memo(
         ref={setNodeRef}
         onMouseDown={() => onSelectionMouseDown?.(slotTime)}
         onMouseMove={() => onSelectionMouseMove?.(slotTime)}
-      onClick={handleClickSlot}
+        onClick={handleClickSlot}
         className={slotClasses}
       >
         {positionedEvents.map((event: EventProps) => {

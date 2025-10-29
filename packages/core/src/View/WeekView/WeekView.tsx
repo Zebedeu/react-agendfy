@@ -13,9 +13,9 @@ import {
   isSameDay,
   startOfWeek,
 } from "date-fns";
-import { rrulestr } from "rrule";
+import { RRule, rrulestr } from "rrule";
 import { ensureDate } from "../../Utils/DateTrannforms";
-import { EventProps, WeekProps } from "../../types";
+import { EventProps, WeekProps } from "../../types/types";
 import { TZDate } from "@date-fns/tz";
 import { DayColumn } from "./Components/DayColumn";
 import { calculateRedLineOffset } from "../../Utils/calculateRedLineOffset";
@@ -47,7 +47,7 @@ const WeekView = ({
     () => ((endHour - startHour) * 60) / slotDuration,
     [startHour, endHour, slotDuration]
   );
-  if (isNaN(numberOfSlots) || numberOfSlots <= 0) {
+  if (isNaN  (numberOfSlots) || numberOfSlots <= 0) {
     return (
       <div className="react-agenfy-weekview-error">
         {config?.slotDuration} de tempo inválido. Certifique-se de que a hora final seja maior que a hora inicial e que sejam horas válidas.
@@ -61,8 +61,6 @@ const WeekView = ({
   );
 
   const daysOfWeek = useMemo(() => {
-    // Em telas móveis, mostre apenas o dia atual.
-    // O 'currentDate.getDay()' garante que o dia correto da semana seja usado.
     return isMobile ? [currentDate.getDay()] : Array.from({ length: 7 }, (_, i) => i);
   }, [isMobile, currentDate]);
 
@@ -70,13 +68,10 @@ const WeekView = ({
 
   const timeslotLabels = useMemo(() => {
     return timeSlots.map((index) => {
-      const time = setMinutes(
-        setHours(
-          startOfDay(new TZDate(currentDate, config?.timeZone)),
-          startHour + Math.floor((index * slotDuration) / 60)
-        ),
-        (index * slotDuration) % 60
-      );
+      const minutes = index * slotDuration;
+      const hour = startHour + Math.floor(minutes / 60);
+      const minute = minutes % 60;
+      const time = setMinutes(setHours(startOfDay(new TZDate(currentDate, config?.timeZone)), hour), minute);
       return format(time, "HH:mm");
     });
   }, [timeSlots, currentDate, config?.timeZone, startHour, slotDuration]);
@@ -157,15 +152,15 @@ const WeekView = ({
 
   const handleSelectionMouseUp = useCallback(() => {
     if (isSelecting && selectionStart && selectionEnd && onDateRangeSelect) {
-      const start = selectionStart < selectionEnd ? selectionStart : selectionEnd;
-      const end = selectionStart > selectionEnd ? selectionStart : selectionEnd;
-      const finalEnd = addMinutes(end, slotDuration);
+    const start = selectionStart < selectionEnd ? selectionStart : selectionEnd;
+    const end = selectionStart > selectionEnd ? selectionStart : selectionEnd;
+    const finalEnd = addMinutes(end, slotDuration);
 
-      onDateRangeSelect({
-        start: start.toISOString(),
-        end: finalEnd.toISOString(),
-        isMultiDay: !isSameDay(start, end),
-      });
+    onDateRangeSelect({
+      start: start.toISOString(),
+      end: finalEnd.toISOString(),
+      isMultiDay: !isSameDay(start, end),
+    });
     }
     setIsSelecting(false);
     setSelectionStart(null);
@@ -177,7 +172,7 @@ const WeekView = ({
     const start = selectionStart < selectionEnd ? selectionStart : selectionEnd;
     const end = selectionStart > selectionEnd ? selectionStart : selectionEnd;
     return slotTime >= start && slotTime <= end;
-  }, [events, config?.timeZone, slotDuration, onEventClick, onEventUpdate]);
+  }, [isSelecting, selectionStart, selectionEnd]);
 
   const getEvents = useCallback((slotTime: string) => {
     const slotDate = new TZDate(slotTime, config?.timeZone);
@@ -185,19 +180,27 @@ const WeekView = ({
     return events.reduce((acc: EventProps[], event: EventProps) => {
       if (event.recurrence) {
         try {
-          const rule = rrulestr(event.recurrence);
-          const occurrences = rule.between(startOfDay(slotDate), endOfDay(slotDate), true);
+          const eventStart = new TZDate(ensureDate(event.start), config?.timeZone);
+          const eventEnd = new TZDate(ensureDate(event.end), config?.timeZone);
+
+          // Ajusta o DTSTART da regra para o fuso horário local do sistema, pois rrule trabalha com datas locais.
+          const localStart = new Date(eventStart.getFullYear(), eventStart.getMonth(), eventStart.getDate(), eventStart.getHours(), eventStart.getMinutes(), eventStart.getSeconds());
+          const ruleOptions = rrulestr(event.recurrence, { forceset: true }).options;
+          ruleOptions.dtstart = localStart;
+
+          const rule = new RRule(ruleOptions);
+
+          // Gera ocorrências no fuso horário local e as converte de volta para o fuso do calendário.
+          const occurrences = rule.between(startOfDay(slotDate), endOfDay(slotDate), true).map(d => new TZDate(d, config?.timeZone));
+
           occurrences.forEach((occurrence) => {
             const occurrenceStart = setMinutes(
-              setHours(new TZDate(occurrence, config?.timeZone), new TZDate(ensureDate(event.start), config?.timeZone).getHours()),
-              new TZDate(ensureDate(event.start), config?.timeZone).getMinutes()
+              setHours(occurrence, eventStart.getHours()),
+              eventStart.getMinutes()
             );
             const occurrenceEnd = addMinutes(
               occurrenceStart,
-              differenceInMinutes(
-                new TZDate(ensureDate(event.end), config?.timeZone),
-                new TZDate(ensureDate(event.start), config?.timeZone)
-              )
+              differenceInMinutes(eventEnd, eventStart)
             );
             if (format(occurrenceStart, "yyyy-MM-dd HH:mm") === slotDateFormatted) {
               acc.push({

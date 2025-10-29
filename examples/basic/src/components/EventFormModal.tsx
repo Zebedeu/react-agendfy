@@ -1,32 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
+import { TZDate } from '@date-fns/tz';
 import './EventFormModal.css';
 
-const formatISOForInput = (isoString: string) => {
+const formatISOForInput = (isoString: string, timeZone: string) => {
   if (!isoString) return '';
-  const date = parseISO(isoString);
-  return format(date, "yyyy-MM-dd'T'HH:mm");
+  // CORREÇÃO: Usar TZDate para formatar a data no fuso horário correto do calendário.
+  const date = new TZDate(isoString, timeZone);
+  return format(date, "yyyy-MM-dd'T'HH:mm:ss");
 };
 
-function EventFormModal({ isOpen, onClose, onSubmit, eventData }: any) {
-  const initialFormState = {
-    title: '',
-    start: '',
-    end: '',
-    isAllDay: false,
-    isMultiDay: false,
-    color: '#38B2AC',
-  };
-  const [formData, setFormData] = useState(initialFormState);
+function EventFormModal({ isOpen, onClose, onSubmit, eventData, config }: any) {
+  console.log('EventFormModal eventData:', eventData);
+  const [formData, setFormData] = useState<any>({});
 
   useEffect(() => {
     if (isOpen && eventData) {
+      // REFATORAÇÃO: Garante que o estado do formulário é sempre reiniciado
+      // com os dados do evento atual, evitando dados obsoletos.
       setFormData({
-        ...initialFormState,
-        start: formatISOForInput(eventData.start),
-        end: formatISOForInput(eventData.end),
+        id: eventData.id || '',
+        title: eventData.title || '',
+        start: eventData.start ? formatISOForInput(eventData.start, config.timeZone) : '',
+        end: eventData.end ? formatISOForInput(eventData.end, config.timeZone) : '',
         isAllDay: eventData.isAllDay || false,
         isMultiDay: eventData.isMultiDay || false,
+        color: eventData.color || '#3490dc',
       });
     }
   }, [isOpen, eventData]);
@@ -48,8 +47,9 @@ function EventFormModal({ isOpen, onClose, onSubmit, eventData }: any) {
       return;
     }
 
-    let finalStart = new Date(formData.start);
-    let finalEnd = new Date(formData.end);
+    // CORREÇÃO: Interpretar a data do input como sendo no fuso horário do calendário.
+    let finalStart = new TZDate(formData.start, config.timeZone);
+    let finalEnd = new TZDate(formData.end, config.timeZone);
 
     if (formData.isAllDay) {
       finalStart.setUTCHours(0, 0, 0, 0);
@@ -57,6 +57,7 @@ function EventFormModal({ isOpen, onClose, onSubmit, eventData }: any) {
     }
 
     onSubmit({
+      id: formData.id, // <-- ADICIONAR ESTA LINHA
       title: formData.title,
       start: finalStart.toISOString(),
       end: finalEnd.toISOString(),

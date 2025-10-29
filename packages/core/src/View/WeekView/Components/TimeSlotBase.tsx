@@ -2,10 +2,9 @@ import React, { memo, useCallback } from 'react';
 import { useDroppable } from "@dnd-kit/core";
 import { TZDate } from "@date-fns/tz";
 import { format } from "date-fns";
-import { Config, EventProps, TimeSlotProps } from '../../../types';
+import { Config, EventProps, TimeSlotProps } from '../../../types/types';
 import { getSlotTime } from '../../../Utils/slotTime';
 
- 
 export const TimeSlotBase = memo(
   ({
     index,
