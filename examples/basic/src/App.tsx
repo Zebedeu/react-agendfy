@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, FC } from "react";
 import { format, roundToNearestHours } from "date-fns";
 import {TZDate} from '@date-fns/tz'
-import { Calendar } from "@react-agendfy/core";
+import { Calendar, Resource } from "@react-agendfy/core";
 import darkThemePlugin from "@react-agendfy/plugin-theme";
 import EventFormModal from "./components/EventFormModal";
 import ErrorBoundary from "./components/ErrorBoundary";
 import MyRightHeaderPlugin from "./components/RightHeaderPlugin";
+import  exportsPlugin from '@react-agendfy/plugin-export-reports'
+import resourceFilterPlugin from "@react-agendfy/plugin-filter";
 import { v6 } from "uuid";
 
 class ExampleEmailAdapter {
@@ -20,7 +22,6 @@ const resources = [
   { id: "r3", name: "Projector", type: "equipment" },
   { id: "r4", name: "Holidays", type: "equipment" },
 ];
-
 
 const initialEvents = [
   {
@@ -89,13 +90,12 @@ const App: FC = () => {
         { daysOfWeek: [1, 2, 3, 4, 5], startTime: "09:00", endTime: "17:00" },
       ],
     },
-    alerts: { enabled: true, thresholdMinutes: 15 },
+    alerts: { enabled: true, thresholdMinutes: 2 },
     export: true,
     calendar_export: "Export",
   }), []);
 
   const handleEventUpdate = useCallback((updatedEvent: any) => {
-    console.log(updatedEvent)
     setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     justUpdatedEvent.current = true;
     setTimeout(() => {
@@ -103,55 +103,23 @@ const App: FC = () => {
     }, 100);
   }, [events]);
 
-  const handleEventClick = useCallback((event: any) => {
-   if (justUpdatedEvent.current) return;
-    setNewEventData({
-      id: event.id,
-      title: event.title,
-      start: event.start,
-      end:  event.end,
-      isAllDay: event.isAllDay ? true :  false,
-    isMultiDay: event.isMultiDay ? true : false,
-    color: event.color ,
-    });
-   setIsModalOpen(true);
-
-
-  }, []);
-
-  const handleDayClick = useCallback((dayDate: Date) => {
-if (justUpdatedEvent.current) return;
-    setNewEventData({
-      start: dayDate.toISOString(),
-      end: new Date(dayDate.getTime() + 60 * 60 * 1000).toISOString(),
-    }); 
-   setIsModalOpen(true);
-
-  }, []);
-
-  const handleSlotClick = useCallback((slotTime: Date) => {
-    console.log(slotTime)
-     if (justUpdatedEvent.current) return;
-    setNewEventData({
-      start: slotTime.toISOString(),
-      end: new Date(slotTime.getTime() + 60 * 60 * 1000).toISOString(),
-    }); 
-   setIsModalOpen(true);
-  }, []);
-
-  const onDateRangeSelect = useCallback((selection: any) => {
-    setNewEventData({
-      start: new Date(selection.start).toISOString(),
-      end: new Date(selection.end).toISOString(),
-      isAllDay: false,
-      isMultiDay: selection.isMultiDay,
-    });
-   setIsModalOpen(true);
+  const handleOpenModal = useCallback((data: any) => {
+    if (justUpdatedEvent.current) return;
+    
+    // Para cliques em dias ou slots, define um 'end' padrão de 1 hora depois.
+    if (data instanceof Date) {
+      setNewEventData({
+        start: data.toISOString(),
+        end: new Date(data.getTime() + 60 * 60 * 1000).toISOString(),
+      });
+    } else {
+      // Para cliques em eventos existentes ou seleção de range
+      setNewEventData(data);
+    }
+    setIsModalOpen(true);
   }, []);
 
   const handleSaveEvent = useCallback((eventData: any) => {
-    if (!newEventData) return;
-
     if (eventData.id) {
       setEvents(prevEvents => prevEvents.map(ev => ev.id === eventData.id ? eventData : ev));
     } else {
@@ -161,8 +129,9 @@ if (justUpdatedEvent.current) return;
       };
       setEvents(prevEvents => [...prevEvents, newEventWithId]);
     }
+    setNewEventData(null);
     setIsModalOpen(false);
-  }, [newEventData, events]);
+  }, []);
 
   const handleResourceFilterChange = useCallback((selected: string[]) => {
     setFilteredResources(selected);
@@ -170,7 +139,7 @@ if (justUpdatedEvent.current) return;
 
   const MyLeftHeaderPlugin: FC = () => (
     <button className="react-agendfy-btn" onClick={toggleTheme}>
-      {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+      {theme === "light" ? "Dark Mode" : "Light Mode"}
     </button>
   );
 
@@ -178,39 +147,42 @@ if (justUpdatedEvent.current) return;
     <div>My customized view ({events.length} events)</div>
   );
 
-
   return (
     <ErrorBoundary>
-      <Calendar
-        ref={calendarRef}
-        events={events}
-        config={defaultConfig}
-        onEventUpdate={handleEventUpdate}
-        onEventResize={handleEventUpdate}
-        onEventClick={handleEventClick}
-        onDayClick={handleDayClick}
-        onSlotClick={handleSlotClick}
-        resources={resources}
-        onDateRangeSelect={onDateRangeSelect}
-        filteredResources={filteredResources}
-        onResourceFilterChange={handleResourceFilterChange}
-        emailAdapter={new ExampleEmailAdapter()}
-        emailConfig={{ defaultRecipient: "user@example.com" }}
-        theme={theme}
-        plugins={[
-          { location: "left", type: "filter", component: MyLeftHeaderPlugin },
-          { location: "right", type: "search", component: MyRightHeaderPlugin },
-          { type: "view", viewName: "custom view", component: MyCustomView },
-          darkThemePlugin,
-        ]}
-      />
-      <EventFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSaveEvent}
-        eventData={newEventData}
-        config={defaultConfig}
-      />
+      <div style={{width: "100%", height: 'auto', display: "flex", flexDirection: "column"}}>
+        <Calendar 
+          ref={calendarRef}
+          events={events}
+          config={defaultConfig}
+          onEventUpdate={handleEventUpdate}
+          onEventResize={handleEventUpdate}
+          onEventClick={handleOpenModal}
+          onDayClick={handleOpenModal}
+          onSlotClick={handleOpenModal}
+          resources={resources}
+          onDateRangeSelect={handleOpenModal}
+          filteredResources={filteredResources}
+          onResourceFilterChange={handleResourceFilterChange}
+          emailAdapter={new ExampleEmailAdapter()}
+          emailConfig={{ defaultRecipient: "user@example.com" }}
+          theme={theme}
+          plugins={[
+           { location: "left", type: "filter", component: MyLeftHeaderPlugin },
+           { ...resourceFilterPlugin, location: "left" },
+         { location: "right", type: "search", component: MyRightHeaderPlugin },
+           { type: "view", viewName: "custom view", component: MyCustomView },
+            darkThemePlugin,
+            exportsPlugin
+          ]}
+        />
+        <EventFormModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleSaveEvent}
+          eventData={newEventData}
+          config={defaultConfig}
+        />
+      </div>
     </ErrorBoundary>
   );
 };

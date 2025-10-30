@@ -51,6 +51,7 @@
   },
   "packageManager": "yarn@4.10.3",
   "dependencies": {
+    "lucide-react": "^0.548.0",
     "uuid": "^13.0.0"
   }
 }

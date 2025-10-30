@@ -20,7 +20,7 @@
   "files": [
     "dist"
   ],
-   "exports": {
+  "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
       "import": "./dist/index.es.js",
@@ -28,7 +28,7 @@
     },
     "./core.css": "./dist/index.css"
   },
-   "sideEffects": [
+  "sideEffects": [
     "./dist/index.css"
   ],
   "scripts": {

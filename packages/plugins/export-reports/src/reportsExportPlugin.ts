@@ -1,7 +1,7 @@
 const reportsExportPlugin = {
   key: 'reports-csv-plugin',
   type: 'export',
-  location: "left",
+  location: "right",
   formatName: 'csv',
   label: 'Generate CSV Report',
   mimeType: 'text/csv;charset=utf-8;',
@@ -35,7 +35,6 @@ const reportsExportPlugin = {
       a.remove();
       URL.revokeObjectURL(url);
     }
-    alert(1);
     return csv;
   },
 };

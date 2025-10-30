@@ -1,246 +1,204 @@
-.react-agenfy-calendar-header {
+.fc-header-toolbar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: var(--padding-1rem);
+  align-items: center;
+  padding: 1rem;
+  flex-wrap: wrap; /* Permite que os chunks quebrem para a próxima linha */
+  gap: 1rem; /* Espaçamento entre os chunks */
   border-bottom: 1px solid var(--color-border);
-  background-color: var(--color-bg-white);
+  background-color: var(--color-bg-white); /* Garante que o fundo seja definido */
 }
 
-.react-agenfy-date-nav {
+.fc-toolbar-chunk {
   display: flex;
   align-items: center;
-  gap: var(--gap-0_5rem);
+  gap: 0.75rem; /* Espaçamento entre os itens dentro de um chunk */
+  flex-wrap: wrap; /* Permite que os itens dentro do chunk quebrem a linha */
 }
 
-.react-agenfy-btn {
-  padding: var(--padding-0_5rem);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  color: var(--color-text-gray-800);
-  transition: background-color var(--transition-duration) var(--transition-timing);
+/* Ajustes específicos para o primeiro chunk (navegação + título) */
+.fc-toolbar-chunk:first-child {
+  flex-grow: 1; /* Permite que ele ocupe mais espaço se disponível */
+  justify-content: flex-start;
 }
 
-.react-agenfy-btn:hover {
-  background-color: var(--color-bg-hover);
+.fc-toolbar-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0;
+  white-space: nowrap; /* Impede que a data quebre a linha */
+  flex-shrink: 0; /* Impede que o título encolha demais */
+  color: var(--color-text-gray-800); /* Garante que a cor do texto se adapte ao tema */
 }
 
-.react-agenfy-calendar-header-date {
-  font-size: var(--font-size-xl);
-  font-weight: 600;
-  color: var(--color-text-gray-800);
+/* Ajustes específicos para o último chunk (botões de visualização + filtro + exportação + plugins da direita) */
+.fc-toolbar-chunk:last-child {
+  justify-content: flex-end;
 }
 
-.react-agenfy-header-actions {
+/* Grupos de botões dentro dos chunks */
+.fc-button-group {
   display: flex;
-  align-items: center;
-  gap: var(--padding-1rem);
-}
-
-.react-agenfy-view-buttons {
-  display: flex;
-  gap: var(--gap-0_5rem);
-}
-
-.react-agenfy-view-btn {
-  padding: var(--padding-0_5rem);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  cursor: pointer;
-  background: transparent;
-  border: none;
+  overflow: hidden; /* Para cantos arredondados em botões agrupados */
+}
+
+.fc-button-group .fc-button {
+  border: none; /* Remove bordas de botões individuais */
+  border-radius: 0; /* Remove border-radius de botões individuais */
+  padding: 0.5rem 0.75rem;
+  background-color: var(--btn-bg);
   color: var(--color-text-gray-800);
-  transition: background-color var(--transition-duration) var(--transition-timing);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.react-agenfy-view-btn:hover {
-  background-color: var(--color-bg-hover);
+.fc-button-group .fc-button:hover {
+  background-color: var(--btn-hover-bg);
 }
 
-.react-agenfy-view-btn-active {
+.fc-button-group .fc-button + .fc-button {
+  border-left: 1px solid var(--color-border); /* Adiciona separador entre botões agrupados */
+}
+
+.fc-button.fc-button-primary.fc-button-active {
   background-color: var(--color-bg-view-btn-active);
   color: var(--color-text-white);
 }
 
-.react-agenfy-download-btn {
-  padding: var(--padding-0_5rem) var(--padding-1rem);
-  border-radius: var(--radius-sm);
-  background-color: var(--btn-bg);
-  color: var(--btn-text);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: background-color var(--transition-duration) var(--transition-timing);
-}
-
-.react-agenfy-download-btn:hover {
-  background-color: var(--btn-hover-bg);
-}
-
-.react-agenfy-filter-container {
+/* Contêineres de Filtro e Exportação */
+.fc-filter-container,
+.fc-export-container {
   position: relative;
 }
 
-.react-agenfy-filter-btn {
-  padding: var(--padding-0_5rem);
-  background-color: var(--color-bg-filter-btn);
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  border: none;
-  transition: background-color var(--transition-duration) var(--transition-timing);
-}
-
-.react-agenfy-filter-btn:hover {
-  background-color: var(--color-bg-hover);
-}
-
-.react-agenfy-filter-dropdown {
+.fc-filter-dropdown,
+.fc-export-menu {
   position: absolute;
-  right: 0;
-  margin-top: var(--margin-top-0_5rem);
-  width: var(--width-filter-dropdown);
+  top: 100%; /* Posiciona abaixo do botão */
+  right: 0; /* Alinha à direita do botão */
   background-color: var(--color-bg-white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  box-shadow: var(--box-shadow-md);
-  z-index: 50;
-  padding: var(--padding-0_5rem);
+  box-shadow: var(--shadow-sm);
+  z-index: 1000; /* Garante que fique acima de outros conteúdos */
+  min-width: 12rem;
+  padding: 0.5rem 0;
+  margin-top: 0.5rem;
 }
 
-.react-agenfy-filter-option {
+.fc-filter-option {
   display: flex;
   align-items: center;
-  gap: var(--gap-0_5rem);
-  padding: var(--padding-0_25rem) 0;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
 }
 
-.react-agenfy-checkbox {
-  height: 1rem;
-  width: 1rem;
+.fc-filter-option:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.fc-filter-option input[type="checkbox"] {
+  margin-right: 0.5rem;
   accent-color: var(--color-accent-checkbox);
 }
 
-.react-agenfy-resource-label {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-gray-800);
-}
-
-.react-agenfy-clear-btn {
-  margin-top: var(--margin-top-0_5rem);
-  font-size: var(--font-size-xs);
-  color: var(--color-clear-btn);
-  cursor: pointer;
+.fc-clear-filter {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  text-align: left;
   background: none;
   border: none;
-  transition: text-decoration var(--transition-duration) var(--transition-timing);
-}
-
-.react-agenfy-clear-btn:hover {
-  text-decoration: underline;
-}
-
-.react-agenfy-export-container {
-  position: relative;
-}
-
-.react-agenfy-export-dropdown {
-  position: absolute;
-  right: 0;
-  margin-top: var(--margin-top-0_5rem);
-  width: max-content;
-  background-color: var(--color-bg-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--box-shadow-md);
-  z-index: 50;
-  padding: var(--padding-0_5rem);
-  display: flex;
-  flex-direction: column;
-}
-
-.react-agenfy-export-option {
-  padding: var(--padding-0_5rem);
+  color: var(--color-clear-btn);
   cursor: pointer;
-  border-radius: var(--radius-sm);
-  color: var(--color-text-gray-800);
+  font-size: var(--font-size-sm);
 }
 
-.react-agenfy-export-option:hover {
+.fc-clear-filter:hover {
   background-color: var(--color-bg-hover);
 }
 
-.react-agenfy-search-input {
-  padding: var(--padding-0_5rem);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background-color: var(--color-bg-white);
+.fc-export-option {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  text-align: left;
+  background: none;
+  border: none;
   color: var(--color-text-gray-800);
-  transition: border-color var(--transition-duration) var(--transition-timing);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
 }
 
-.react-agenfy-search-input:focus {
-  outline: none;
-  border-color: var(--color-text-blue-600);
+.fc-export-option:hover {
+  background-color: var(--color-bg-hover);
 }
 
-@media (max-width: 640px) {
-  .react-agenfy-calendar-header {
-    flex-direction: column;
-    align-items: center;
-    gap: var(--padding-1rem);
+.fc-icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.25rem;
+}
+
+/* Plugins */
+.fc-plugin-left, .fc-plugin-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* --- Media Query para Telas Menores (Responsividade) --- */
+@media (max-width: 768px) {
+  .fc-header-toolbar {
+    flex-direction: column; /* Empilha os grupos verticalmente */
+    align-items: stretch; /* Faz os grupos ocuparem a largura total */
   }
-  
-  .react-agenfy-date-nav {
+
+  .fc-toolbar-chunk {
+    justify-content: center; /* Centraliza os controles em telas pequenas */
     width: 100%;
-    justify-content: space-between;
+    margin-bottom: 0.5rem; /* Adiciona espaçamento entre os chunks empilhados */
   }
-  
-  .react-agenfy-calendar-header-date {
-    font-size: var(--font-size-lg);
+
+  /* Reordena os chunks para uma melhor experiência mobile */
+  .fc-toolbar-chunk:first-child { /* Botões de navegação + Título */
+    order: 2;
+    flex-direction: column; /* Empilha botões de navegação e título */
+    gap: 0.5rem;
+  }
+  .fc-toolbar-chunk:first-child .fc-button-group {
+    justify-content: center;
+  }
+  .fc-toolbar-chunk:first-child .fc-toolbar-title {
+    width: 100%; /* Garante que o título ocupe a largura total */
     text-align: center;
-    width: 100%;
-  }
-  
-  .react-agenfy-header-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: var(--padding-0_5rem);
-    justify-content: center;
-  }
-  
-  .react-agenfy-view-buttons {
-    flex-wrap: wrap;
-    gap: var(--gap-0_25rem);
-    justify-content: center;
-    width: 100%;
   }
 
-  .react-agenfy-view-btn {
-    flex-grow: 1;
-    min-width: unset;
-  }
-
-  .react-agenfy-filter-container,
-  .react-agenfy-export-container {
-    width: 100%;
-    display: flex;
+  .fc-toolbar-chunk:nth-child(2) { /* Plugins da Esquerda */
+    order: 3;
     justify-content: center;
   }
-  
-  .react-agenfy-filter-dropdown {
-    width: 100%;
-    right: auto;
-    left: 0;
-  }
 
-  .react-agenfy-export-dropdown {
-    width: 100%;
-    right: auto;
-    left: 0;
-    align-items: center;
+  .fc-toolbar-chunk:last-child { /* Botões de visualização + Filtro + Exportação + Plugins da Direita */
+    order: 1; /* Move os botões de visualização para o topo */
+    justify-content: center;
+    flex-direction: column; /* Empilha botões de visualização, filtro, exportação e plugins */
+    gap: 0.5rem;
+  }
+  .fc-toolbar-chunk:last-child .fc-button-group {
+    justify-content: center;
+    width: 100%; /* Garante que os botões de visualização ocupem a largura total */
+  }
+  .fc-filter-container, .fc-export-container {
+    width: 100%; /* Faz com que os botões de filtro/exportação ocupem a largura total */
+    display: flex; /* Para centralizar o botão */
+    justify-content: center;
+  }
+  .fc-filter-dropdown, .fc-export-menu {
+    right: auto; /* Remove alinhamento à direita */
+    left: 50%; /* Centraliza o dropdown */
+    transform: translateX(-50%); /* Ajusta para centralização */
+    min-width: 90%; /* Torna o dropdown mais largo em dispositivos móveis */
   }
 }

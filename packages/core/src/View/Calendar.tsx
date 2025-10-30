@@ -341,11 +341,14 @@ const Calendar: FC<CalendarProps> = ({
           onFilterChange={handleFilterChangeFromPlugin}
           onSearch={handleSearchFromPlugin}
           config={localeConfig}
+          resources={resources}
+          filteredResources={localFilteredResources}
+          onResourceFilterChange={handleResourceFilterChange}
           {...plugin.props}
         />
       ) : null
     );
-  }, [combinedExclusivePlugins, normalizedEvents, handleFilterChangeFromPlugin, handleSearchFromPlugin, localeConfig]);
+  }, [combinedExclusivePlugins, normalizedEvents, handleFilterChangeFromPlugin, handleSearchFromPlugin, localeConfig, resources, localFilteredResources, handleResourceFilterChange]);
 
   const headerRightPlugins = useMemo(() => {
     return combinedExclusivePlugins.rightList.map((plugin, idx) =>
@@ -356,11 +359,14 @@ const Calendar: FC<CalendarProps> = ({
           onFilterChange={handleFilterChangeFromPlugin}
           onSearch={handleSearchFromPlugin}
           config={localeConfig}
+          resources={resources}
+          filteredResources={localFilteredResources}
+          onResourceFilterChange={handleResourceFilterChange}
           {...plugin.props}
         />
       ) : null
     );
-  }, [combinedExclusivePlugins, normalizedEvents, handleFilterChangeFromPlugin, handleSearchFromPlugin, localeConfig]);
+  }, [combinedExclusivePlugins, normalizedEvents, handleFilterChangeFromPlugin, handleSearchFromPlugin, localeConfig, resources, localFilteredResources, handleResourceFilterChange]);
 
   const renderViewComponent = () => {
     const CustomViewComponent = allCustomViews[currentView];
@@ -461,28 +467,7 @@ const Calendar: FC<CalendarProps> = ({
 
   return (
     <div className={`react-agenfy-layout theme-${theme}`}>
-      <div className="react-agenfy-layout-header">
-        <CalendarHeader
-          view={currentView}
-          onViewChange={(newView) => {
-            setCurrentView(newView);
-            setLocaleConfig((prev) => ({ ...prev, defaultView: newView }));
-          }}
-          currentDate={currentDate}
-          onNavigateToday={navigateToday}
-          onNavigateBack={navigateBack}
-          onNavigateForward={navigateForward}
-          config={localeConfig}
-          resources={resources}
-          onDownloadcalendar={handleExport}
-          onResourceFilterChange={handleResourceFilterChange}
-          exportOptions={exportOptions}
-          leftControls={headerLeftPlugins}
-          rightControls={headerRightPlugins}
-          availableViews={availableViews}
-          currentView={currentView}
-        />
-      </div>
+     
       <div
         className="visually-hidden"
         aria-live="polite"
@@ -490,6 +475,22 @@ const Calendar: FC<CalendarProps> = ({
       >
         {`Current view: ${currentView}. Period: ${currentDate.toLocaleDateString(config.lang)}`}
       </div>
+            <CalendarHeader
+  currentDate={currentDate}
+  currentView={currentView}
+  availableViews={availableViews}
+  localeConfig={localeConfig}
+  onViewChange={handleViewChange}
+  onNavigate={(dir) => {
+    if (dir === "today") navigateToday();
+    else if (dir === "prev") navigateBack();
+    else if (dir === "next") navigateForward();
+  }}
+  headerLeftPlugins={headerLeftPlugins}
+  headerRightPlugins={headerRightPlugins}
+  exportOptions={localeConfig.export ? exportOptions : []}
+  onExport={handleExport}
+/>
       <div className="react-agenfy-layout-content">{renderViewComponent()}</div>
     </div>
   );

@@ -2526,6 +2526,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-agendfy/plugin-filter@workspace:packages/plugins/filters":
+  version: 0.0.0-use.local
+  resolution: "@react-agendfy/plugin-filter@workspace:packages/plugins/filters"
+  dependencies:
+    "@vitejs/plugin-react": "npm:^4.0.0"
+    typescript: "npm:^5.7.3"
+    vite: "npm:^6.1.0"
+    vite-plugin-dts: "npm:^3.0.0"
+  peerDependencies:
+    "@react-agendfy/core": "workspace:*"
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  languageName: unknown
+  linkType: soft
+
 "@react-agendfy/plugin-google-calendar@workspace:packages/plugins/google-calendar":
   version: 0.0.0-use.local
   resolution: "@react-agendfy/plugin-google-calendar@workspace:packages/plugins/google-calendar"
@@ -6980,6 +6995,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lucide-react@npm:^0.548.0":
+  version: 0.548.0
+  resolution: "lucide-react@npm:0.548.0"
+  peerDependencies:
+    react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/4b3416982927622a8aad49edd3ed53c7a7c202e7357188f56b8dd582e8f22d33b30fda736440a2e640e0faf9baa724a06d0d3c1de5ecf42d2844eb6b24ddefdd
+  languageName: node
+  linkType: hard
+
 "lz-string@npm:^1.5.0":
   version: 1.5.0
   resolution: "lz-string@npm:1.5.0"
@@ -7802,6 +7826,7 @@ __metadata:
     eslint-plugin-react-refresh: "npm:^0.4.24"
     jest: "npm:^29.7.0"
     jest-environment-jsdom: "npm:^30.2.0"
+    lucide-react: "npm:^0.548.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.0"
     vite: "npm:^6.1.0"

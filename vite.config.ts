@@ -12,7 +12,8 @@ export default defineConfig({
       '@react-agendfy/plugin-export-reports': resolve(__dirname, 'packages/plugins/export-reports/src'),
       '@react-agendfy/plugin-google-calendar': resolve(__dirname, 'packages/plugins/google-calendar/src'),
       '@react-agendfy/plugin-theme': resolve(__dirname, 'packages/plugins/theme/src'),
-      '@react-agendfy/plugin-timeline': resolve(__dirname, 'packages/plugins/timeline/src')
+      '@react-agendfy/plugin-timeline': resolve(__dirname, 'packages/plugins/timeline/src'),
+      '@react-agendfy/plugin-filter': resolve(__dirname, 'packages/plugins/filter/src'),
     }
   },
   server: {

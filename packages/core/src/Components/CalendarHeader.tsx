@@ -1,173 +1,135 @@
-import React, { useState } from "react";
-import { endOfWeek, format, startOfWeek } from "date-fns";
+import React, { useState, useEffect, useRef } from "react";
+import { format, startOfWeek, endOfWeek } from "date-fns";
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Filter } from "lucide-react";
 import { getLocale } from "../Utils/locate";
 import { CalendarHeaderProps, Resource } from "../types/types";
-
 
 const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   currentView,
   availableViews,
   onViewChange,
   currentDate,
-  onNavigateToday,
-  onNavigateBack,
-  onNavigateForward,
-  config,
-  resources,
-  onResourceFilterChange,
-  onDownloadcalendar,
-  exportOptions,
-  leftControls,
-  rightControls,
+  onNavigate,
+  localeConfig, 
+  onExport,
+  exportOptions = [],
+  headerLeftPlugins = [],
+  headerRightPlugins = [],
 }) => {
-  const [selectedResources, setSelectedResources] = useState<Resource[]>([]);
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
 
-  const displayDate = () => {
-    if (currentView === "month") {
-      return format(currentDate, "MMMM yyyy", { locale: getLocale(config.lang) });
-    } else if (currentView === "week") {
-      const start = format(startOfWeek(currentDate, { weekStartsOn: 0 }), "dd MMM", {
-        locale: getLocale(config.lang),
-      });
-      const end = format(endOfWeek(currentDate, { weekStartsOn: 0 }), "dd MMM yyyy", {
-        locale: getLocale(config.lang),
-      });
-      return `${start} - ${end}`;
-    } else if (currentView === "day") {
-      return format(currentDate, "EEE, dd MMMM yyyy", { locale: getLocale(config.lang) });
-    } else {
-      return format(currentDate, "EEE, dd MMMM yyyy", { locale: getLocale(config.lang) });
-    }
-  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (exportRef.current && !exportRef.current.contains(event.target as Node)) {
+        setIsExportOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
-  const handleResourceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const resourceId = e.target.value;
-    const isChecked = e.target.checked;
-    let newSelected;
-    if (isChecked) {
-      newSelected = [...selectedResources, resourceId];
-    } else {
-      newSelected = selectedResources.filter((id) => id !== resourceId);
+  const formatTitle = () => {
+    const locale = getLocale(localeConfig.lang);
+    if (currentView === "week") {
+      const start = startOfWeek(currentDate, { weekStartsOn: 1 });
+      const end = endOfWeek(currentDate, { weekStartsOn: 1 });
+      return `${format(start, "d")} - ${format(end, "d MMM yyyy", { locale })}`;
     }
-    setSelectedResources(newSelected);
-    onResourceFilterChange(newSelected);
+    if (currentView === "day") {
+      return format(currentDate, "d MMMM yyyy", { locale });
+    }
+    return format(currentDate, "MMMM yyyy", { locale });
   };
 
   return (
-    <div className="react-agenfy-calendar-header">
-      {leftControls && <div className="react-agenfy-header-controls-left">{leftControls}</div>}
-
-      <div className="react-agenfy-date-nav">
-        <button
-  data-testid="btn-back"
-  onClick={onNavigateBack}
-  className="react-agenfy-btn"
-  aria-label={`Back ${currentView}`}
->
-  &lt;
-</button>
-
-<button
-  data-testid="btn-today"
-  onClick={onNavigateToday}
-  className="react-agenfy-btn"
-  aria-label="Go to today"
->
-  {config.today}
-</button>
-
-<button
-  data-testid="btn-forward"
-  onClick={onNavigateForward}
-  className="react-agenfy-btn"
-  aria-label={`Next ${currentView}`}
->
-  &gt;
-</button>
+    <div className="fc-header-toolbar fc-toolbar">
+      <div className="fc-toolbar-chunk">
+        <div className="fc-button-group">
+          <button
+            type="button"
+            className="fc-prev-button fc-button fc-button-primary"
+            onClick={() => onNavigate("prev")}
+          >
+            <ChevronLeft className="fc-icon" />
+          </button>
+          <button
+            type="button"
+            className="fc-next-button fc-button fc-button-primary"
+            onClick={() => onNavigate("next")}
+          >
+            <ChevronRight className="fc-icon" />
+          </button>
+        </div>
+        <div className="fc-button-group">
+          <button
+            type="button"
+            className="fc-today-button fc-button fc-button-primary"
+            onClick={() => onNavigate("today")}
+          >
+            {localeConfig?.today || "Today"}
+          </button>
+        </div>
+        <h2 className="fc-toolbar-title">{formatTitle()}</h2>
       </div>
-      <h2 className="react-agenfy-calendar-header-date">{displayDate()}</h2>
 
-      <div className="react-agenfy-header-actions">
-        <div className="react-agenfy-view-buttons">
-        {availableViews.map((viewInfo) => (
+      <div className="fc-toolbar-chunk">
+        {headerLeftPlugins.map((plugin, i) => (
+          <div key={i} className="fc-plugin-left">{plugin}</div>
+        ))}
+      </div>
+
+      <div className="fc-toolbar-chunk">
+        <div className="fc-button-group">
+          {availableViews.map((view) => (
             <button
-              key={viewInfo.name}
-              onClick={() => onViewChange(viewInfo.name)}
-              className={`react-agenfy-view-btn ${currentView === viewInfo.name ? "react-agenfy-view-btn-active" : ""}`}
-              aria-current={currentView === viewInfo.name ? "page" : undefined}
+              key={view.name}
+              type="button"
+              className={`fc-${view.name}-button fc-button fc-button-primary ${currentView === view.name ? "fc-button-active" : ""}`}
+              onClick={() => onViewChange(view.name)}
             >
-              {viewInfo.label}
+              {view.label}
             </button>
           ))}
         </div>
 
-        <div className="react-agenfy-filter-container">
-          <button
-            onClick={() => setFilterOpen(!filterOpen)}
-            className="react-agenfy-filter-btn"
-            aria-haspopup="true"
-            aria-expanded={filterOpen}
-            aria-controls="filter-dropdown"
-          >
-            {config.filter_resources} {selectedResources.length > 0 && `(${selectedResources.length})`}
-          </button>
-          {filterOpen && (
-            <div id="filter-dropdown" className="react-agenfy-filter-dropdown" role="menu">
-              {resources.map((resource: Resource) => (
-                <label key={resource.id} className="react-agenfy-filter-option">
-                  <input
-                    type="checkbox"
-                    value={resource.id}
-                    checked={selectedResources.includes(resource.id)}
-                    onChange={handleResourceChange}
-                    className="react-agenfy-checkbox"
-                  />
-                  <span className="react-agenfy-resource-label">{resource.name}</span>
-                </label>
-              ))}
-              <button
-                onClick={() => {
-                  setSelectedResources([]);
-                  onResourceFilterChange([]);
-                }}
-                className="react-agenfy-clear-btn"
-              >
-                {config.clear_filter}
-              </button>
-            </div>
-          )}
-        </div>
-        {config.export && (
-          <div className="react-agenfy-export-container">
+        {localeConfig?.export && exportOptions.length > 0 && onExport && (
+          <div className="fc-export-container" ref={exportRef}>
             <button
-              onClick={() => setExportMenuOpen(!exportMenuOpen)}
-              className="react-agenfy-download-btn"
+              type="button"
+              className="fc-export-button fc-button fc-button-primary"
+              onClick={() => setIsExportOpen(!isExportOpen)}
               aria-haspopup="true"
-              aria-expanded={exportMenuOpen}
-              aria-controls="export-dropdown"
+              aria-expanded={isExportOpen}
             >
-              {config.calendar_export}
+              <CalendarIcon className="fc-icon" size={16} />
+              <span>{localeConfig?.calendar_export || "Export"}</span>
             </button>
-            {exportMenuOpen && (
-              <div id="export-dropdown" className="react-agenfy-export-dropdown" role="menu">
-                <div className="react-agenfy-export-option" onClick={() => { onDownloadcalendar('ics'); setExportMenuOpen(false); }}>
-                  Export to .ics
-                </div>
-                <div className="react-agenfy-export-option" onClick={() => { onDownloadcalendar('csv'); setExportMenuOpen(false); }}>
-                  Export to .csv
-                </div>
-                <div className="react-agenfy-export-option" onClick={() => { onDownloadcalendar('json'); setExportMenuOpen(false); }}>
-                  Export to .json
-                </div>
+            {isExportOpen && (
+              <div className="fc-export-menu">
+                {exportOptions.map((opt) => (
+                  <button
+                    key={opt.formatName}
+                    className="fc-export-option"
+                    onClick={() => {
+                      onExport(opt.formatName);
+                      setIsExportOpen(false);
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
               </div>
             )}
           </div>
         )}
-      </div>
 
-      {rightControls && <div className="react-agenfy-header-controls-right">{rightControls}</div>}
+        {headerRightPlugins.map((plugin, i) => (
+          <div key={i} className="fc-plugin-right">{plugin}</div>
+        ))}
+      </div>
     </div>
   );
 };
