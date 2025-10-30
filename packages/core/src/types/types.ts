@@ -26,8 +26,8 @@ export interface Config {
     }[];
   },
   alerts?: {
-    enabled: boolean,          
-    thresholdMinutes: number,  
+    enabled: boolean,
+    thresholdMinutes: number,
   },
   emailAdapter?: null,
   export?: boolean,
@@ -42,7 +42,7 @@ export interface WeekProps  {
   onEventClick?: (event: EventProps) => void;
   onSlotClick?: (slotTime: Date) => void;
   onEventResize?: (event: EventProps) => void;
-  onDateRangeSelect?: (event: EventProps) => void;
+  onDateRangeSelect?: (selection: { start: string; end: string; isMultiDay: boolean }) => void;
   currentDate: TZDate,
   slotMin: string,
   slotMax: string,

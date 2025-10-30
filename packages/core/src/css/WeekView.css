@@ -29,7 +29,7 @@
   padding: var(--padding-0_125rem);
   background-color: var(--color-bg-white);
   color: var(--color-text-gray-800);
-  min-width: 0; /* Permite que o item flexível encolha abaixo do seu conteúdo intrínseco */
+  min-width: 0;
 }
 
 .react-agenfy-weekview-all-day-event {
@@ -76,7 +76,7 @@
 .react-agenfy-weekview-day-column {
   flex: 1;
   position: relative;
-  min-width: 0; /* Permite que o item flexível encolha abaixo do seu conteúdo intrínseco */
+  min-width: 0;
 }
 
 .react-agenfy-border-right {

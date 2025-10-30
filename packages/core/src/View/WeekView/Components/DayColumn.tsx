@@ -17,12 +17,11 @@ import { getLocale } from "../../../Utils/locate";
 export const DayColumn = memo(
   ({
     dayDate,
-    events,
     timeSlots,
     parsedSlotMin, 
     onEventClick,
     onSlotClick,
-    getEvents,
+    getEventsForDay,
     parsedSlotMax, 
     onEventResize,
     redLineOffset,
@@ -44,11 +43,11 @@ export const DayColumn = memo(
         const minute = minutes % 60;
         const slotDate = setMinutes(setHours(dayStart, hour), minute);
         const slotKey = slotDate.toISOString();
-        let slotEvents = getEvents(slotKey) || [];
+        let slotEvents = getEventsForDay(slotKey) || [];
         mapping[slotKey] = slotEvents;
       });
       return mapping;
-    }, [dayStart, parsedSlotMin, timeSlots, getEvents, config?.slotDuration]);
+    }, [dayStart, parsedSlotMin, timeSlots, getEventsForDay, config?.slotDuration]);
 
     const businessIntervals = useBusinessHours(dayDate, config?.businessHours);
 

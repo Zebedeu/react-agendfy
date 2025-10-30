@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Filter } from "luc
 import { getLocale } from "../Utils/locate";
 import { CalendarHeaderProps, Resource } from "../types/types";
 
-const CalendarHeader: React.FC<CalendarHeaderProps> = ({
+const CalendarHeader: React.FC<CalendarHeaderProps> = ({ 
   currentView,
   availableViews,
   onViewChange,

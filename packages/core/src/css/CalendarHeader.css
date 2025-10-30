@@ -3,22 +3,21 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  flex-wrap: wrap; /* Permite que os chunks quebrem para a próxima linha */
-  gap: 1rem; /* Espaçamento entre os chunks */
+  flex-wrap: wrap;
+  gap: 1rem;
   border-bottom: 1px solid var(--color-border);
-  background-color: var(--color-bg-white); /* Garante que o fundo seja definido */
+  background-color: var(--color-bg-white);
 }
 
 .fc-toolbar-chunk {
   display: flex;
   align-items: center;
-  gap: 0.75rem; /* Espaçamento entre os itens dentro de um chunk */
-  flex-wrap: wrap; /* Permite que os itens dentro do chunk quebrem a linha */
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
-/* Ajustes específicos para o primeiro chunk (navegação + título) */
 .fc-toolbar-chunk:first-child {
-  flex-grow: 1; /* Permite que ele ocupe mais espaço se disponível */
+  flex-grow: 1;
   justify-content: flex-start;
 }
 
@@ -26,27 +25,25 @@
   font-size: 1.25rem;
   font-weight: 500;
   margin: 0;
-  white-space: nowrap; /* Impede que a data quebre a linha */
-  flex-shrink: 0; /* Impede que o título encolha demais */
-  color: var(--color-text-gray-800); /* Garante que a cor do texto se adapte ao tema */
+  white-space: nowrap;
+  flex-shrink: 0;
+  color: var(--color-text-gray-800);
 }
 
-/* Ajustes específicos para o último chunk (botões de visualização + filtro + exportação + plugins da direita) */
 .fc-toolbar-chunk:last-child {
   justify-content: flex-end;
 }
 
-/* Grupos de botões dentro dos chunks */
 .fc-button-group {
   display: flex;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  overflow: hidden; /* Para cantos arredondados em botões agrupados */
+  overflow: hidden;
 }
 
 .fc-button-group .fc-button {
-  border: none; /* Remove bordas de botões individuais */
-  border-radius: 0; /* Remove border-radius de botões individuais */
+  border: none;
+  border-radius: 0;
   padding: 0.5rem 0.75rem;
   background-color: var(--btn-bg);
   color: var(--color-text-gray-800);
@@ -141,64 +138,61 @@
   margin-right: 0.25rem;
 }
 
-/* Plugins */
 .fc-plugin-left, .fc-plugin-right {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-/* --- Media Query para Telas Menores (Responsividade) --- */
 @media (max-width: 768px) {
-  .fc-header-toolbar {
-    flex-direction: column; /* Empilha os grupos verticalmente */
-    align-items: stretch; /* Faz os grupos ocuparem a largura total */
+  .fc-header-toolbar { 
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .fc-toolbar-chunk {
-    justify-content: center; /* Centraliza os controles em telas pequenas */
+    justify-content: center;
     width: 100%;
-    margin-bottom: 0.5rem; /* Adiciona espaçamento entre os chunks empilhados */
+    margin-bottom: 0.5rem;
   }
 
-  /* Reordena os chunks para uma melhor experiência mobile */
-  .fc-toolbar-chunk:first-child { /* Botões de navegação + Título */
+  .fc-toolbar-chunk:first-child {
     order: 2;
-    flex-direction: column; /* Empilha botões de navegação e título */
+    flex-direction: column;
     gap: 0.5rem;
   }
   .fc-toolbar-chunk:first-child .fc-button-group {
     justify-content: center;
   }
   .fc-toolbar-chunk:first-child .fc-toolbar-title {
-    width: 100%; /* Garante que o título ocupe a largura total */
+    width: 100%;
     text-align: center;
   }
 
-  .fc-toolbar-chunk:nth-child(2) { /* Plugins da Esquerda */
+  .fc-toolbar-chunk:nth-child(2) {
     order: 3;
     justify-content: center;
   }
 
-  .fc-toolbar-chunk:last-child { /* Botões de visualização + Filtro + Exportação + Plugins da Direita */
-    order: 1; /* Move os botões de visualização para o topo */
+  .fc-toolbar-chunk:last-child {
+    order: 1;
     justify-content: center;
-    flex-direction: column; /* Empilha botões de visualização, filtro, exportação e plugins */
+    flex-direction: column;
     gap: 0.5rem;
   }
   .fc-toolbar-chunk:last-child .fc-button-group {
     justify-content: center;
-    width: 100%; /* Garante que os botões de visualização ocupem a largura total */
+    width: 100%;
   }
   .fc-filter-container, .fc-export-container {
-    width: 100%; /* Faz com que os botões de filtro/exportação ocupem a largura total */
-    display: flex; /* Para centralizar o botão */
+    width: 100%;
+    display: flex;
     justify-content: center;
   }
   .fc-filter-dropdown, .fc-export-menu {
-    right: auto; /* Remove alinhamento à direita */
-    left: 50%; /* Centraliza o dropdown */
-    transform: translateX(-50%); /* Ajusta para centralização */
-    min-width: 90%; /* Torna o dropdown mais largo em dispositivos móveis */
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 90%;
   }
 }
