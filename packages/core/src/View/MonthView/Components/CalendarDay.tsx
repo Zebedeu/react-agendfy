@@ -1,6 +1,6 @@
-// CalendarDay.tsx (Atualizado)
+// CalendarDay.tsx
 import React, { useRef, useEffect, useState, memo } from "react";
-import { useDroppable, } from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
 import {
   format,
   isSameDay,
@@ -21,13 +21,13 @@ const CalendarDayMemo: React.FC<CalendarDayProps> = ({
   day,
   events = [],
   onDayClick,
-  onEventClick,
-  onEventResize, // Passe se necessário
+  onEventClick, 
+  onEventResize,
   config,
   onMouseDown, 
   onMouseMove,
   isSelected,
-  monthDate, // Para outros meses
+  monthDate,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
@@ -47,10 +47,10 @@ const CalendarDayMemo: React.FC<CalendarDayProps> = ({
   const dayEvents = events.filter((e) => {
     try {
       const eventStart = ensureDate(e.start, config?.timeZone);
-      const eventEnd = addMilliseconds(ensureDate(e.end, config?.timeZone), 1); // ← Ajuste chave!
+      const eventEnd = addMilliseconds(ensureDate(e.end, config?.timeZone), 1);
       return isWithinInterval(day, {
         start: startOfDay(eventStart),
-        end: endOfDay(eventEnd), // Agora captura o dia completo
+        end: endOfDay(eventEnd),
       }); 
     } catch (error) {
       console.error("Erro ao filtrar evento:", error, e);
@@ -71,7 +71,7 @@ const CalendarDayMemo: React.FC<CalendarDayProps> = ({
   const visible = sorted.slice(0, MAX_VISIBLE);
   const hidden = Math.max(0, sorted.length - MAX_VISIBLE);
   const isToday = isSameDay(day, new TZDate(new Date(), config?.timeZone)); 
-  const isOtherMonth = monthDate && !isSameMonth(day, monthDate); // ← Adicione import isSameMonth
+  const isOtherMonth = monthDate && !isSameMonth(day, monthDate);
 
   const classes = [
     "react-agenfy-calendar-day",
@@ -81,6 +81,13 @@ const CalendarDayMemo: React.FC<CalendarDayProps> = ({
     isOtherMonth && "react-agenfy-calendar-day-other-month",
   ].filter(Boolean).join(" ");
 
+  const handleDayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget || (e.target as HTMLElement).closest('.react-agenfy-event-item') === null) {
+      e.stopPropagation();
+      onDayClick?.(day);
+    }
+  };
+
   return (
     <div
       ref={(el) => {
@@ -88,8 +95,14 @@ const CalendarDayMemo: React.FC<CalendarDayProps> = ({
         setNodeRef(el);
       }}
       className={classes}
-      onClick={(e) => { e.stopPropagation(); onDayClick?.(day); }}
-      onMouseDown={() => onMouseDown?.(day)}
+      onClick={handleDayClick}
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget || (e.target as HTMLElement).closest('.react-agenfy-event-item') === null) {
+          onMouseDown?.(day);
+        } else {
+          e.stopPropagation();
+        }
+      }}
       onMouseMove={() => onMouseMove?.(day)}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onDayClick?.(day); } }}
       role="button"
@@ -131,7 +144,7 @@ const CalendarDayMemo: React.FC<CalendarDayProps> = ({
               event={event} 
               isStart={isEventStart}
               isEnd={isEventEnd}
-              isMultiDay={event.isMultiDay || !isSameDay(s, e)} // ← Calcula dinamicamente se necessário
+              isMultiDay={event.isMultiDay || !isSameDay(s, e)}
               onEventClick={onEventClick}
               onEventResize={onEventResize}
               config={config}
@@ -145,4 +158,4 @@ const CalendarDayMemo: React.FC<CalendarDayProps> = ({
   );
 };
 
-export const CalendarDay = memo(CalendarDayMemo);
+export const CalendarDay = memo(CalendarDayMemo); 

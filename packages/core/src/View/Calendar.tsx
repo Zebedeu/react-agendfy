@@ -15,12 +15,9 @@ import { normalizeEvents } from "../Utils/calendarHelpers";
 import { useToast } from "../Components/Toast/Toast";
 import { useEventReminder } from "../hooks/useEventReminder";
 import { NotificationService } from "../Notify/NotificationService";
-import {
-  updateEventsList,
-  getFilteredEventsList,
-  exportCalendarEvents,
-  downloadFile,
-} from "./../Utils/CalendarUtils";
+import { updateEventsList, getFilteredEventsList } from "./../Utils/CalendarUtils";
+    // No longer need to import downloadFile or exportCalendarEvents from CalendarUtils
+    // as export logic is now handled by plugins and downloadBlob is from core index
 import useCalendarNavigation from "../hooks/useCalendarNavigation";
 import usePluginManagement from "../hooks/usePluginManagement";
 import { CalendarPlugin, ViewPlugin, ExportPlugin, CustomFilterPlugin, ThemePlugin } from "../types/plugins";
@@ -46,7 +43,7 @@ const defaultConfig = {
   weekView: "Week",
   dayView: "Day",
   listView: "List",
-  schedule: "Schedule",
+  agenda: "Agenda",
   all_day: "All Day",
   clear_filter: "Clear Filters",
   filter_resources: "Filter Resources",
@@ -86,11 +83,7 @@ const Calendar: FC<CalendarProps> = ({
   const [pluginFilteredEvents, setPluginFilteredEvents] = useState<EventProps[]>(initialEvents);
   const [pluginSearchResults, setPluginSearchResults] = useState<EventProps[]>(initialEvents);
   const [isSearchActive, setIsSearchActive] = useState(false);
-  const [dataSourceEvents, setDataSourceEvents] = useState<EventProps[]>([]);
-  const [isDataSourceLoading, setIsDataSourceLoading] = useState(false);
-  const [dataSourceError, setDataSourceError] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<string>(config.defaultView);
-  const [customFilterValues, setCustomFilterValues] = useState<Record<string, any>>({});
 
   const addToast = useToast();
 
@@ -98,22 +91,14 @@ const Calendar: FC<CalendarProps> = ({
     const finalConfig = { ...defaultConfig, ...config };
     return { ...finalConfig, ...getLocale(finalConfig.lang) };
   });
-  const lastRelevantConfigRef = useRef(config);
 
   useEffect(() => {
     if (config && typeof config === "object") {
-      const isRelevantChange =
-        !lastRelevantConfigRef.current ||
-        config.lang !== lastRelevantConfigRef.current.lang ||
-        config.defaultView !== lastRelevantConfigRef.current.defaultView;
-      if (isRelevantChange) {
-        setLocaleConfig((prevConfig) => ({
-          ...prevConfig,
-          ...config,
-          ...getLocale(config.lang || prevConfig.lang),
-        }));
-        lastRelevantConfigRef.current = config;
-      }
+      setLocaleConfig((prevConfig) => ({
+        ...prevConfig,
+        ...config,
+        ...getLocale(config.lang || prevConfig.lang),
+      }));
     }
   }, [config]);
 
@@ -172,10 +157,6 @@ const Calendar: FC<CalendarProps> = ({
   });
 
   const normalizedEvents = useMemo(() => normalizeEvents(events), [events]);
-
-  const handleCustomFilterChange = useCallback((filterName: string, value: any) => {
-    setCustomFilterValues(prev => ({ ...prev, [filterName]: value }));
-  }, []);
 
   const filteredEvents = useMemo(
     () =>
@@ -271,7 +252,7 @@ const Calendar: FC<CalendarProps> = ({
       { name: "week", label: localeConfig.weekView },
       { name: "day", label: localeConfig.dayView },
       { name: "list", label: localeConfig.listView },
-      { name: "schedule", label: localeConfig.schedule }
+      { name: "agenda", label: localeConfig.agenda }
     ];
     const customViews = customViewPlugins.map((plugin: ViewPlugin) => ({
       name: plugin.viewName,
@@ -438,7 +419,7 @@ const Calendar: FC<CalendarProps> = ({
             config={localeConfig}
           />
         );
-      case "schedule":
+      case "agenda":
         return (
           <AgendaView
             events={filteredEvents}
@@ -453,18 +434,14 @@ const Calendar: FC<CalendarProps> = ({
   };
 
   const exportOptions = useMemo(() => {
-    const defaultOptions = [
-      { formatName: 'ics', label: 'Exportar para .ics' },
-      { formatName: 'csv', label: 'Exportar para .csv' },
-      { formatName: 'json', label: 'Exportar para .json' },
-    ];
+   
     const pluginOptions = exportPlugins.map((plugin: ExportPlugin) => ({
       formatName: plugin.formatName,
       label: plugin.label,
     }));
-    return [...defaultOptions, ...pluginOptions];
+    return [...pluginOptions];
   }, [exportPlugins]);
-
+ 
   return (
     <div className={`react-agenfy-layout theme-${theme}`}>
      

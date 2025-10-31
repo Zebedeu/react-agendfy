@@ -90,6 +90,8 @@
   align-items: center;
   padding: 0.5rem 1rem;
   cursor: pointer;
+  color: var(--color-text-gray-800);
+
 }
 
 .fc-filter-option:hover {
@@ -111,11 +113,7 @@
   cursor: pointer;
   font-size: var(--font-size-sm);
 }
-
-.fc-clear-filter:hover {
-  background-color: var(--color-bg-hover);
-}
-
+ 
 .fc-export-option {
   display: block;
   width: 100%;

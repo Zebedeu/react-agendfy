@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { format, startOfWeek, endOfWeek } from "date-fns";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Filter } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Filter } from "lucide-react";
 import { getLocale } from "../Utils/locate";
 import { CalendarHeaderProps, Resource } from "../types/types";
 
@@ -104,7 +104,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
               aria-haspopup="true"
               aria-expanded={isExportOpen}
             >
-              <CalendarIcon className="fc-icon" size={16} />
+              <Download className="fc-icon" size={16} />
               <span>{localeConfig?.calendar_export || "Export"}</span>
             </button>
             {isExportOpen && (

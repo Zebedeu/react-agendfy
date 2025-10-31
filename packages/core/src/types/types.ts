@@ -49,6 +49,20 @@ export interface WeekProps  {
   config: Config,
 }
 
+export interface CalendarDayProps {
+  day: TZDate | null;
+  events?: EventProps[];
+  onDayClick?: (day: TZDate) => void;
+  onEventClick?: (event: EventProps) => void;
+  onEventResize?: (event: EventProps) => void;
+  onMouseDown?: (day: Date) => void;
+  onMouseMove?: (day: Date) => void;
+  isSelected?: boolean;
+  monthDate?: TZDate;
+  isDroppable?: boolean;
+  isDropTarget?: boolean;
+  config: Config;
+}
 export interface BaseEventProps {
   event: EventProps;
   onEventClick?: (event: EventProps) => void;

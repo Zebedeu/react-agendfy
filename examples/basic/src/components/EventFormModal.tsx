@@ -1,23 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
 import { TZDate } from '@date-fns/tz';
+import { User, Building, Monitor, Tag } from 'lucide-react';
+import { EventProps, Config, Resource } from '@react-agendfy/core';
 import './EventFormModal.css';
+
+interface EventFormModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (event: EventProps) => void;
+  eventData: Partial<EventProps>;
+  config: Config;
+  resources: Resource[];
+}
 
 const formatISOForInput = (isoString: string, timeZone: string) => {
   if (!isoString) return '';
-  // CORREÇÃO: Usar TZDate para formatar a data no fuso horário correto do calendário.
   const date = new TZDate(isoString, timeZone);
   return format(date, "yyyy-MM-dd'T'HH:mm:ss");
 };
 
-function EventFormModal({ isOpen, onClose, onSubmit, eventData, config }: any) {
-  console.log('EventFormModal eventData:', eventData);
-  const [formData, setFormData] = useState<any>({});
+function EventFormModal({ isOpen, onClose, onSubmit, eventData, config, resources }: EventFormModalProps) {
+  const [formData, setFormData] = useState<Partial<EventProps> & { resourceIds?: (string | number)[]; }>({});
 
   useEffect(() => {
     if (isOpen && eventData) {
-      // REFATORAÇÃO: Garante que o estado do formulário é sempre reiniciado
-      // com os dados do evento atual, evitando dados obsoletos.
       setFormData({
         id: eventData.id || '',
         title: eventData.title || '',
@@ -25,10 +32,28 @@ function EventFormModal({ isOpen, onClose, onSubmit, eventData, config }: any) {
         end: eventData.end ? formatISOForInput(eventData.end, config.timeZone) : '',
         isAllDay: eventData.isAllDay || false,
         isMultiDay: eventData.isMultiDay || false,
+        resourceIds: eventData.resourceIds || [],
         color: eventData.color || '#3490dc',
       });
     }
-  }, [isOpen, eventData]);
+  }, [isOpen, eventData, config.timeZone]);
+
+  const getIconForResourceType = (type: string) => {
+    switch (type) {
+      case 'room': return <Building size={16} />;
+      case 'person': return <User size={16} />;
+      case 'equipment': return <Monitor size={16} />;
+      default: return <Tag size={16} />;
+    }
+  };
+
+  const handleResourceChange = (resourceId: string | number, isChecked: boolean) => {
+    setFormData(prev => {
+      const currentResourceIds = prev.resourceIds || [];
+      if (isChecked) return { ...prev, resourceIds: [...currentResourceIds, resourceId] };
+      return { ...prev, resourceIds: currentResourceIds.filter((id: string | number) => id !== resourceId) };
+    });
+  };
 
   if (!isOpen || !eventData) return null;
 
@@ -47,7 +72,6 @@ function EventFormModal({ isOpen, onClose, onSubmit, eventData, config }: any) {
       return;
     }
 
-    // CORREÇÃO: Interpretar a data do input como sendo no fuso horário do calendário.
     let finalStart = new TZDate(formData.start, config.timeZone);
     let finalEnd = new TZDate(formData.end, config.timeZone);
 
@@ -57,13 +81,14 @@ function EventFormModal({ isOpen, onClose, onSubmit, eventData, config }: any) {
     }
 
     onSubmit({
-      id: formData.id, // <-- ADICIONAR ESTA LINHA
+      id: formData.id,
       title: formData.title,
       start: finalStart.toISOString(),
       end: finalEnd.toISOString(),
-      isAllDay: formData.isAllDay,
+      isAllDay: formData.isAllDay || false,
       isMultiDay: formData.isMultiDay,
       color: formData.color,
+      resourceIds: formData.resourceIds,
     });
   };
 
@@ -133,6 +158,26 @@ function EventFormModal({ isOpen, onClose, onSubmit, eventData, config }: any) {
               <label htmlFor="isMultiDay">Multi-Day</label>
             </div>
           </div>
+
+          {resources.length > 0 && (
+            <div className="form-group">
+              <label>Resources</label>
+              <div className="resource-selection-container">
+                {resources.map(resource => (
+                  <label key={resource.id} className="resource-option">
+                    <input
+                      type="checkbox"
+                      value={resource.id}
+                      checked={formData.resourceIds?.includes(resource.id)}
+                      onChange={(e) => handleResourceChange(resource.id, e.target.checked)}
+                    />
+                    {getIconForResourceType(resource.type)}
+                    <span>{resource.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="modal-actions">
             <button type="button" onClick={onClose} className="btn-cancel">

@@ -1,4 +1,3 @@
-// utilitários usados pelos plugins (download, aplicação de tema, validação)
 export const downloadBlob = (data: Blob | string, filename = 'export') => {
   const blob = typeof data === 'string' ? new Blob([data], { type: 'text/plain;charset=utf-8' }) : data;
   const url = URL.createObjectURL(blob);

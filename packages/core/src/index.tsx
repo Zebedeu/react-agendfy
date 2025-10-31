@@ -17,21 +17,21 @@ import {
   SearchPluginProps,
 } from "./types/search";
 import { CalendarPlugin, DataSourcePlugin, EventLike, ExportPlugin, ThemePlugin, ViewPlugin } from "./types/plugins";
-import { ToastProvider } from "./Components/Toast/Toast";
-import Calendar from "./View/Calendar";
+import { ToastProvider } from "./Components/Toast/Toast"; 
+import CalendarComponent from "./View/Calendar";
 import { ensureDate } from "./Utils/DateTrannforms";
+import { downloadBlob } from './Utils/pluginUtils';
 
 const WrappedCalendar = React.forwardRef<HTMLDivElement, CalendarProps>((props, ref) => {
   return (
     <ToastProvider>
-      <Calendar {...props} ref={ref} />
+      <CalendarComponent events={[]} {...props} ref={ref} />
     </ToastProvider>
   );
 });
 WrappedCalendar.displayName = 'WrappedCalendar';
 
-export { WrappedCalendar as Calendar };
-export {ensureDate}
+export { WrappedCalendar as Calendar, ensureDate, downloadBlob };
 export type {
   CalendarProps,
   EventProps,

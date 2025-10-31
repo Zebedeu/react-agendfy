@@ -24,6 +24,7 @@ const MonthView: React.FC<MonthViewProps> = ({
   onEventResize
 }) => {
   const [activeEvent, setActiveEvent] = useState<EventProps | null>(null);
+  const [isResizing, setIsResizing] = useState(false);
   const [selecting, setSelecting] = useState(false);
   const [selStart, setSelStart] = useState<Date | null>(null);
   const [selEnd, setSelEnd] = useState<Date | null>(null);
@@ -55,10 +56,16 @@ const monthStart = useMemo(() => startOfMonth(new TZDate(currentDate, config?.ti
   const handleDragStart = (e: any) => setActiveEvent(e.active.data.current.event);
   const handleDragEnd = (e: any) => {
     setActiveEvent(null);
-    const { active, over } = e;
-    if (!over || !onEventUpdate) return;
+    const { active, over, delta } = e;
+    if (!active || !over) return;
 
     const event = active.data.current.event as EventProps;
+
+    if (Math.abs(delta.x) < 5 && Math.abs(delta.y) < 5) {
+      onEventClick?.(event);
+      return;
+    }
+
     const targetDate = new Date(over.id);
     const origStart = ensureDate(event.start, tz);
 
@@ -70,11 +77,16 @@ const monthStart = useMemo(() => startOfMonth(new TZDate(currentDate, config?.ti
     const duration = ensureDate(event.end, tz).getTime() - origStart.getTime();
     const newEnd = new Date(targetDate.getTime() + duration);
 
-    onEventUpdate({
+    onEventUpdate?.({
       ...event,
       start: targetDate.toISOString(),
       end: newEnd.toISOString(),
     });
+  };
+
+  const handleEventResize = (status: 'start' | 'stop', event?: EventProps) => {
+    setIsResizing(status === 'start');
+    if (status === 'stop' && event) onEventResize?.(event);
   };
 
   const handleMouseDown = (d: Date) => { setSelecting(true); setSelStart(d); setSelEnd(d); };
@@ -115,14 +127,14 @@ const monthStart = useMemo(() => startOfMonth(new TZDate(currentDate, config?.ti
                   key={day ? format(day, 'yyyy-MM-dd') : `empty-${i}-${j}`}
                   day={day}
                   events={expandedEvents}
-                  onDayClick={onDayClick}
+                  onDayClick={isResizing ? undefined : onDayClick}
                   onEventClick={onEventClick}
                   config={config}
                   onMouseDown={handleMouseDown}
                   onMouseMove={handleMouseMove}
                   isSelected={isSelected(day)}
                   monthDate={monthStart}
-                  onEventResize={onEventResize}
+                  onEventResize={handleEventResize}
                 />
               ))}
             </div>
